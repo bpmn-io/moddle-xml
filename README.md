@@ -1,6 +1,6 @@
 # moddle-xml
 
-XML import/export for documents described with [https://github.com/bpmn-io/moddle].
+XML import/export for documents described with [moddle](https://github.com/bpmn-io/moddle).
 
 ## Example
 
