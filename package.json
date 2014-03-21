@@ -1,6 +1,6 @@
 {
   "name": "moddle-xml",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "XML import/export for documents described with moddle",
   "directories": {
     "lib" : "lib"
@@ -46,10 +46,10 @@
     "jsondiffpatch": "~0.1.4",
     "lodash": "~2.4.0",
     "sax": "~0.6.0",
-    "moddle": "~0.0.1"
+    "moddle": "~0.0.2"
   },
   "peerDependencies": {
-    "moddle": "~0.0.1",
+    "moddle": "~0.0.2",
     "lodash": "~2.4.0",
     "sax": "~0.6.0"
   }
