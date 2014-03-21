@@ -494,5 +494,63 @@ describe('Reader', function() {
 
     });
 
+
+    it('should handle invalid root element', function(done) {
+
+      var xml = '<props:referencingCollection xmlns:props="http://properties" id="C_4">' +
+                  '<props:references>C_2</props:references>' +
+                  '<props:references>C_5</props:references>' +
+                '</props:referencingCollection>';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      var expectedError =
+        'illegal content <props:references> detected\n\t' +
+            'line: 0\n\t' +
+            'column: 88\n\t' +
+            'nested error: unknown type <props:References>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        expect(err).toBeDefined();
+        expect(err.message).toEqual(expectedError);
+
+        expect(result).not.toBeDefined();
+
+        done();
+      });
+    });
+
+
+    it('should handle invalid child element', function(done) {
+
+      var xml = '<props:referencingCollection xmlns:props="http://properties" id="C_4">' +
+                  '<props:references>C_2</props:references>' +
+                  '<props:invalid>C_5</props:invalid>' +
+                '</props:referencingCollection>';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ReferencingCollection');
+
+      var expectedError =
+        'illegal content <props:invalid> detected\n\t' +
+            'line: 0\n\t' +
+            'column: 125\n\t' +
+            'nested error: unknown type <props:Invalid>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        expect(err).toBeDefined();
+        expect(err.message).toEqual(expectedError);
+
+        expect(result).not.toBeDefined();
+
+        done();
+      });
+    });
+
   });
 });
