@@ -4,6 +4,7 @@ var Reader = require('../../lib/Reader'),
     logger = require('moddle').util.Logger;
 
 var Helper = require('./Helper'),
+    readFile = Helper.readFile,
     createModelBuilder = Helper.createModelBuilder,
     log = Helper.log;
 
@@ -454,4 +455,44 @@ describe('Reader', function() {
 
   });
 
+  describe('error handling', function() {
+
+    it('should handle non-xml text files', function(done) {
+
+      var data = readFile('test/fixtures/error/no-xml.txt');
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML(data, rootHandler, function(err, result) {
+
+        expect(err).toBeDefined();
+        expect(result).not.toBeDefined();
+
+        done();
+      });
+
+    });
+
+
+    it('should handle non-xml binary file', function(done) {
+
+      var data = readFile('test/fixtures/error/binary.png');
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML(data, rootHandler, function(err, result) {
+
+        expect(err).toBeDefined();
+        expect(result).not.toBeDefined();
+
+        done();
+      });
+
+    });
+
+  });
 });
