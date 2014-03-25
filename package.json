@@ -1,11 +1,11 @@
 {
   "name": "moddle-xml",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "XML import/export for documents described with moddle",
   "directories": {
-    "lib" : "lib"
+    "lib": "lib"
   },
-  "main" : "lib/main",
+  "main": "lib/main",
   "scripts": {
     "test": "grunt test"
   },
@@ -23,11 +23,14 @@
     "export"
   ],
   "author": {
-    "name" : "Nico Rehwaldt",
-    "url" : "https://github.com/Nikku"
+    "name": "Nico Rehwaldt",
+    "url": "https://github.com/Nikku"
   },
   "contributors": [
-    { "name": "bpmn.io contributors", "url": "https://github.com/bpmn-io" }
+    {
+      "name": "bpmn.io contributors",
+      "url": "https://github.com/bpmn-io"
+    }
   ],
   "licenses": [
     {
