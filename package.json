@@ -41,6 +41,7 @@
     "grunt-contrib-connect": "~0.6.0",
     "grunt-contrib-jshint": "~0.7.2",
     "grunt-jsdoc": "~0.5.1",
+    "grunt-release": "~0.7.0",
     "load-grunt-tasks": "~0.3.0",
     "grunt-jasmine-node": "~0.1.0",
     "jsondiffpatch": "~0.1.4",
