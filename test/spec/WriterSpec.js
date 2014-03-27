@@ -18,9 +18,11 @@ describe('Writer', function() {
     return new Writer({ preamble: false });
   }
 
+
   describe('api', function() {
 
   });
+
 
   describe('should export', function() {
 
@@ -38,6 +40,7 @@ describe('Writer', function() {
         expect(xml).toEqual('<?xml version="1.0" encoding="UTF-8"?>\n<props:root xmlns:props="http://properties" />');
       });
     });
+
 
     describe('datatypes', function() {
 
@@ -58,6 +61,7 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<dt:root xmlns:dt="http://datatypes"><dt:bounds y="100" /></dt:root>');
       });
+
 
       it('via xsi:type / in collection / other namespace)', function() {
 
@@ -84,6 +88,7 @@ describe('Writer', function() {
 
     });
 
+
     describe('attributes', function() {
 
       it('with line breaks', function() {
@@ -104,6 +109,7 @@ describe('Writer', function() {
       
     });
 
+
     describe('simple properties', function() {
       
       it('attribute', function() {
@@ -119,6 +125,7 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<props:attributes xmlns:props="http://properties" integerValue="1000" />');
       });
+
 
       it('write integer property', function() {
 
@@ -136,6 +143,7 @@ describe('Writer', function() {
         expect(xml).toEqual('<props:simpleBodyProperties xmlns:props="http://properties"><props:intValue>5</props:intValue></props:simpleBodyProperties>');
       });
 
+
       it('write boolean property', function() {
 
         // given
@@ -151,6 +159,7 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<props:simpleBodyProperties xmlns:props="http://properties"><props:boolValue>false</props:boolValue></props:simpleBodyProperties>');
       });
+
 
       it('write string isMany property', function() {
 
@@ -170,6 +179,7 @@ describe('Writer', function() {
 
     });
   
+
     describe('embedded properties',  function() {
 
       it('single', function() {
@@ -186,6 +196,7 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<props:embedding xmlns:props="http://properties"><props:complexCount id="ComplexCount_1" /></props:embedding>');
       });
+
 
       it('collection', function() {
         
@@ -210,6 +221,7 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<props:root xmlns:props="http://properties"><props:attributes id="Attributes_1" /><props:simpleBody /><props:containedCollection /></props:root>');
       });
+
 
       it('collection / different ns', function() {
         
@@ -240,6 +252,7 @@ describe('Writer', function() {
 
     });
 
+
     describe('body text', function() {
 
       it('write body text property', function() {
@@ -257,6 +270,7 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<props:simpleBody xmlns:props="http://properties">textContent</props:simpleBody>');
       });
+
 
       it('write body CDATA property', function() {
 
@@ -276,6 +290,7 @@ describe('Writer', function() {
 
     });
 
+
     describe('alias', function() {
 
       it('lowerCase', function() {
@@ -291,6 +306,7 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<props:root xmlns:props="http://properties" />');
       });
+
 
       it('none', function() {
 
@@ -309,6 +325,7 @@ describe('Writer', function() {
       });
     });
 
+
     describe('ns', function() {
 
       it('single package', function() {
@@ -324,6 +341,7 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<props:root xmlns:props="http://properties" />');
       });
+
 
       it('multiple packages', function() {
 
@@ -343,6 +361,7 @@ describe('Writer', function() {
 
     });
 
+
     describe('reference', function() {
 
       it('single', function() {
@@ -359,6 +378,7 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<props:referencingSingle xmlns:props="http://properties" referencedComplex="Complex_1" />');
       });
+
 
       it('collection', function() {
         
@@ -381,6 +401,119 @@ describe('Writer', function() {
           '</props:referencingCollection>');
       });
 
+    });
+  });
+
+
+  describe('extension handling', function() {
+
+    var extensionModel = createModel([ 'extensions' ]);
+
+
+    it('should write self-closing extension elements', function() {
+
+      // given
+      var writer = createWriter(extensionModel);
+
+      var meta1 = extensionModel.createAny('other:meta', 'http://other', {
+        key: 'FOO',
+        value: 'BAR'
+      });
+
+      var meta2 = extensionModel.createAny('other:meta', 'http://other', {
+        key: 'BAZ',
+        value: 'FOOBAR'
+      });
+
+      var root = extensionModel.create('e:Root', {
+        id: 'FOO',
+        extensions: [ meta1, meta2 ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).toEqual(
+        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+          '<e:id>FOO</e:id>' +
+          '<other:meta key="FOO" value="BAR" />' +
+          '<other:meta key="BAZ" value="FOOBAR" />' +
+        '</e:root>');
+    });
+
+
+    it('should write extension element body', function() {
+      
+      // given
+      var writer = createWriter(extensionModel);
+
+      var note = extensionModel.createAny('other:note', 'http://other', {
+        $body: 'a note'
+      });
+
+      var root = extensionModel.create('e:Root', {
+        id: 'FOO',
+        extensions: [ note ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).toEqual(
+        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+          '<e:id>FOO</e:id>' +
+          '<other:note>' +
+            'a note' +
+          '</other:note>' +
+        '</e:root>');
+    });
+
+
+    it('should write nested extension element', function() {
+
+      // given
+      var writer = createWriter(extensionModel);
+
+      var meta1 = extensionModel.createAny('other:meta', 'http://other', {
+        key: 'k1',
+        value: 'v1'
+      });
+
+      var meta2 = extensionModel.createAny('other:meta', 'http://other', {
+        key: 'k2',
+        value: 'v2'
+      });
+
+      var additionalNote = extensionModel.createAny('other:additionalNote', 'http://other', {
+        $body: 'this is some text'
+      });
+
+      var nestedMeta = extensionModel.createAny('other:nestedMeta', 'http://other', {
+        $children: [ meta1, meta2, additionalNote ]
+      });
+
+      var root = extensionModel.create('e:Root', {
+        id: 'FOO',
+        extensions: [ nestedMeta ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).toEqual(
+        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+          '<e:id>FOO</e:id>' +
+          '<other:nestedMeta>' +
+            '<other:meta key="k1" value="v1" />' +
+            '<other:meta key="k2" value="v2" />' +
+            '<other:additionalNote>' +
+              'this is some text' +
+            '</other:additionalNote>' +
+          '</other:nestedMeta>' +
+        '</e:root>');
     });
   });
 });
