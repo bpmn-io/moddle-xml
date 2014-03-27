@@ -22,6 +22,7 @@ describe('Reader', function() {
 
   });
 
+
   describe('should import', function() {
 
     describe('data types', function() {
@@ -48,6 +49,7 @@ describe('Reader', function() {
         });
       });
 
+
       it('simple / no xsi:type', function(done) {
 
         // given
@@ -70,6 +72,7 @@ describe('Reader', function() {
         });
       });
 
+
       it('collection / no xsi:type', function(done) {
 
         // given
@@ -91,6 +94,7 @@ describe('Reader', function() {
           done(err);
         });
       });
+
 
       it('simple / xsi:type / other namespace)', function(done) {
 
@@ -121,7 +125,9 @@ describe('Reader', function() {
           done(err);
         });
       });
+
     });
+
 
     describe('attributes', function() {
 
@@ -146,6 +152,7 @@ describe('Reader', function() {
       
     });
 
+
     describe('simple nested properties', function() {
       
       it('parse boolean property', function(done) {
@@ -167,6 +174,7 @@ describe('Reader', function() {
         });
       });
 
+
       it('parse boolean property', function(done) {
 
         // given
@@ -185,6 +193,7 @@ describe('Reader', function() {
           done(err);
         });
       });
+
 
       it('parse string isMany prooperty', function(done) {
 
@@ -205,6 +214,7 @@ describe('Reader', function() {
         });
       });
     });
+
 
     describe('body text', function() {
 
@@ -227,6 +237,7 @@ describe('Reader', function() {
         });
       });
 
+
       it('parse body CDATA property', function(done) {
 
         // given
@@ -245,7 +256,9 @@ describe('Reader', function() {
           done(err);
         });
       });
+
     });
+
 
     describe('alias', function() {
 
@@ -266,6 +279,7 @@ describe('Reader', function() {
 
       });
 
+
       it('none', function(done) {
 
         // given
@@ -285,6 +299,7 @@ describe('Reader', function() {
       });
 
     });
+
 
     describe('reference', function() {
 
@@ -330,6 +345,7 @@ describe('Reader', function() {
           done(err);
         });
       });
+
 
       it('collection', function(done) {
 
@@ -378,12 +394,15 @@ describe('Reader', function() {
           done(err);
         });
       });
+
     });
+
   });
+
 
   describe('internal', function() {
 
-    describe('identify references', function() {
+    describe('should identify references', function() {
 
       it('on attribute', function(done) {
 
@@ -413,6 +432,7 @@ describe('Reader', function() {
           done(err);
         });
       });
+
 
       it('embedded', function(done) {
 
@@ -451,9 +471,11 @@ describe('Reader', function() {
           done(err);
         });
       });
+
     });
 
   });
+
 
   describe('error handling', function() {
 
@@ -506,7 +528,7 @@ describe('Reader', function() {
       var rootHandler = reader.handler('props:ComplexAttrs');
 
       var expectedError =
-        'illegal content <props:references> detected\n\t' +
+        'unparsable content <props:references> detected\n\t' +
             'line: 0\n\t' +
             'column: 88\n\t' +
             'nested error: unknown type <props:References>';
@@ -535,7 +557,7 @@ describe('Reader', function() {
       var rootHandler = reader.handler('props:ReferencingCollection');
 
       var expectedError =
-        'illegal content <props:invalid> detected\n\t' +
+        'unparsable content <props:invalid> detected\n\t' +
             'line: 0\n\t' +
             'column: 125\n\t' +
             'nested error: unknown type <props:Invalid>';
@@ -552,5 +574,242 @@ describe('Reader', function() {
       });
     });
 
+
+    it('should handle invalid child element / non-model schema', function(done) {
+
+      var xml = '<props:referencingCollection xmlns:props="http://properties" xmlns:other="http://other">' +
+                  '<other:foo>C_2</other:foo>' +
+                '</props:referencingCollection>';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ReferencingCollection');
+
+      var expectedError =
+        'unparsable content <other:foo> detected\n\t' +
+            'line: 0\n\t' +
+            'column: 99\n\t' +
+            'nested error: unrecognized element <other:foo>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        expect(err).toBeDefined();
+        expect(err.message).toEqual(expectedError);
+
+        expect(result).not.toBeDefined();
+
+        done();
+      });
+    });
+
   });
+
+
+  describe('extension handling', function() {
+
+    var extensionModel = createModel([ 'extensions' ]);
+
+
+    it('should read self-closing extension elements', function(done) {
+
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('e:Root');
+
+      var xml =
+        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+          '<e:id>FOO</e:id>' +
+          '<other:meta key="FOO" value="BAR" />' +
+          '<other:meta key="BAZ" value="FOOBAR" />' +
+        '</e:root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        if (err) {
+          return done(err);
+        }
+
+        // then
+        expect(result).toDeepEqual({
+          $type: 'e:Root',
+          id: 'FOO',
+          extensions: [
+            {
+              $type: 'other:meta',
+              key: 'FOO',
+              value: 'BAR'
+            },
+            {
+              $type: 'other:meta',
+              key: 'BAZ',
+              value: 'FOOBAR'
+            }
+          ]
+        });
+
+        done();
+      });
+    });
+
+
+    it('should read extension element body', function(done) {
+
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('e:Root');
+
+      var xml =
+        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+          '<e:id>FOO</e:id>' +
+          '<other:note>' +
+            'a note' +
+          '</other:note>' +
+        '</e:root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        if (err) {
+          return done(err);
+        }
+
+        // then
+        expect(result).toDeepEqual({
+          $type: 'e:Root',
+          id: 'FOO',
+          extensions: [
+            {
+              $type: 'other:note',
+              $body: 'a note'
+            }
+          ]
+        });
+
+        done();
+      });
+    });
+
+
+    it('should read nested extension element', function(done) {
+
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('e:Root');
+
+      var xml =
+        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+          '<e:id>FOO</e:id>' +
+          '<other:nestedMeta>' +
+            '<other:meta key="k1" value="v1" />' +
+            '<other:meta key="k2" value="v2" />' +
+            '<other:additionalNote>' +
+              'this is some text' +
+            '</other:additionalNote>' +
+          '</other:nestedMeta>' +
+        '</e:root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        if (err) {
+          return done(err);
+        }
+
+        // then
+        expect(result).toDeepEqual({
+          $type: 'e:Root',
+          id: 'FOO',
+          extensions: [
+            {
+              $type: 'other:nestedMeta',
+              $children: [
+                { $type: 'other:meta', key: 'k1', value: 'v1' },
+                { $type: 'other:meta', key: 'k2', value: 'v2' },
+                { $type: 'other:additionalNote', $body: 'this is some text' }
+              ]
+            }
+          ]
+        });
+
+        done();
+      });
+    });
+
+
+    describe('descriptor', function() {
+
+      it('should exist', function(done) {
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('e:Root');
+
+        var xml =
+          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+            '<e:id>FOO</e:id>' +
+            '<other:note>' +
+              'a note' +
+            '</other:note>' +
+          '</e:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          var note = result.extensions[0];
+
+          // then
+          expect(note.$descriptor).toBeDefined();
+
+          done();
+        });
+      });
+
+
+      it('should contain namespace information', function(done) {
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('e:Root');
+
+        var xml =
+          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+            '<e:id>FOO</e:id>' +
+            '<other:note>' +
+              'a note' +
+            '</other:note>' +
+          '</e:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          var note = result.extensions[0];
+
+          // then
+          expect(note.$descriptor).toEqual({
+            name: 'other:note',
+            isGeneric: true,
+            ns: {
+              prefix: 'other',
+              localName: 'note',
+              uri: 'http://other'
+            }
+          });
+
+          done();
+        });
+      });
+      
+    });
+
+  });
+
 });

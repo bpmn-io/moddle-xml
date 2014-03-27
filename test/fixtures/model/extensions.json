@@ -1,0 +1,15 @@
+{
+  "name": "Extensions",
+  "uri": "http://extensions",
+  "prefix": "e",
+  "alias": "lowerCase",
+  "types": [
+    {
+      "name": "Root",
+      "properties": [
+        { "name": "id", "type": "String" },
+        { "name": "extensions", "type": "Element", "isMany" : true }
+      ]
+    }
+  ]
+}
