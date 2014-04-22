@@ -610,136 +610,38 @@ describe('Reader', function() {
     var extensionModel = createModel([ 'extensions' ]);
 
 
-    it('should read self-closing extension elements', function(done) {
+    describe('attributes', function() {
 
-      // given
-      var reader = new Reader(extensionModel);
-      var rootHandler = reader.handler('e:Root');
+      it('should read extension attributes', function() {
 
-      var xml =
-        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
-          '<e:id>FOO</e:id>' +
-          '<other:meta key="FOO" value="BAR" />' +
-          '<other:meta key="BAZ" value="FOOBAR" />' +
-        '</e:root>';
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('e:Root');
 
-      // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+        var xml = '<e:root xmlns:e="http://extensions" xmlns:other="http://other" other:foo="BAR" />';
 
-        if (err) {
-          return done(err);
-        }
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
-        // then
-        expect(result).toDeepEqual({
-          $type: 'e:Root',
-          id: 'FOO',
-          extensions: [
-            {
-              $type: 'other:meta',
-              key: 'FOO',
-              value: 'BAR'
-            },
-            {
-              $type: 'other:meta',
-              key: 'BAZ',
-              value: 'FOOBAR'
-            }
-          ]
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result.$attrs).toDeepEqual({
+            'xmlns:e': 'http://extensions',
+            'xmlns:other': 'http://other',
+            'other:foo' : 'BAR'
+          });
+
         });
 
-        done();
       });
     });
 
 
-    it('should read extension element body', function(done) {
+    describe('elements', function() {
 
-      // given
-      var reader = new Reader(extensionModel);
-      var rootHandler = reader.handler('e:Root');
-
-      var xml =
-        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
-          '<e:id>FOO</e:id>' +
-          '<other:note>' +
-            'a note' +
-          '</other:note>' +
-        '</e:root>';
-
-      // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
-
-        if (err) {
-          return done(err);
-        }
-
-        // then
-        expect(result).toDeepEqual({
-          $type: 'e:Root',
-          id: 'FOO',
-          extensions: [
-            {
-              $type: 'other:note',
-              $body: 'a note'
-            }
-          ]
-        });
-
-        done();
-      });
-    });
-
-
-    it('should read nested extension element', function(done) {
-
-      // given
-      var reader = new Reader(extensionModel);
-      var rootHandler = reader.handler('e:Root');
-
-      var xml =
-        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
-          '<e:id>FOO</e:id>' +
-          '<other:nestedMeta>' +
-            '<other:meta key="k1" value="v1" />' +
-            '<other:meta key="k2" value="v2" />' +
-            '<other:additionalNote>' +
-              'this is some text' +
-            '</other:additionalNote>' +
-          '</other:nestedMeta>' +
-        '</e:root>';
-
-      // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
-
-        if (err) {
-          return done(err);
-        }
-
-        // then
-        expect(result).toDeepEqual({
-          $type: 'e:Root',
-          id: 'FOO',
-          extensions: [
-            {
-              $type: 'other:nestedMeta',
-              $children: [
-                { $type: 'other:meta', key: 'k1', value: 'v1' },
-                { $type: 'other:meta', key: 'k2', value: 'v2' },
-                { $type: 'other:additionalNote', $body: 'this is some text' }
-              ]
-            }
-          ]
-        });
-
-        done();
-      });
-    });
-
-
-    describe('descriptor', function() {
-
-      it('should exist', function(done) {
+      it('should read self-closing extension elements', function(done) {
 
         // given
         var reader = new Reader(extensionModel);
@@ -748,9 +650,8 @@ describe('Reader', function() {
         var xml =
           '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
             '<e:id>FOO</e:id>' +
-            '<other:note>' +
-              'a note' +
-            '</other:note>' +
+            '<other:meta key="FOO" value="BAR" />' +
+            '<other:meta key="BAZ" value="FOOBAR" />' +
           '</e:root>';
 
         // when
@@ -760,54 +661,186 @@ describe('Reader', function() {
             return done(err);
           }
 
-          var note = result.extensions[0];
-
           // then
-          expect(note.$descriptor).toBeDefined();
-
-          done();
-        });
-      });
-
-
-      it('should contain namespace information', function(done) {
-
-        // given
-        var reader = new Reader(extensionModel);
-        var rootHandler = reader.handler('e:Root');
-
-        var xml =
-          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
-            '<e:id>FOO</e:id>' +
-            '<other:note>' +
-              'a note' +
-            '</other:note>' +
-          '</e:root>';
-
-        // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
-
-          if (err) {
-            return done(err);
-          }
-
-          var note = result.extensions[0];
-
-          // then
-          expect(note.$descriptor).toEqual({
-            name: 'other:note',
-            isGeneric: true,
-            ns: {
-              prefix: 'other',
-              localName: 'note',
-              uri: 'http://other'
-            }
+          expect(result).toDeepEqual({
+            $type: 'e:Root',
+            id: 'FOO',
+            extensions: [
+              {
+                $type: 'other:meta',
+                key: 'FOO',
+                value: 'BAR'
+              },
+              {
+                $type: 'other:meta',
+                key: 'BAZ',
+                value: 'FOOBAR'
+              }
+            ]
           });
 
           done();
         });
       });
-      
+
+
+      it('should read extension element body', function(done) {
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('e:Root');
+
+        var xml =
+          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+            '<e:id>FOO</e:id>' +
+            '<other:note>' +
+              'a note' +
+            '</other:note>' +
+          '</e:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result).toDeepEqual({
+            $type: 'e:Root',
+            id: 'FOO',
+            extensions: [
+              {
+                $type: 'other:note',
+                $body: 'a note'
+              }
+            ]
+          });
+
+          done();
+        });
+      });
+
+
+      it('should read nested extension element', function(done) {
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('e:Root');
+
+        var xml =
+          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+            '<e:id>FOO</e:id>' +
+            '<other:nestedMeta>' +
+              '<other:meta key="k1" value="v1" />' +
+              '<other:meta key="k2" value="v2" />' +
+              '<other:additionalNote>' +
+                'this is some text' +
+              '</other:additionalNote>' +
+            '</other:nestedMeta>' +
+          '</e:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result).toDeepEqual({
+            $type: 'e:Root',
+            id: 'FOO',
+            extensions: [
+              {
+                $type: 'other:nestedMeta',
+                $children: [
+                  { $type: 'other:meta', key: 'k1', value: 'v1' },
+                  { $type: 'other:meta', key: 'k2', value: 'v2' },
+                  { $type: 'other:additionalNote', $body: 'this is some text' }
+                ]
+              }
+            ]
+          });
+
+          done();
+        });
+      });
+
+
+      describe('descriptor', function() {
+
+        it('should exist', function(done) {
+
+          // given
+          var reader = new Reader(extensionModel);
+          var rootHandler = reader.handler('e:Root');
+
+          var xml =
+            '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+              '<e:id>FOO</e:id>' +
+              '<other:note>' +
+                'a note' +
+              '</other:note>' +
+            '</e:root>';
+
+          // when
+          reader.fromXML(xml, rootHandler, function(err, result) {
+
+            if (err) {
+              return done(err);
+            }
+
+            var note = result.extensions[0];
+
+            // then
+            expect(note.$descriptor).toBeDefined();
+
+            done();
+          });
+        });
+
+
+        it('should contain namespace information', function(done) {
+
+          // given
+          var reader = new Reader(extensionModel);
+          var rootHandler = reader.handler('e:Root');
+
+          var xml =
+            '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+              '<e:id>FOO</e:id>' +
+              '<other:note>' +
+                'a note' +
+              '</other:note>' +
+            '</e:root>';
+
+          // when
+          reader.fromXML(xml, rootHandler, function(err, result) {
+
+            if (err) {
+              return done(err);
+            }
+
+            var note = result.extensions[0];
+
+            // then
+            expect(note.$descriptor).toEqual({
+              name: 'other:note',
+              isGeneric: true,
+              ns: {
+                prefix: 'other',
+                localName: 'note',
+                uri: 'http://other'
+              }
+            });
+
+            done();
+          });
+        });
+        
+      });
+
     });
 
   });

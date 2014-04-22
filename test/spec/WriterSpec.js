@@ -410,110 +410,173 @@ describe('Writer', function() {
     var extensionModel = createModel([ 'extensions' ]);
 
 
-    it('should write self-closing extension elements', function() {
-
-      // given
-      var writer = createWriter(extensionModel);
-
-      var meta1 = extensionModel.createAny('other:meta', 'http://other', {
-        key: 'FOO',
-        value: 'BAR'
-      });
-
-      var meta2 = extensionModel.createAny('other:meta', 'http://other', {
-        key: 'BAZ',
-        value: 'FOOBAR'
-      });
-
-      var root = extensionModel.create('e:Root', {
-        id: 'FOO',
-        extensions: [ meta1, meta2 ]
-      });
-
-      // when
-      var xml = writer.toXML(root);
-
-      // then
-      expect(xml).toEqual(
-        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
-          '<e:id>FOO</e:id>' +
-          '<other:meta key="FOO" value="BAR" />' +
-          '<other:meta key="BAZ" value="FOOBAR" />' +
-        '</e:root>');
-    });
-
-
-    it('should write extension element body', function() {
+    describe('attributes', function() {
       
-      // given
-      var writer = createWriter(extensionModel);
+      it('should write xsi:schemaLocation', function() {
 
-      var note = extensionModel.createAny('other:note', 'http://other', {
-        $body: 'a note'
+        // given
+        var writer = createWriter(extensionModel);
+
+        var root = extensionModel.create('e:Root', {
+          'xsi:schemaLocation': 'http://fooo ./foo.xsd'
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).toEqual('<e:root xmlns:e="http://extensions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://fooo ./foo.xsd" />');
       });
 
-      var root = extensionModel.create('e:Root', {
-        id: 'FOO',
-        extensions: [ note ]
+
+      it('should write extension attributes', function() {
+
+        debugger;
+        
+        // given
+        var writer = createWriter(extensionModel);
+
+        var root = extensionModel.create('e:Root', {
+          'xmlns:foo': 'http://fooo',
+          'foo:bar': 'BAR'
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).toEqual('<e:root xmlns:e="http://extensions" xmlns:foo="http://fooo" foo:bar="BAR" />');
       });
 
-      // when
-      var xml = writer.toXML(root);
 
-      // then
-      expect(xml).toEqual(
-        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
-          '<e:id>FOO</e:id>' +
-          '<other:note>' +
-            'a note' +
-          '</other:note>' +
-        '</e:root>');
+      it('should ignore unknown namespace prefix', function() {
+
+        // given
+        var writer = createWriter(extensionModel);
+
+        var root = extensionModel.create('e:Root', {
+          'foo:bar': 'BAR'
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then        
+        expect(xml).toEqual('<e:root xmlns:e="http://extensions" />');
+      });
+
     });
 
 
-    it('should write nested extension element', function() {
+    describe('elements', function() {
 
-      // given
-      var writer = createWriter(extensionModel);
+      it('should write self-closing extension elements', function() {
 
-      var meta1 = extensionModel.createAny('other:meta', 'http://other', {
-        key: 'k1',
-        value: 'v1'
+        // given
+        var writer = createWriter(extensionModel);
+
+        var meta1 = extensionModel.createAny('other:meta', 'http://other', {
+          key: 'FOO',
+          value: 'BAR'
+        });
+
+        var meta2 = extensionModel.createAny('other:meta', 'http://other', {
+          key: 'BAZ',
+          value: 'FOOBAR'
+        });
+
+        var root = extensionModel.create('e:Root', {
+          id: 'FOO',
+          extensions: [ meta1, meta2 ]
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).toEqual(
+          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+            '<e:id>FOO</e:id>' +
+            '<other:meta key="FOO" value="BAR" />' +
+            '<other:meta key="BAZ" value="FOOBAR" />' +
+          '</e:root>');
       });
 
-      var meta2 = extensionModel.createAny('other:meta', 'http://other', {
-        key: 'k2',
-        value: 'v2'
+
+      it('should write extension element body', function() {
+        
+        // given
+        var writer = createWriter(extensionModel);
+
+        var note = extensionModel.createAny('other:note', 'http://other', {
+          $body: 'a note'
+        });
+
+        var root = extensionModel.create('e:Root', {
+          id: 'FOO',
+          extensions: [ note ]
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).toEqual(
+          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+            '<e:id>FOO</e:id>' +
+            '<other:note>' +
+              'a note' +
+            '</other:note>' +
+          '</e:root>');
       });
 
-      var additionalNote = extensionModel.createAny('other:additionalNote', 'http://other', {
-        $body: 'this is some text'
+
+      it('should write nested extension element', function() {
+
+        // given
+        var writer = createWriter(extensionModel);
+
+        var meta1 = extensionModel.createAny('other:meta', 'http://other', {
+          key: 'k1',
+          value: 'v1'
+        });
+
+        var meta2 = extensionModel.createAny('other:meta', 'http://other', {
+          key: 'k2',
+          value: 'v2'
+        });
+
+        var additionalNote = extensionModel.createAny('other:additionalNote', 'http://other', {
+          $body: 'this is some text'
+        });
+
+        var nestedMeta = extensionModel.createAny('other:nestedMeta', 'http://other', {
+          $children: [ meta1, meta2, additionalNote ]
+        });
+
+        var root = extensionModel.create('e:Root', {
+          id: 'FOO',
+          extensions: [ nestedMeta ]
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).toEqual(
+          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+            '<e:id>FOO</e:id>' +
+            '<other:nestedMeta>' +
+              '<other:meta key="k1" value="v1" />' +
+              '<other:meta key="k2" value="v2" />' +
+              '<other:additionalNote>' +
+                'this is some text' +
+              '</other:additionalNote>' +
+            '</other:nestedMeta>' +
+          '</e:root>');
       });
-
-      var nestedMeta = extensionModel.createAny('other:nestedMeta', 'http://other', {
-        $children: [ meta1, meta2, additionalNote ]
-      });
-
-      var root = extensionModel.create('e:Root', {
-        id: 'FOO',
-        extensions: [ nestedMeta ]
-      });
-
-      // when
-      var xml = writer.toXML(root);
-
-      // then
-      expect(xml).toEqual(
-        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
-          '<e:id>FOO</e:id>' +
-          '<other:nestedMeta>' +
-            '<other:meta key="k1" value="v1" />' +
-            '<other:meta key="k2" value="v2" />' +
-            '<other:additionalNote>' +
-              'this is some text' +
-            '</other:additionalNote>' +
-          '</other:nestedMeta>' +
-        '</e:root>');
     });
+
   });
+
 });
