@@ -359,6 +359,74 @@ describe('Writer', function() {
         expect(xml).toEqual('<props:root xmlns:props="http://properties" xmlns:ext="http://extended"><ext:extendedComplex /></props:root>');
       });
 
+
+      it('default ns', function() {
+
+        // given
+        var writer = createWriter(extendedModel);
+
+        var root = extendedModel.create('props:Root', { xmlns: 'http://properties' });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).toEqual('<root xmlns="http://properties" />');
+      });
+
+
+      it('default ns / attributes', function() {
+
+        // given
+        var writer = createWriter(extendedModel);
+
+        var root = extendedModel.create('props:Root', { xmlns: 'http://properties', id: 'Root' });
+
+        var any = root.get('any');
+        any.push(extendedModel.create('ext:ExtendedComplex'));
+        any.push(extendedModel.create('props:Attributes', { id: 'Attributes_2' }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml)
+          .toEqual('<root xmlns="http://properties" xmlns:ext="http://extended" id="Root">' +
+                     '<ext:extendedComplex />' +
+                     '<attributes id="Attributes_2" />' +
+                   '</root>');
+      });
+
+
+      it('default ns / extension attributes', function() {
+
+        // given
+        var writer = createWriter(extendedModel);
+
+        var root = extendedModel.create('props:Root', { xmlns: 'http://properties', 'xmlns:foo': 'http://fooo', id: 'Root', 'foo:bar': 'BAR' });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).toEqual('<root xmlns="http://properties" xmlns:foo="http://fooo" id="Root" foo:bar="BAR" />');
+      });
+
+
+      it('explicit ns / attributes', function() {
+
+        // given
+        var writer = createWriter(extendedModel);
+
+        var root = extendedModel.create('props:Root', { 'xmlns:foo': 'http://properties', id: 'Root' });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).toEqual('<foo:root xmlns:foo="http://properties" id="Root" />');
+      });
+
     });
 
 
@@ -430,8 +498,6 @@ describe('Writer', function() {
 
 
       it('should write extension attributes', function() {
-
-        debugger;
         
         // given
         var writer = createWriter(extensionModel);
