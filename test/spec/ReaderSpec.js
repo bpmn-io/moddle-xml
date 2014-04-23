@@ -632,6 +632,30 @@ describe('Reader', function() {
             'xmlns:other': 'http://other',
             'other:foo' : 'BAR'
           });
+        });
+      });
+
+
+      it('should read default ns', function() {
+
+        debugger;
+        
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('e:Root');
+
+        var xml = '<root xmlns="http://extensions" />';
+
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result.$attrs).toDeepEqual({
+            'xmlns': 'http://extensions'
+          });
 
         });
 
