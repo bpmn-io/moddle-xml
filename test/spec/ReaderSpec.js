@@ -18,7 +18,47 @@ describe('Reader', function() {
 
   beforeEach(Helper.initAdditionalMatchers);
 
+
   describe('api', function() {
+
+    it('should provide result with context', function(done) {
+
+      // given
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML('<props:complexAttrs xmlns:props="http://properties"></props:complexAttrs>', rootHandler, function(err, result, context) {
+
+        // then
+        expect(err).toEqual(null);
+
+        expect(result).toBeDefined();
+        expect(context).toBeDefined();
+
+        done();
+      });
+    });
+
+
+    it('should provide error with context', function(done) {
+
+      // given
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML('this-is-garbage', rootHandler, function(err, result, context) {
+
+        // then
+        expect(err).toBeDefined();
+
+        expect(result).toEqual(null);
+        expect(context).toBeDefined();
+
+        done();
+      });
+    });
 
   });
 
@@ -149,12 +189,12 @@ describe('Reader', function() {
           done(err);
         });
       });
-      
+
     });
 
 
     describe('simple nested properties', function() {
-      
+
       it('parse boolean property', function(done) {
 
         // given
@@ -284,7 +324,7 @@ describe('Reader', function() {
 
         // given
         var noAliasModel = createModel(['noalias']);
-        
+
         var reader = new Reader(noAliasModel);
         var rootHandler = reader.handler('na:Root');
 
@@ -387,10 +427,10 @@ describe('Reader', function() {
           var containedCollection = result.any[0];
           var complex_c2 = containedCollection.children[1];
 
-          var referencingSingle = result.any[1];
+          var referencingCollection = result.any[1];
 
-          expect(referencingSingle.references).toDeepEqual([ complex_c2, containedCollection ]);
-          
+          expect(referencingCollection.references).toDeepEqual([ complex_c2, containedCollection ]);
+
           done(err);
         });
       });
@@ -413,7 +453,7 @@ describe('Reader', function() {
         var xml = '<props:referencingSingle xmlns:props="http://properties" id="C_4" referencedComplex="C_1" />';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result, context) {
 
           // then
           var expectedReference = {
@@ -425,7 +465,7 @@ describe('Reader', function() {
             id: 'C_1'
           };
 
-          var references = rootHandler.context.getReferences();
+          var references = context.references;
 
           expect(references).toDeepEqual([ expectedReference ]);
 
@@ -445,7 +485,7 @@ describe('Reader', function() {
                     '<props:references>C_5</props:references>' +
                   '</props:referencingCollection>';
 
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result, context) {
 
           var expectedTarget = {
             $type: 'props:ReferencingCollection',
@@ -464,7 +504,7 @@ describe('Reader', function() {
             id: 'C_5'
           };
 
-          var references = rootHandler.context.getReferences();
+          var references = context.references;
 
           expect(references).toDeepEqual([ expectedReference1, expectedReference2 ]);
 
@@ -602,6 +642,119 @@ describe('Reader', function() {
       });
     });
 
+
+    describe('references', function() {
+
+      describe('should log warning', function() {
+
+        it('on unresolvable reference', function(done) {
+
+          // given
+          var reader = new Reader(extendedModel);
+          var rootHandler = reader.handler('props:Root');
+
+          var xml =
+            '<props:root xmlns:props="http://properties">' +
+              '<props:referencingSingle id="C_4" referencedComplex="C_1" />' +
+            '</props:root>';
+
+          // when
+          reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+            if (err) {
+              return done(err);
+            }
+
+            // then
+            expect(result).toDeepEqual({
+              $type: 'props:Root',
+              any: [
+                { $type: 'props:ReferencingSingle', id: 'C_4' }
+              ]
+            });
+
+            var referencingSingle = result.any[0];
+
+            expect(referencingSingle.referencedComplex).not.toBeDefined();
+
+            // expect warning to be logged
+            expect(context.warnings).toEqual([
+              {
+                message : 'unresolved reference <C_1>',
+                element : referencingSingle,
+                property : 'props:referencedComplex',
+                value : 'C_1'
+              }
+            ]);
+
+            done();
+          });
+        });
+
+
+        it('on unresolvable collection reference', function(done) {
+
+          // given
+          var reader = new Reader(extendedModel);
+          var rootHandler = reader.handler('props:Root');
+
+          var xml =
+            '<props:root xmlns:props="http://properties">' +
+              '<props:containedCollection id="C_5">' +
+                '<props:complex id="C_2" />' +
+              '</props:containedCollection>' +
+              '<props:referencingCollection id="C_4">' +
+                '<props:references>C_1</props:references>' +
+                '<props:references>C_2</props:references>' +
+              '</props:referencingCollection>' +
+            '</props:root>';
+
+          // when
+          reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+            if (err) {
+              return done(err);
+            }
+
+            // then
+            expect(result).toDeepEqual({
+              $type: 'props:Root',
+              any: [
+                {
+                  $type: 'props:ContainedCollection',
+                  id: 'C_5',
+                  children: [
+                    { $type: 'props:Complex', id: 'C_2' }
+                  ]
+                },
+                { $type: 'props:ReferencingCollection', id: 'C_4' }
+              ]
+            });
+
+            // expect invalid reference not to be included
+            var c2 = result.any[0].children[0];
+            var referencingCollection = result.any[1];
+
+            expect(referencingCollection.references).toDeepEqual([ c2 ]);
+
+            // expect warning to be logged
+            expect(context.warnings).toDeepEqual([
+              {
+                message: 'unresolved reference <C_1>',
+                element: referencingCollection,
+                property : 'props:references',
+                value : 'C_1'
+              }
+            ]);
+
+            done();
+          });
+        });
+
+      });
+
+    });
+
   });
 
 
@@ -638,8 +791,6 @@ describe('Reader', function() {
 
       it('should read default ns', function() {
 
-        debugger;
-        
         // given
         var reader = new Reader(extensionModel);
         var rootHandler = reader.handler('e:Root');
@@ -862,7 +1013,7 @@ describe('Reader', function() {
             done();
           });
         });
-        
+
       });
 
     });
