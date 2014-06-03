@@ -2,7 +2,9 @@
   "name": "Extensions",
   "uri": "http://extensions",
   "prefix": "e",
-  "alias": "lowerCase",
+  "xml" : {
+    "alias": "lowerCase"
+  },
   "types": [
     {
       "name": "Root",

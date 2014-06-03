@@ -765,7 +765,7 @@ describe('Reader', function() {
 
     describe('attributes', function() {
 
-      it('should read extension attributes', function() {
+      it('should read extension attributes', function(done) {
 
         // given
         var reader = new Reader(extensionModel);
@@ -785,11 +785,13 @@ describe('Reader', function() {
             'xmlns:other': 'http://other',
             'other:foo' : 'BAR'
           });
+
+          done();
         });
       });
 
 
-      it('should read default ns', function() {
+      it('should read default ns', function(done) {
 
         // given
         var reader = new Reader(extensionModel);
@@ -808,6 +810,7 @@ describe('Reader', function() {
             'xmlns': 'http://extensions'
           });
 
+          done();
         });
 
       });

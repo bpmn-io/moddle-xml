@@ -2,7 +2,9 @@
   "name": "Properties",
   "uri": "http://properties",
   "prefix": "props",
-  "alias": "lowerCase",
+  "xml" : {
+    "alias": "lowerCase"
+  },
   "types": [
     {
       "name": "Complex",
