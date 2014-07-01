@@ -1,9 +1,10 @@
+'use strict';
+
 var fs = require('fs');
 var util = require('util');
 
 var _ = require('lodash');
 
-var logger = require('moddle').util.Logger;
 var Model = require('moddle');
 
 var jsondiffpatch = require('jsondiffpatch').create({
@@ -41,7 +42,7 @@ function initAdditionalMatchers() {
       };
 
       if (!result.pass) {
-        logger.error('[to-deep-equal] elements do not equal. diff: ', util.inspect(jsondiffpatch.diff(actualClone, expectedClone), false, 4));
+        console.warn('[to-deep-equal] elements do not equal. diff: ', util.inspect(jsondiffpatch.diff(actualClone, expectedClone), false, 4));
       }
 
       // jasmine 1.3.x
@@ -55,9 +56,9 @@ function createModelBuilder(base) {
   var cache = {};
 
   if (!base) {
-    throw new Error("[test-util] must specify a base directory");
+    throw new Error('[test-util] must specify a base directory');
   }
-  
+
   function createModel(packageNames) {
 
     var packages = _.collect(packageNames, function(f) {
@@ -81,19 +82,6 @@ function createModelBuilder(base) {
   return createModel;
 }
 
-/** log during execution of a test callback */
-function log(level, fn) {
-  logger.setLevel(level);
-
-  return function(done) {
-    fn(function() {
-      logger.setLevel(null);
-      done();
-    });
-  };
-}
-
-module.exports.log = log;
 module.exports.readFile = readFile;
 module.exports.ensureDirExists = ensureDirExists;
 module.exports.initAdditionalMatchers = initAdditionalMatchers;
