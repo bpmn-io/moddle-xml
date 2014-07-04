@@ -1,10 +1,9 @@
+'use strict';
+
 var _ = require('lodash');
 
 var Writer = require('../../lib/Writer'),
-    logger = require('moddle').util.Logger;
-
-var Helper = require('./Helper'),
-    log = Helper.log;
+    Helper = require('./Helper');
 
 
 describe('Writer', function() {
@@ -47,7 +46,7 @@ describe('Writer', function() {
       var datatypesModel = createModel(['datatype', 'datatype-external']);
 
       it('via xsi:type', function() {
-        
+
         // given
         var writer = createWriter(datatypesModel);
 
@@ -57,7 +56,7 @@ describe('Writer', function() {
 
         // when
         var xml = writer.toXML(root);
-        
+
         // then
         expect(xml).toEqual('<dt:root xmlns:dt="http://datatypes"><dt:bounds y="100" /></dt:root>');
       });
@@ -106,14 +105,14 @@ describe('Writer', function() {
         // then
         expect(xml).toEqual('<props:baseWithId xmlns:props="http://properties" id="FOO&#10;BAR" />');
       });
-      
+
     });
 
 
     describe('simple properties', function() {
-      
+
       it('attribute', function() {
-        
+
         // given
         var writer = createWriter(model);
 
@@ -178,12 +177,12 @@ describe('Writer', function() {
       });
 
     });
-  
+
 
     describe('embedded properties',  function() {
 
       it('single', function() {
-        
+
         // given
         var writer = createWriter(model);
 
@@ -199,7 +198,7 @@ describe('Writer', function() {
 
 
       it('collection', function() {
-        
+
         // given
         var writer = createWriter(model);
 
@@ -210,7 +209,7 @@ describe('Writer', function() {
         var containedCollection = model.create('props:ContainedCollection');
 
         var any = root.get('any');
-        
+
         any.push(attributes);
         any.push(simpleBody);
         any.push(containedCollection);
@@ -224,7 +223,7 @@ describe('Writer', function() {
 
 
       it('collection / different ns', function() {
-        
+
         // given
         var writer = createWriter(extendedModel);
 
@@ -235,7 +234,7 @@ describe('Writer', function() {
         var extendedComplex = extendedModel.create('ext:ExtendedComplex', { numCount: 100 });
 
         var any = root.get('any');
-        
+
         any.push(attributes1);
         any.push(attributes2);
         any.push(extendedComplex);
@@ -433,7 +432,7 @@ describe('Writer', function() {
     describe('reference', function() {
 
       it('single', function() {
-        
+
         // given
         var writer = createWriter(model);
 
@@ -449,7 +448,7 @@ describe('Writer', function() {
 
 
       it('collection', function() {
-        
+
         // given
         var writer = createWriter(model);
 
@@ -479,7 +478,7 @@ describe('Writer', function() {
 
 
     describe('attributes', function() {
-      
+
       it('should write xsi:schemaLocation', function() {
 
         // given
@@ -498,7 +497,7 @@ describe('Writer', function() {
 
 
       it('should write extension attributes', function() {
-        
+
         // given
         var writer = createWriter(extensionModel);
 
@@ -527,7 +526,7 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
-        // then        
+        // then
         expect(xml).toEqual('<e:root xmlns:e="http://extensions" />');
       });
 
@@ -570,7 +569,7 @@ describe('Writer', function() {
 
 
       it('should write extension element body', function() {
-        
+
         // given
         var writer = createWriter(extensionModel);
 

@@ -5,7 +5,7 @@ var util = require('util');
 
 var _ = require('lodash');
 
-var Model = require('moddle');
+var Moddle = require('moddle');
 
 var jsondiffpatch = require('jsondiffpatch').create({
   objectHash: function (obj) {
@@ -76,7 +76,7 @@ function createModelBuilder(base) {
       return pkg;
     });
 
-    return new Model(packages);
+    return new Moddle(packages);
   }
 
   return createModel;

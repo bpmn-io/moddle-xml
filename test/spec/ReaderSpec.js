@@ -1,12 +1,11 @@
+'use strict';
+
 var _ = require('lodash');
 
 var Reader = require('../../lib/Reader'),
-    logger = require('moddle').util.Logger;
-
-var Helper = require('./Helper'),
+    Helper = require('./Helper'),
     readFile = Helper.readFile,
-    createModelBuilder = Helper.createModelBuilder,
-    log = Helper.log;
+    createModelBuilder = Helper.createModelBuilder;
 
 
 describe('Reader', function() {
@@ -1021,6 +1020,119 @@ describe('Reader', function() {
 
     });
 
+  });
+
+
+  describe('parent -> child relationship', function() {
+
+    var model = createModel([ 'properties' ]);
+    var extensionModel = createModel([ 'extensions' ]);
+
+
+    it('should expose $parent on model elements', function(done) {
+
+      // given
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML('<props:complexAttrs xmlns:props="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><props:attrs xsi:type="props:Attributes" integerValue="10" /></props:complexAttrs>', rootHandler, function(err, result) {
+
+        if (err) {
+          return done(err);
+        }
+
+        // then
+        expect(result.$parent).not.toBeDefined();
+        expect(result.attrs.$parent).toBe(result);
+
+        done();
+      });
+    });
+
+
+    it('should expose $parent on references', function(done) {
+
+      // given
+      var reader = new Reader(extendedModel);
+      var rootHandler = reader.handler('props:Root');
+
+      var xml =
+        '<props:root xmlns:props="http://properties">' +
+          '<props:containedCollection id="C_5">' +
+            '<props:complex id="C_1" />' +
+            '<props:complex id="C_2" />' +
+          '</props:containedCollection>' +
+          '<props:referencingSingle id="C_4" referencedComplex="C_1" />' +
+        '</props:root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        if (err) {
+          return done(err);
+        }
+
+        var containedCollection = result.any[0];
+        var referencedComplex = result.any[1].referencedComplex;
+
+        // then
+        expect(referencedComplex.$parent).toBe(containedCollection);
+
+        done();
+      });
+    });
+
+
+    it('should expose $parent on extension elements', function(done) {
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('e:Root');
+
+        var xml =
+          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+            '<e:id>FOO</e:id>' +
+            '<other:nestedMeta>' +
+              '<other:meta key="k1" value="v1" />' +
+              '<other:meta key="k2" value="v2" />' +
+              '<other:additionalNote>' +
+                'this is some text' +
+              '</other:additionalNote>' +
+            '</other:nestedMeta>' +
+          '</e:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          var child = result.extensions[0];
+          var nested = child.$children[0];
+
+          expect(child.$parent).toBe(result);
+          expect(nested.$parent).toBe(child);
+
+          expect(result).toDeepEqual({
+            $type: 'e:Root',
+            id: 'FOO',
+            extensions: [
+              {
+                $type: 'other:nestedMeta',
+                $children: [
+                  { $type: 'other:meta', key: 'k1', value: 'v1' },
+                  { $type: 'other:meta', key: 'k2', value: 'v2' },
+                  { $type: 'other:additionalNote', $body: 'this is some text' }
+                ]
+              }
+            ]
+          });
+
+          done();
+        });
+    })
   });
 
 });
