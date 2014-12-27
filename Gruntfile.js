@@ -20,7 +20,7 @@ module.exports = function(grunt) {
         tagMessage: 'chore(project): tag v<%= version %>'
       }
     },
-    
+
     jshint: {
       src: [
         ['<%=config.sources %>']
@@ -32,24 +32,27 @@ module.exports = function(grunt) {
         jshintrc: true
       }
     },
-    jasmine_node: {
-      options: {
-        specNameMatcher: '.*Spec',
-        jUnit: {
-          report: true,
-          savePath : 'tmp/reports/jasmine',
-          useDotNotation: true,
-          consolidate: true
-        }
-      },
-      all: [ 'test/spec/' ]
-    },
-    watch: {
+
+
+    mochaTest: {
       test: {
-        files: [ '<%= config.sources %>/**/*.js', '<%= config.tests %>/**/*.js'],
-        tasks: [ 'jasmine_node']
+        options: {
+          reporter: 'spec',
+          require: [
+            './test/expect.js'
+          ]
+        },
+        src: ['test/**/*.js']
       }
     },
+
+    watch: {
+      test: {
+        files: [ '<%= config.sources %>/**/*.js', '<%= config.tests %>/**/*.js' ],
+        tasks: [ 'test']
+      }
+    },
+
     jsdoc: {
       dist: {
         src: [ '<%= config.sources %>/**/*.js' ],
@@ -62,9 +65,9 @@ module.exports = function(grunt) {
   });
 
   // tasks
-  
-  grunt.registerTask('test', [ 'jasmine_node' ]);
-  grunt.registerTask('auto-test', [ 'jasmine_node', 'watch:test' ]);
+
+  grunt.registerTask('test', [ 'mochaTest' ]);
+  grunt.registerTask('auto-test', [ 'test', 'watch:test' ]);
 
   grunt.registerTask('default', [ 'jshint', 'test', 'jsdoc' ]);
 };

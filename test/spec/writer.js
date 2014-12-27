@@ -3,7 +3,7 @@
 var _ = require('lodash');
 
 var Writer = require('../../lib/Writer'),
-    Helper = require('./Helper');
+    Helper = require('../helper');
 
 
 describe('Writer', function() {
@@ -16,11 +16,6 @@ describe('Writer', function() {
   function createWriter(model) {
     return new Writer({ preamble: false });
   }
-
-
-  describe('api', function() {
-
-  });
 
 
   describe('should export', function() {
@@ -36,7 +31,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<?xml version="1.0" encoding="UTF-8"?>\n<props:root xmlns:props="http://properties" />');
+        expect(xml).to.eql('<?xml version="1.0" encoding="UTF-8"?>\n<props:root xmlns:props="http://properties" />');
       });
     });
 
@@ -58,7 +53,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<dt:root xmlns:dt="http://datatypes"><dt:bounds y="100" /></dt:root>');
+        expect(xml).to.eql('<dt:root xmlns:dt="http://datatypes"><dt:bounds y="100" /></dt:root>');
       });
 
 
@@ -78,7 +73,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual(
+        expect(xml).to.eql(
           '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2">' +
             '<dt:otherBounds x="100" />' +
             '<dt:otherBounds x="200" />' +
@@ -103,7 +98,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:baseWithId xmlns:props="http://properties" id="FOO&#10;BAR" />');
+        expect(xml).to.eql('<props:baseWithId xmlns:props="http://properties" id="FOO&#10;BAR" />');
       });
 
     });
@@ -122,7 +117,7 @@ describe('Writer', function() {
         var xml = writer.toXML(attributes);
 
         // then
-        expect(xml).toEqual('<props:attributes xmlns:props="http://properties" integerValue="1000" />');
+        expect(xml).to.eql('<props:attributes xmlns:props="http://properties" integerValue="1000" />');
       });
 
 
@@ -139,7 +134,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:simpleBodyProperties xmlns:props="http://properties"><props:intValue>5</props:intValue></props:simpleBodyProperties>');
+        expect(xml).to.eql('<props:simpleBodyProperties xmlns:props="http://properties"><props:intValue>5</props:intValue></props:simpleBodyProperties>');
       });
 
 
@@ -156,7 +151,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:simpleBodyProperties xmlns:props="http://properties"><props:boolValue>false</props:boolValue></props:simpleBodyProperties>');
+        expect(xml).to.eql('<props:simpleBodyProperties xmlns:props="http://properties"><props:boolValue>false</props:boolValue></props:simpleBodyProperties>');
       });
 
 
@@ -173,7 +168,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:simpleBodyProperties xmlns:props="http://properties"><props:str>A</props:str><props:str>B</props:str><props:str>C</props:str></props:simpleBodyProperties>');
+        expect(xml).to.eql('<props:simpleBodyProperties xmlns:props="http://properties"><props:str>A</props:str><props:str>B</props:str><props:str>C</props:str></props:simpleBodyProperties>');
       });
 
     });
@@ -193,7 +188,7 @@ describe('Writer', function() {
         var xml = writer.toXML(embedding);
 
         // then
-        expect(xml).toEqual('<props:embedding xmlns:props="http://properties"><props:complexCount id="ComplexCount_1" /></props:embedding>');
+        expect(xml).to.eql('<props:embedding xmlns:props="http://properties"><props:complexCount id="ComplexCount_1" /></props:embedding>');
       });
 
 
@@ -218,7 +213,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:root xmlns:props="http://properties"><props:attributes id="Attributes_1" /><props:simpleBody /><props:containedCollection /></props:root>');
+        expect(xml).to.eql('<props:root xmlns:props="http://properties"><props:attributes id="Attributes_1" /><props:simpleBody /><props:containedCollection /></props:root>');
       });
 
 
@@ -246,7 +241,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<ext:root xmlns:ext="http://extended" xmlns:props="http://properties"><props:attributes id="Attributes_1" /><props:attributes id="Attributes_2" /><ext:extendedComplex numCount="100" /><ext:base /></ext:root>');
+        expect(xml).to.eql('<ext:root xmlns:ext="http://extended" xmlns:props="http://properties"><props:attributes id="Attributes_1" /><props:attributes id="Attributes_2" /><ext:extendedComplex numCount="100" /><ext:base /></ext:root>');
       });
 
     });
@@ -267,7 +262,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:simpleBody xmlns:props="http://properties">textContent</props:simpleBody>');
+        expect(xml).to.eql('<props:simpleBody xmlns:props="http://properties">textContent</props:simpleBody>');
       });
 
 
@@ -284,7 +279,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:simpleBody xmlns:props="http://properties"><![CDATA[<h2>HTML markup</h2>]]></props:simpleBody>');
+        expect(xml).to.eql('<props:simpleBody xmlns:props="http://properties"><![CDATA[<h2>HTML markup</h2>]]></props:simpleBody>');
       });
 
     });
@@ -303,7 +298,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:root xmlns:props="http://properties" />');
+        expect(xml).to.eql('<props:root xmlns:props="http://properties" />');
       });
 
 
@@ -320,7 +315,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<na:Root xmlns:na="http://noalias" />');
+        expect(xml).to.eql('<na:Root xmlns:na="http://noalias" />');
       });
     });
 
@@ -338,7 +333,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:root xmlns:props="http://properties" />');
+        expect(xml).to.eql('<props:root xmlns:props="http://properties" />');
       });
 
 
@@ -355,7 +350,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<props:root xmlns:props="http://properties" xmlns:ext="http://extended"><ext:extendedComplex /></props:root>');
+        expect(xml).to.eql('<props:root xmlns:props="http://properties" xmlns:ext="http://extended"><ext:extendedComplex /></props:root>');
       });
 
 
@@ -370,7 +365,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<root xmlns="http://properties" />');
+        expect(xml).to.eql('<root xmlns="http://properties" />');
       });
 
 
@@ -390,7 +385,7 @@ describe('Writer', function() {
 
         // then
         expect(xml)
-          .toEqual('<root xmlns="http://properties" xmlns:ext="http://extended" id="Root">' +
+          .to.eql('<root xmlns="http://properties" xmlns:ext="http://extended" id="Root">' +
                      '<ext:extendedComplex />' +
                      '<attributes id="Attributes_2" />' +
                    '</root>');
@@ -408,7 +403,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<root xmlns="http://properties" xmlns:foo="http://fooo" id="Root" foo:bar="BAR" />');
+        expect(xml).to.eql('<root xmlns="http://properties" xmlns:foo="http://fooo" id="Root" foo:bar="BAR" />');
       });
 
 
@@ -423,7 +418,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<foo:root xmlns:foo="http://properties" id="Root" />');
+        expect(xml).to.eql('<foo:root xmlns:foo="http://properties" id="Root" />');
       });
 
     });
@@ -443,7 +438,7 @@ describe('Writer', function() {
         var xml = writer.toXML(referencingSingle);
 
         // then
-        expect(xml).toEqual('<props:referencingSingle xmlns:props="http://properties" referencedComplex="Complex_1" />');
+        expect(xml).to.eql('<props:referencingSingle xmlns:props="http://properties" referencedComplex="Complex_1" />');
       });
 
 
@@ -461,7 +456,7 @@ describe('Writer', function() {
         var xml = writer.toXML(referencingCollection);
 
         // then
-        expect(xml).toEqual(
+        expect(xml).to.eql(
           '<props:referencingCollection xmlns:props="http://properties">' +
             '<props:references>ComplexCount_1</props:references>' +
             '<props:references>ComplexNesting_1</props:references>' +
@@ -492,7 +487,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<e:root xmlns:e="http://extensions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://fooo ./foo.xsd" />');
+        expect(xml).to.eql('<e:root xmlns:e="http://extensions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://fooo ./foo.xsd" />');
       });
 
 
@@ -510,7 +505,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<e:root xmlns:e="http://extensions" xmlns:foo="http://fooo" foo:bar="BAR" />');
+        expect(xml).to.eql('<e:root xmlns:e="http://extensions" xmlns:foo="http://fooo" foo:bar="BAR" />');
       });
 
 
@@ -527,7 +522,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual('<e:root xmlns:e="http://extensions" />');
+        expect(xml).to.eql('<e:root xmlns:e="http://extensions" />');
       });
 
     });
@@ -559,7 +554,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual(
+        expect(xml).to.eql(
           '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
             '<e:id>FOO</e:id>' +
             '<other:meta key="FOO" value="BAR" />' +
@@ -586,7 +581,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual(
+        expect(xml).to.eql(
           '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
             '<e:id>FOO</e:id>' +
             '<other:note>' +
@@ -628,7 +623,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).toEqual(
+        expect(xml).to.eql(
           '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
             '<e:id>FOO</e:id>' +
             '<other:nestedMeta>' +

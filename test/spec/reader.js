@@ -3,7 +3,7 @@
 var _ = require('lodash');
 
 var Reader = require('../../lib/Reader'),
-    Helper = require('./Helper'),
+    Helper = require('../helper'),
     readFile = Helper.readFile,
     createModelBuilder = Helper.createModelBuilder;
 
@@ -14,8 +14,6 @@ describe('Reader', function() {
 
   var model = createModel(['properties']);
   var extendedModel = createModel(['properties', 'properties-extended']);
-
-  beforeEach(Helper.initAdditionalMatchers);
 
 
   describe('api', function() {
@@ -30,10 +28,10 @@ describe('Reader', function() {
       reader.fromXML('<props:complexAttrs xmlns:props="http://properties"></props:complexAttrs>', rootHandler, function(err, result, context) {
 
         // then
-        expect(err).toEqual(null);
+        expect(err).not.to.exist;
 
-        expect(result).toBeDefined();
-        expect(context).toBeDefined();
+        expect(result).to.exist;
+        expect(context).to.exist;
 
         done();
       });
@@ -50,10 +48,10 @@ describe('Reader', function() {
       reader.fromXML('this-is-garbage', rootHandler, function(err, result, context) {
 
         // then
-        expect(err).toBeDefined();
+        expect(err).to.exist;
 
-        expect(result).toEqual(null);
-        expect(context).toBeDefined();
+        expect(result).not.to.exist;
+        expect(context).to.exist;
 
         done();
       });
@@ -76,7 +74,7 @@ describe('Reader', function() {
         reader.fromXML('<props:complexAttrs xmlns:props="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><props:attrs xsi:type="props:Attributes" integerValue="10" /></props:complexAttrs>', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:ComplexAttrs',
             attrs: {
               $type: 'props:Attributes',
@@ -99,7 +97,7 @@ describe('Reader', function() {
         reader.fromXML('<props:complexAttrs xmlns:props="http://properties"><props:attrs integerValue="10" /></props:complexAttrs>', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:ComplexAttrs',
             attrs: {
               $type: 'props:Attributes',
@@ -122,7 +120,7 @@ describe('Reader', function() {
         reader.fromXML('<props:complexAttrsCol xmlns:props="http://properties"><props:attrs integerValue="10" /><props:attrs booleanValue="true" /></props:complexAttrsCol>', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:ComplexAttrsCol',
             attrs: [
               { $type: 'props:Attributes', integerValue: 10 },
@@ -153,7 +151,7 @@ describe('Reader', function() {
         reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'dt:Root',
             otherBounds: [
               { $type: 'do:Rect', x: 100 },
@@ -180,7 +178,7 @@ describe('Reader', function() {
         reader.fromXML('<props:baseWithId xmlns:props="http://properties" id="FOO&#10;BAR" />', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:BaseWithId',
             id: 'FOO\nBAR'
           });
@@ -204,7 +202,7 @@ describe('Reader', function() {
         reader.fromXML('<props:simpleBodyProperties xmlns:props="http://properties"><props:intValue>5</props:intValue></props:simpleBodyProperties>', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:SimpleBodyProperties',
             intValue: 5
           });
@@ -224,7 +222,7 @@ describe('Reader', function() {
         reader.fromXML('<props:simpleBodyProperties xmlns:props="http://properties"><props:boolValue>false</props:boolValue></props:simpleBodyProperties>', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:SimpleBodyProperties',
             boolValue: false
           });
@@ -244,7 +242,7 @@ describe('Reader', function() {
         reader.fromXML('<props:simpleBodyProperties xmlns:props="http://properties"><props:str>A</props:str><props:str>B</props:str><props:str>C</props:str></props:simpleBodyProperties>', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:SimpleBodyProperties',
             str: [ 'A', 'B', 'C' ]
           });
@@ -267,7 +265,7 @@ describe('Reader', function() {
         reader.fromXML('<props:simpleBody xmlns:props="http://properties">textContent</props:simpleBody>', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:SimpleBody',
             body: 'textContent'
           });
@@ -287,7 +285,7 @@ describe('Reader', function() {
         reader.fromXML('<props:simpleBody xmlns:props="http://properties"><![CDATA[<h2>HTML markup</h2>]]></props:simpleBody>', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:SimpleBody',
             body: '<h2>HTML markup</h2>'
           });
@@ -311,7 +309,7 @@ describe('Reader', function() {
         reader.fromXML('<props:root xmlns:props="http://properties" />', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({ $type: 'props:Root' });
+          expect(result).to.jsonEqual({ $type: 'props:Root' });
 
           done(err);
         });
@@ -331,7 +329,7 @@ describe('Reader', function() {
         reader.fromXML('<na:Root xmlns:na="http://noalias" />', rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({ $type: 'na:Root' });
+          expect(result).to.jsonEqual({ $type: 'na:Root' });
 
           done(err);
         });
@@ -361,7 +359,7 @@ describe('Reader', function() {
         reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:Root',
             any: [
               {
@@ -379,7 +377,7 @@ describe('Reader', function() {
           var referenced = result.any[0].children[0];
           var referencingSingle = result.any[1];
 
-          expect(referencingSingle.referencedComplex).toBe(referenced);
+          expect(referencingSingle.referencedComplex).to.equal(referenced);
 
           done(err);
         });
@@ -408,7 +406,7 @@ describe('Reader', function() {
         reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'props:Root',
             any: [
               {
@@ -428,7 +426,7 @@ describe('Reader', function() {
 
           var referencingCollection = result.any[1];
 
-          expect(referencingCollection.references).toDeepEqual([ complex_c2, containedCollection ]);
+          expect(referencingCollection.references).to.jsonEqual([ complex_c2, containedCollection ]);
 
           done(err);
         });
@@ -466,7 +464,7 @@ describe('Reader', function() {
 
           var references = context.references;
 
-          expect(references).toDeepEqual([ expectedReference ]);
+          expect(references).to.jsonEqual([ expectedReference ]);
 
           done(err);
         });
@@ -492,20 +490,20 @@ describe('Reader', function() {
           };
 
           var expectedReference1 = {
-            element: expectedTarget,
             property: 'props:references',
-            id: 'C_2'
+            id: 'C_2',
+            element: expectedTarget
           };
 
           var expectedReference2 = {
-            element: expectedTarget,
             property: 'props:references',
-            id: 'C_5'
+            id: 'C_5',
+            element: expectedTarget
           };
 
           var references = context.references;
 
-          expect(references).toDeepEqual([ expectedReference1, expectedReference2 ]);
+          expect(references).to.jsonEqual([ expectedReference1, expectedReference2 ]);
 
           done(err);
         });
@@ -528,8 +526,8 @@ describe('Reader', function() {
       // when
       reader.fromXML(data, rootHandler, function(err, result) {
 
-        expect(err).toBeDefined();
-        expect(result).not.toBeDefined();
+        expect(err).to.exist;
+        expect(result).not.to.exist;
 
         done();
       });
@@ -547,8 +545,8 @@ describe('Reader', function() {
       // when
       reader.fromXML(data, rootHandler, function(err, result) {
 
-        expect(err).toBeDefined();
-        expect(result).not.toBeDefined();
+        expect(err).to.exist;
+        expect(result).not.to.exist;
 
         done();
       });
@@ -575,10 +573,10 @@ describe('Reader', function() {
       // when
       reader.fromXML(xml, rootHandler, function(err, result) {
 
-        expect(err).toBeDefined();
-        expect(err.message).toEqual(expectedError);
+        expect(err).to.exist;
+        expect(err.message).to.eql(expectedError);
 
-        expect(result).not.toBeDefined();
+        expect(result).not.to.exist;
 
         done();
       });
@@ -604,10 +602,10 @@ describe('Reader', function() {
       // when
       reader.fromXML(xml, rootHandler, function(err, result) {
 
-        expect(err).toBeDefined();
-        expect(err.message).toEqual(expectedError);
+        expect(err).to.exist;
+        expect(err.message).to.eql(expectedError);
 
-        expect(result).not.toBeDefined();
+        expect(result).not.to.exist;
 
         done();
       });
@@ -632,10 +630,10 @@ describe('Reader', function() {
       // when
       reader.fromXML(xml, rootHandler, function(err, result) {
 
-        expect(err).toBeDefined();
-        expect(err.message).toEqual(expectedError);
+        expect(err).to.exist;
+        expect(err.message).to.eql(expectedError);
 
-        expect(result).not.toBeDefined();
+        expect(result).not.to.exist;
 
         done();
       });
@@ -665,7 +663,7 @@ describe('Reader', function() {
             }
 
             // then
-            expect(result).toDeepEqual({
+            expect(result).to.jsonEqual({
               $type: 'props:Root',
               any: [
                 { $type: 'props:ReferencingSingle', id: 'C_4' }
@@ -674,10 +672,10 @@ describe('Reader', function() {
 
             var referencingSingle = result.any[0];
 
-            expect(referencingSingle.referencedComplex).not.toBeDefined();
+            expect(referencingSingle.referencedComplex).not.to.exist;
 
             // expect warning to be logged
-            expect(context.warnings).toEqual([
+            expect(context.warnings).to.eql([
               {
                 message : 'unresolved reference <C_1>',
                 element : referencingSingle,
@@ -716,7 +714,7 @@ describe('Reader', function() {
             }
 
             // then
-            expect(result).toDeepEqual({
+            expect(result).to.jsonEqual({
               $type: 'props:Root',
               any: [
                 {
@@ -734,10 +732,10 @@ describe('Reader', function() {
             var c2 = result.any[0].children[0];
             var referencingCollection = result.any[1];
 
-            expect(referencingCollection.references).toDeepEqual([ c2 ]);
+            expect(referencingCollection.references).to.jsonEqual([ c2 ]);
 
             // expect warning to be logged
-            expect(context.warnings).toDeepEqual([
+            expect(context.warnings).to.jsonEqual([
               {
                 message: 'unresolved reference <C_1>',
                 element: referencingCollection,
@@ -779,7 +777,7 @@ describe('Reader', function() {
           }
 
           // then
-          expect(result.$attrs).toDeepEqual({
+          expect(result.$attrs).to.jsonEqual({
             'xmlns:e': 'http://extensions',
             'xmlns:other': 'http://other',
             'other:foo' : 'BAR'
@@ -805,7 +803,7 @@ describe('Reader', function() {
           }
 
           // then
-          expect(result.$attrs).toDeepEqual({
+          expect(result.$attrs).to.jsonEqual({
             'xmlns': 'http://extensions'
           });
 
@@ -839,7 +837,7 @@ describe('Reader', function() {
           }
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'e:Root',
             id: 'FOO',
             extensions: [
@@ -883,7 +881,7 @@ describe('Reader', function() {
           }
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'e:Root',
             id: 'FOO',
             extensions: [
@@ -925,7 +923,7 @@ describe('Reader', function() {
           }
 
           // then
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'e:Root',
             id: 'FOO',
             extensions: [
@@ -971,7 +969,7 @@ describe('Reader', function() {
             var note = result.extensions[0];
 
             // then
-            expect(note.$descriptor).toBeDefined();
+            expect(note.$descriptor).to.exist;
 
             done();
           });
@@ -1002,7 +1000,7 @@ describe('Reader', function() {
             var note = result.extensions[0];
 
             // then
-            expect(note.$descriptor).toEqual({
+            expect(note.$descriptor).to.eql({
               name: 'other:note',
               isGeneric: true,
               ns: {
@@ -1043,8 +1041,8 @@ describe('Reader', function() {
         }
 
         // then
-        expect(result.$parent).not.toBeDefined();
-        expect(result.attrs.$parent).toBe(result);
+        expect(result.$parent).not.to.exist;
+        expect(result.attrs.$parent).to.equal(result);
 
         done();
       });
@@ -1077,7 +1075,7 @@ describe('Reader', function() {
         var referencedComplex = result.any[1].referencedComplex;
 
         // then
-        expect(referencedComplex.$parent).toBe(containedCollection);
+        expect(referencedComplex.$parent).to.equal(containedCollection);
 
         done();
       });
@@ -1112,10 +1110,10 @@ describe('Reader', function() {
           var child = result.extensions[0];
           var nested = child.$children[0];
 
-          expect(child.$parent).toBe(result);
-          expect(nested.$parent).toBe(child);
+          expect(child.$parent).to.equal(result);
+          expect(nested.$parent).to.equal(child);
 
-          expect(result).toDeepEqual({
+          expect(result).to.jsonEqual({
             $type: 'e:Root',
             id: 'FOO',
             extensions: [
