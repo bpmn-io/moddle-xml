@@ -1,8 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
-
-var Writer = require('../../lib/Writer'),
+var Writer = require('../../lib/writer'),
     Helper = require('../helper');
 
 

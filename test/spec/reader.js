@@ -1,8 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
-
-var Reader = require('../../lib/Reader'),
+var Reader = require('../../lib/reader'),
     Helper = require('../helper'),
     readFile = Helper.readFile,
     createModelBuilder = Helper.createModelBuilder;
