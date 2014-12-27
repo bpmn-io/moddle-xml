@@ -3,14 +3,15 @@
   "uri": "http://datatypes",
   "prefix": "dt",
   "xml" : {
-    "alias": "lowerCase"
+    "alias": "lowerCase",
+    "typeAlias": "t{name}"
   },
   "types": [
     {
       "name": "Root",
       "properties": [
         { "name": "bounds", "serialize": "xsi:type", "type": "Rect" },
-        { "name": "otherBounds", "type": "do:Rect", "serialize": "xsi:type", "isMany": true }
+        { "name": "otherBounds", "type": "Rect", "serialize": "xsi:type", "isMany": true }
       ]
     },
     {

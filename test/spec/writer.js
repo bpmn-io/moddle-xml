@@ -53,7 +53,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).to.eql('<dt:root xmlns:dt="http://datatypes"><dt:bounds y="100" /></dt:root>');
+        expect(xml).to.eql('<dt:root xmlns:dt="http://datatypes"><dt:bounds xsi:type="dt:tRect" y="100" /></dt:root>');
       });
 
 
@@ -66,8 +66,8 @@ describe('Writer', function() {
 
         var otherBounds = root.get('otherBounds');
 
+        otherBounds.push(datatypesModel.create('dt:Rect', { y: 200 }));
         otherBounds.push(datatypesModel.create('do:Rect', { x: 100 }));
-        otherBounds.push(datatypesModel.create('do:Rect', { x: 200 }));
 
         // when
         var xml = writer.toXML(root);
@@ -75,8 +75,8 @@ describe('Writer', function() {
         // then
         expect(xml).to.eql(
           '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2">' +
-            '<dt:otherBounds x="100" />' +
-            '<dt:otherBounds x="200" />' +
+            '<dt:otherBounds xsi:type="dt:tRect" y="200" />' +
+            '<dt:otherBounds xsi:type="do:tRect" x="100" />' +
           '</dt:root>');
       });
 

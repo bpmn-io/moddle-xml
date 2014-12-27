@@ -70,8 +70,12 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:ComplexAttrs');
 
+        var xml = '<props:complexAttrs xmlns:props="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+                    '<props:attrs xsi:type="props:Attributes" integerValue="10" />' +
+                  '</props:complexAttrs>';
+
         // when
-        reader.fromXML('<props:complexAttrs xmlns:props="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><props:attrs xsi:type="props:Attributes" integerValue="10" /></props:complexAttrs>', rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
@@ -93,8 +97,12 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:ComplexAttrs');
 
+        var xml = '<props:complexAttrs xmlns:props="http://properties">' +
+                    '<props:attrs integerValue="10" />' +
+                  '</props:complexAttrs>';
+
         // when
-        reader.fromXML('<props:complexAttrs xmlns:props="http://properties"><props:attrs integerValue="10" /></props:complexAttrs>', rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
@@ -116,8 +124,13 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:ComplexAttrsCol');
 
+        var xml = '<props:complexAttrsCol xmlns:props="http://properties">'
+                    '<props:attrs integerValue="10" />' +
+                    '<props:attrs booleanValue="true" />' +
+                  '</props:complexAttrsCol>';
+
         // when
-        reader.fromXML('<props:complexAttrsCol xmlns:props="http://properties"><props:attrs integerValue="10" /><props:attrs booleanValue="true" /></props:complexAttrsCol>', rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
@@ -142,19 +155,21 @@ describe('Reader', function() {
         var rootHandler = reader.handler('dt:Root');
 
         var xml =
-          '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2">' +
-            '<dt:otherBounds x="100" />' +
-            '<dt:otherBounds x="200" />' +
+          '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dt:otherBounds xsi:type="dt:tRect" y="100" />' +
+            '<dt:otherBounds xsi:type="do:tRect" x="200" />' +
           '</dt:root>';
 
         // when
         reader.fromXML(xml, rootHandler, function(err, result) {
 
+          expect(err).not.to.exist;
+
           // then
           expect(result).to.jsonEqual({
             $type: 'dt:Root',
             otherBounds: [
-              { $type: 'do:Rect', x: 100 },
+              { $type: 'dt:Rect', y: 100 },
               { $type: 'do:Rect', x: 200 }
             ]
           });
