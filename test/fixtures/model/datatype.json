@@ -3,8 +3,7 @@
   "uri": "http://datatypes",
   "prefix": "dt",
   "xml" : {
-    "alias": "lowerCase",
-    "typeAlias": "t{name}"
+    "tagAlias": "lowerCase"
   },
   "types": [
     {

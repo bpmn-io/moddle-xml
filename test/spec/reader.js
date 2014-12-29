@@ -68,12 +68,16 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:ComplexAttrs');
 
-        var xml = '<props:complexAttrs xmlns:props="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-                    '<props:attrs xsi:type="props:Attributes" integerValue="10" />' +
+        var xml = '<props:complexAttrs xmlns:props="http://properties">' +
+                    '<props:attrs integerValue="10" />' +
                   '</props:complexAttrs>';
 
         // when
         reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
 
           // then
           expect(result).to.jsonEqual({
@@ -89,24 +93,90 @@ describe('Reader', function() {
       });
 
 
-      it('simple / no xsi:type', function(done) {
+      it('simple / xsi:type', function(done) {
 
         // given
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:ComplexAttrs');
 
-        var xml = '<props:complexAttrs xmlns:props="http://properties">' +
-                    '<props:attrs integerValue="10" />' +
+        var xml = '<props:complexAttrs xmlns:props="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+                    '<props:attrs xsi:type="props:SubAttributes" integerValue="10" />' +
                   '</props:complexAttrs>';
 
         // when
         reader.fromXML(xml, rootHandler, function(err, result) {
 
+          if (err) {
+            return done(err);
+          }
+
           // then
           expect(result).to.jsonEqual({
             $type: 'props:ComplexAttrs',
             attrs: {
-              $type: 'props:Attributes',
+              $type: 'props:SubAttributes',
+              integerValue: 10
+            }
+          });
+
+          done(err);
+        });
+      });
+
+
+      it('simple / xsi:type / default ns', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:ComplexAttrs');
+
+        var xml = '<complexAttrs xmlns="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+                    '<attrs xsi:type="SubAttributes" integerValue="10" />' +
+                  '</complexAttrs>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result).to.jsonEqual({
+            $type: 'props:ComplexAttrs',
+            attrs: {
+              $type: 'props:SubAttributes',
+              integerValue: 10
+            }
+          });
+
+          done(err);
+        });
+      });
+
+
+      it('simple / xsi:type / different ns prefix', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:ComplexAttrs');
+
+        var xml = '<a:complexAttrs xmlns:a="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+                    '<a:attrs xsi:type="a:SubAttributes" integerValue="10" />' +
+                  '</a:complexAttrs>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result).to.jsonEqual({
+            $type: 'props:ComplexAttrs',
+            attrs: {
+              $type: 'props:SubAttributes',
               integerValue: 10
             }
           });
@@ -122,13 +192,17 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:ComplexAttrsCol');
 
-        var xml = '<props:complexAttrsCol xmlns:props="http://properties">'
+        var xml = '<props:complexAttrsCol xmlns:props="http://properties">' +
                     '<props:attrs integerValue="10" />' +
                     '<props:attrs booleanValue="true" />' +
                   '</props:complexAttrsCol>';
 
         // when
         reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
 
           // then
           expect(result).to.jsonEqual({
@@ -144,7 +218,7 @@ describe('Reader', function() {
       });
 
 
-      it('simple / xsi:type / other namespace)', function(done) {
+      it('collection / xsi:type / from other namespace)', function(done) {
 
         var datatypeModel = createModel(['datatype', 'datatype-external']);
 
@@ -154,14 +228,16 @@ describe('Reader', function() {
 
         var xml =
           '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dt:otherBounds xsi:type="dt:tRect" y="100" />' +
-            '<dt:otherBounds xsi:type="do:tRect" x="200" />' +
+            '<dt:otherBounds xsi:type="dt:Rect" y="100" />' +
+            '<dt:otherBounds xsi:type="do:Rect" x="200" />' +
           '</dt:root>';
 
         // when
         reader.fromXML(xml, rootHandler, function(err, result) {
 
-          expect(err).not.to.exist;
+          if (err) {
+            return done(err);
+          }
 
           // then
           expect(result).to.jsonEqual({
@@ -173,6 +249,101 @@ describe('Reader', function() {
           });
 
           done(err);
+        });
+      });
+
+
+      it('collection / xsi:type / from other namespace / default ns)', function(done) {
+
+        var datatypeModel = createModel(['datatype', 'datatype-external']);
+
+        // given
+        var reader = new Reader(datatypeModel);
+        var rootHandler = reader.handler('dt:Root');
+
+        var xml =
+          '<root xmlns="http://datatypes" xmlns:do="http://datatypes2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<otherBounds xsi:type="Rect" y="100" />' +
+            '<otherBounds xsi:type="do:Rect" x="200" />' +
+          '</root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result).to.jsonEqual({
+            $type: 'dt:Root',
+            otherBounds: [
+              { $type: 'dt:Rect', y: 100 },
+              { $type: 'do:Rect', x: 200 }
+            ]
+          });
+
+          done(err);
+        });
+      });
+
+
+      it('collection / xsi:type / type alias', function(done) {
+
+        var datatypeModel = createModel(['datatype', 'datatype-aliased']);
+
+        // given
+        var reader = new Reader(datatypeModel);
+        var rootHandler = reader.handler('dt:Root');
+
+        var xml =
+          '<root xmlns="http://datatypes" xmlns:da="http://datatypes-aliased" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<otherBounds xsi:type="dt:Rect" y="100" />' +
+            '<otherBounds xsi:type="da:tRect" z="200" />' +
+          '</root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result).to.jsonEqual({
+            $type: 'dt:Root',
+            otherBounds: [
+              { $type: 'dt:Rect', y: 100 },
+              { $type: 'da:Rect', z: 200 }
+            ]
+          });
+
+          done(err);
+        });
+      });
+
+
+      it('collection / xsi:type / unknown type', function(done) {
+
+        var datatypeModel = createModel([ 'datatype' ]);
+
+        // given
+        var reader = new Reader(datatypeModel);
+        var rootHandler = reader.handler('dt:Root');
+
+        var xml =
+          '<root xmlns="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<otherBounds xsi:type="Unknown" y="100" />' +
+          '</root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          expect(err).to.exist;
+
+          expect(err.message).to.contain('unparsable content <otherBounds> detected');
+
+          done();
         });
       });
 
@@ -1097,53 +1268,53 @@ describe('Reader', function() {
 
     it('should expose $parent on extension elements', function(done) {
 
-        // given
-        var reader = new Reader(extensionModel);
-        var rootHandler = reader.handler('e:Root');
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('e:Root');
 
-        var xml =
-          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
-            '<e:id>FOO</e:id>' +
-            '<other:nestedMeta>' +
-              '<other:meta key="k1" value="v1" />' +
-              '<other:meta key="k2" value="v2" />' +
-              '<other:additionalNote>' +
-                'this is some text' +
-              '</other:additionalNote>' +
-            '</other:nestedMeta>' +
-          '</e:root>';
+      var xml =
+        '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+          '<e:id>FOO</e:id>' +
+          '<other:nestedMeta>' +
+            '<other:meta key="k1" value="v1" />' +
+            '<other:meta key="k2" value="v2" />' +
+            '<other:additionalNote>' +
+              'this is some text' +
+            '</other:additionalNote>' +
+          '</other:nestedMeta>' +
+        '</e:root>';
 
-        // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
 
-          if (err) {
-            return done(err);
-          }
+        if (err) {
+          return done(err);
+        }
 
-          var child = result.extensions[0];
-          var nested = child.$children[0];
+        var child = result.extensions[0];
+        var nested = child.$children[0];
 
-          expect(child.$parent).to.equal(result);
-          expect(nested.$parent).to.equal(child);
+        expect(child.$parent).to.equal(result);
+        expect(nested.$parent).to.equal(child);
 
-          expect(result).to.jsonEqual({
-            $type: 'e:Root',
-            id: 'FOO',
-            extensions: [
-              {
-                $type: 'other:nestedMeta',
-                $children: [
-                  { $type: 'other:meta', key: 'k1', value: 'v1' },
-                  { $type: 'other:meta', key: 'k2', value: 'v2' },
-                  { $type: 'other:additionalNote', $body: 'this is some text' }
-                ]
-              }
-            ]
-          });
-
-          done();
+        expect(result).to.jsonEqual({
+          $type: 'e:Root',
+          id: 'FOO',
+          extensions: [
+            {
+              $type: 'other:nestedMeta',
+              $children: [
+                { $type: 'other:meta', key: 'k1', value: 'v1' },
+                { $type: 'other:meta', key: 'k2', value: 'v2' },
+                { $type: 'other:additionalNote', $body: 'this is some text' }
+              ]
+            }
+          ]
         });
-    })
+
+        done();
+      });
+    });
   });
 
 });

@@ -3,7 +3,7 @@
   "uri": "http://extensions",
   "prefix": "e",
   "xml" : {
-    "alias": "lowerCase"
+    "tagAlias": "lowerCase"
   },
   "types": [
     {

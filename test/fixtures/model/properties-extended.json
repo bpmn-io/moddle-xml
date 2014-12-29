@@ -3,7 +3,7 @@
   "uri": "http://extended",
   "prefix": "ext",
   "xml" : {
-    "alias": "lowerCase"
+    "tagAlias": "lowerCase"
   },
   "types": [
     {
