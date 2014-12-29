@@ -29,14 +29,16 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).to.eql('<?xml version="1.0" encoding="UTF-8"?>\n<props:root xmlns:props="http://properties" />');
+        expect(xml).to.eql(
+          '<?xml version="1.0" encoding="UTF-8"?>\n' +
+          '<props:root xmlns:props="http://properties" />');
       });
     });
 
 
     describe('datatypes', function() {
 
-      var datatypesModel = createModel(['datatype', 'datatype-external']);
+      var datatypesModel = createModel(['datatype', 'datatype-external', 'datatype-aliased']);
 
       it('via xsi:type', function() {
 
@@ -51,7 +53,30 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).to.eql('<dt:root xmlns:dt="http://datatypes"><dt:bounds xsi:type="dt:tRect" y="100" /></dt:root>');
+        expect(xml).to.eql(
+          '<dt:root xmlns:dt="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dt:bounds xsi:type="dt:Rect" y="100" />' +
+          '</dt:root>');
+      });
+
+
+      it('via xsi:type / no namespace', function() {
+
+        // given
+        var writer = createWriter(datatypesModel);
+
+        var root = datatypesModel.create('dt:Root', { xmlns: 'http://datatypes' });
+
+        root.set('bounds', datatypesModel.create('dt:Rect', { y: 100 }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<root xmlns="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<bounds xsi:type="Rect" y="100" />' +
+          '</root>');
       });
 
 
@@ -72,9 +97,33 @@ describe('Writer', function() {
 
         // then
         expect(xml).to.eql(
-          '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2">' +
-            '<dt:otherBounds xsi:type="dt:tRect" y="200" />' +
-            '<dt:otherBounds xsi:type="do:tRect" x="100" />' +
+          '<dt:root xmlns:dt="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:do="http://datatypes2">' +
+            '<dt:otherBounds xsi:type="dt:Rect" y="200" />' +
+            '<dt:otherBounds xsi:type="do:Rect" x="100" />' +
+          '</dt:root>');
+      });
+
+
+      it('via xsi:type / in collection / type prefix)', function() {
+
+        // given
+        var writer = createWriter(datatypesModel);
+
+        var root = datatypesModel.create('dt:Root');
+
+        var otherBounds = root.get('otherBounds');
+
+        otherBounds.push(datatypesModel.create('da:Rect', { z: 200 }));
+        otherBounds.push(datatypesModel.create('dt:Rect', { y: 100 }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<dt:root xmlns:dt="http://datatypes" xmlns:da="http://datatypes-aliased" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dt:otherBounds xsi:type="da:tRect" z="200" />' +
+            '<dt:otherBounds xsi:type="dt:Rect" y="100" />' +
           '</dt:root>');
       });
 
