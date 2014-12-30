@@ -50,7 +50,7 @@
     "mocha": "^2.1.0"
   },
   "dependencies": {
-    "moddle": "~0.4.0",
+    "moddle": "~0.5.0",
     "lodash": "~2.4.0",
     "sax": "~0.6.0",
     "tiny-stack": "^0.1.0"
