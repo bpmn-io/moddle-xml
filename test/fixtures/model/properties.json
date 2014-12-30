@@ -52,6 +52,17 @@
       ]
     },
     {
+      "name": "WithBody",
+      "superClass": [ "Base" ],
+      "properties": [
+        {
+          "name": "someBody",
+          "serialize": "xsi:type",
+          "type": "SimpleBody"
+        }
+      ]
+    },
+    {
       "name": "SimpleBodyProperties",
       "superClass": [ "Base" ],
       "properties": [

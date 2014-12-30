@@ -3,6 +3,8 @@
 var Writer = require('../../lib/writer'),
     Helper = require('../helper');
 
+var _ = require('lodash');
+
 
 describe('Writer', function() {
 
@@ -11,8 +13,8 @@ describe('Writer', function() {
   var model = createModel(['properties']);
   var extendedModel = createModel(['properties', 'properties-extended']);
 
-  function createWriter(model) {
-    return new Writer({ preamble: false });
+  function createWriter(model, options) {
+    return new Writer(_.extend({ preamble: false }, options || {}));
   }
 
 
@@ -80,6 +82,26 @@ describe('Writer', function() {
       });
 
 
+      it('via xsi:type / other namespace', function() {
+
+        // given
+        var writer = createWriter(datatypesModel);
+
+        var root = datatypesModel.create('dt:Root', { 'xmlns:a' : 'http://datatypes' });
+
+        root.set('bounds', datatypesModel.create('dt:Rect', { y: 100 }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<a:root xmlns:a="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<a:bounds xsi:type="a:Rect" y="100" />' +
+          '</a:root>');
+      });
+
+
       it('via xsi:type / in collection / other namespace)', function() {
 
         // given
@@ -125,6 +147,52 @@ describe('Writer', function() {
             '<dt:otherBounds xsi:type="da:tRect" z="200" />' +
             '<dt:otherBounds xsi:type="dt:Rect" y="100" />' +
           '</dt:root>');
+      });
+
+
+      it('via xsi:type / body property', function() {
+
+        var propertiesModel = createModel([ 'properties' ]);
+
+        // given
+        var writer = createWriter(propertiesModel);
+
+        var body = propertiesModel.create('props:SimpleBody', { body: '${ foo < bar }' });
+        var root = propertiesModel.create('props:WithBody', { someBody: body });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<props:withBody xmlns:props="http://properties" ' +
+                          'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<props:someBody xsi:type="props:SimpleBody">' +
+              '<![CDATA[${ foo < bar }]]>' +
+            '</props:someBody>' +
+          '</props:withBody>');
+      });
+
+
+      it('via xsi:type / body property / formated', function() {
+
+        var propertiesModel = createModel([ 'properties' ]);
+
+        // given
+        var writer = createWriter(propertiesModel, { format: true });
+
+        var body = propertiesModel.create('props:SimpleBody', { body: '${ foo < bar }' });
+        var root = propertiesModel.create('props:WithBody', { someBody: body });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<props:withBody xmlns:props="http://properties" ' +
+                          'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
+          '  <props:someBody xsi:type="props:SimpleBody"><![CDATA[${ foo < bar }]]></props:someBody>\n' +
+          '</props:withBody>\n');
       });
 
     });
