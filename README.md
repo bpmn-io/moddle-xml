@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/bpmn-io/moddle-xml.svg)](https://travis-ci.org/bpmn-io/moddle-xml)
 
-XML import/export for documents described with [moddle](https://github.com/bpmn-io/moddle).
+Read and write XML documents described with [moddle](https://github.com/bpmn-io/moddle).
+
 
 ## Usage
 
@@ -15,7 +16,7 @@ npm install --save moddle-xml
 
 #### Bootstrap
 
-Instantiate a [moddle instance](https://github.com/bpmn-io/moddle)
+Create a [moddle instance](https://github.com/bpmn-io/moddle)
 
 ```
 var Moddle = require('moddle'),
@@ -27,7 +28,7 @@ var model = new Moddle([ myPackage ]);
 
 #### Read XML
 
-Use the reader to parse XML into an object tree that represents your model descriptor:
+Use the reader to parse XML into an easily accessible object tree:
 
 ```javascript
 var model; // previously created
@@ -36,7 +37,7 @@ var xml =
   '<my:root xmlns:props="http://mypackage">' +
     '<my:car id="Car_1">' +
       '<my:engine power="121" fuelConsumption="10" />' +
-    '</my:car>
+    '</my:car>' +
   '</my:root>';
 
 var reader = new Reader(model);
@@ -69,7 +70,6 @@ reader.fromXML(xml, rootHandler, function(err, cars, context) {
     // }
   }
 });
-
 ```
 
 
