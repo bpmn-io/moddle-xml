@@ -1,5 +1,7 @@
 # moddle-xml
 
+[![Build Status](https://travis-ci.org/bpmn-io/moddle-xml.svg)](https://travis-ci.org/bpmn-io/moddle-xml)
+
 XML import/export for documents described with [moddle](https://github.com/bpmn-io/moddle).
 
 ## Usage
