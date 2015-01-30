@@ -1,4 +1,4 @@
-'use strict';
-
-module.exports.Reader = require('./lib/reader');
-module.exports.Writer = require('./lib/writer');
+module.exports = {
+  Reader: require('./lib/reader'),
+  Writer: require('./lib/writer')
+};
