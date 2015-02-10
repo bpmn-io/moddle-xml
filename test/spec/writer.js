@@ -821,4 +821,85 @@ describe('Writer', function() {
 
   });
 
+
+  describe('qualified extensions', function() {
+
+    var extensionModel = createModel([ 'extension/base', 'extension/custom' ]);
+
+
+    it('should write typed extension property', function() {
+
+      // given
+      var writer = createWriter(extensionModel);
+
+      var customGeneric = extensionModel.create('c:CustomGeneric', { count: 10 });
+
+      var root = extensionModel.create('b:Root', {
+        generic: customGeneric
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<b:Root xmlns:b="http://base" xmlns:c="http://custom">' +
+          '<c:CustomGeneric count="10" />' +
+        '</b:Root>';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+    });
+
+
+    it('should write typed extension attribute', function() {
+
+      // given
+      var writer = createWriter(extensionModel);
+
+      var root = extensionModel.create('b:Root', { customAttr: 666 });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<b:Root xmlns:b="http://base" xmlns:c="http://custom" c:customAttr="666" />';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+    });
+
+
+    it('should write generic collection', function() {
+
+      // given
+      var writer = createWriter(extensionModel);
+
+      var property1 = extensionModel.create('c:Property', { key: 'foo', value: 'FOO' });
+      var property2 = extensionModel.create('c:Property', { key: 'bar', value: 'BAR' });
+
+      var any = extensionModel.createAny('other:Xyz', 'http://other', {
+        $body: 'content'
+      });
+
+      var root = extensionModel.create('b:Root', {
+        genericCollection: [ property1, property2, any ]
+      });
+
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<b:Root xmlns:b="http://base" xmlns:c="http://custom" ' +
+                'xmlns:other="http://other">' +
+          '<c:Property key="foo" value="FOO" />' +
+          '<c:Property key="bar" value="BAR" />' +
+          '<other:Xyz>content</other:Xyz>' +
+        '</b:Root>';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+
+    });
+
+  });
+
 });

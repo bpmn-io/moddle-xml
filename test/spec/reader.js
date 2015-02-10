@@ -1351,4 +1351,165 @@ describe('Reader', function() {
 
   });
 
+
+  describe('qualified extensions', function() {
+
+    var extensionModel = createModel([ 'extension/base', 'extension/custom' ]);
+
+
+    it('should read typed extension property', function(done) {
+
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('b:Root');
+
+      var xml =
+        '<b:Root xmlns:b="http://base" xmlns:c="http://custom">' +
+          '<c:CustomGeneric count="10" />' +
+        '</b:Root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        if (err) {
+          return done(err);
+        }
+
+        expect(result).to.jsonEqual({
+          $type: 'b:Root',
+          generic: {
+            $type: 'c:CustomGeneric',
+            count: 10
+          }
+        });
+
+        done();
+      });
+
+    });
+
+
+    it('should read typed extension attribute', function(done) {
+
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('b:Root');
+
+      var xml =
+        '<b:Root xmlns:b="http://base" xmlns:c="http://custom" ' +
+                'c:customAttr="666">' +
+        '</b:Root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        if (err) {
+          return done(err);
+        }
+
+        expect(result).to.jsonEqual({
+          $type: 'b:Root',
+          customAttr: 666
+        });
+
+        done();
+      });
+
+    });
+
+
+    it('should read generic collection', function(done) {
+
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('b:Root');
+
+      var xml =
+        '<b:Root xmlns:b="http://base" xmlns:c="http://custom" ' +
+                'xmlns:other="http://other">' +
+          '<c:Property key="foo" value="FOO" />' +
+          '<c:Property key="bar" value="BAR" />' +
+          '<other:Xyz>content</other:Xyz>' +
+        '</b:Root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        if (err) {
+          return done(err);
+        }
+
+        expect(result).to.jsonEqual({
+          $type: 'b:Root',
+          genericCollection: [
+            {
+              $type: 'c:Property',
+              key: 'foo',
+              value: 'FOO'
+            },
+            {
+              $type: 'c:Property',
+              key: 'bar',
+              value: 'BAR'
+            },
+            {
+              $type: 'other:Xyz',
+              $body: 'content'
+            }
+          ]
+        });
+
+        done();
+      });
+
+    });
+
+
+    describe('validation', function() {
+
+      it('should not fail parsing unknown attribute', function(done) {
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('b:Root');
+
+        var xml =
+          '<b:Root xmlns:b="http://base" xmlns:c="http://custom" ' +
+                  'xmlns:other="http://other" c:unknownAttribute="XXX">' +
+          '</b:Root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+          expect(err).not.to.exist;
+
+          done();
+        });
+
+      });
+
+
+      it('should fail parsing unknown element', function(done) {
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('b:Root');
+
+        var xml =
+          '<b:Root xmlns:b="http://base" xmlns:c="http://custom" ' +
+                  'xmlns:other="http://other">' +
+            '<c:NonExisting />' +
+          '</b:Root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+          expect(err).to.exist;
+
+          done();
+        });
+
+      });
+    });
+
+  });
+
 });
