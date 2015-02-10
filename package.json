@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "lodash": "^3.0.0",
-    "moddle": "~0.5.0",
+    "moddle": "^0.5.0",
     "sax": "~0.6.0",
     "tiny-stack": "^0.1.0"
   }
