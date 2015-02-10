@@ -10,15 +10,16 @@ describe('Writer', function() {
 
   var createModel = Helper.createModelBuilder('test/fixtures/model/');
 
-  var model = createModel(['properties']);
-  var extendedModel = createModel(['properties', 'properties-extended']);
-
   function createWriter(model, options) {
     return new Writer(_.extend({ preamble: false }, options || {}));
   }
 
 
   describe('should export', function() {
+
+    var model = createModel([ 'properties' ]);
+    var extendedModel = createModel([ 'properties', 'properties-extended' ]);
+
 
     describe('base', function() {
 
@@ -119,7 +120,9 @@ describe('Writer', function() {
 
         // then
         expect(xml).to.eql(
-          '<dt:root xmlns:dt="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:do="http://datatypes2">' +
+          '<dt:root xmlns:dt="http://datatypes" ' +
+                   'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+                   'xmlns:do="http://datatypes2">' +
             '<dt:otherBounds xsi:type="dt:Rect" y="200" />' +
             '<dt:otherBounds xsi:type="do:Rect" x="100" />' +
           '</dt:root>');
@@ -143,7 +146,9 @@ describe('Writer', function() {
 
         // then
         expect(xml).to.eql(
-          '<dt:root xmlns:dt="http://datatypes" xmlns:da="http://datatypes-aliased" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+          '<dt:root xmlns:dt="http://datatypes" ' +
+                   'xmlns:da="http://datatypes-aliased" ' +
+                   'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
             '<dt:otherBounds xsi:type="da:tRect" z="200" />' +
             '<dt:otherBounds xsi:type="dt:Rect" y="100" />' +
           '</dt:root>');
@@ -248,8 +253,13 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
+        var expectedXml =
+          '<props:simpleBodyProperties xmlns:props="http://properties">' +
+            '<props:intValue>5</props:intValue>' +
+          '</props:simpleBodyProperties>';
+
         // then
-        expect(xml).to.eql('<props:simpleBodyProperties xmlns:props="http://properties"><props:intValue>5</props:intValue></props:simpleBodyProperties>');
+        expect(xml).to.eql(expectedXml);
       });
 
 
@@ -265,8 +275,13 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
+        var expectedXml =
+          '<props:simpleBodyProperties xmlns:props="http://properties">' +
+            '<props:boolValue>false</props:boolValue>' +
+          '</props:simpleBodyProperties>';
+
         // then
-        expect(xml).to.eql('<props:simpleBodyProperties xmlns:props="http://properties"><props:boolValue>false</props:boolValue></props:simpleBodyProperties>');
+        expect(xml).to.eql(expectedXml);
       });
 
 
@@ -282,8 +297,15 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
+        var expectedXml =
+          '<props:simpleBodyProperties xmlns:props="http://properties">' +
+            '<props:str>A</props:str>' +
+            '<props:str>B</props:str>' +
+            '<props:str>C</props:str>' +
+          '</props:simpleBodyProperties>';
+
         // then
-        expect(xml).to.eql('<props:simpleBodyProperties xmlns:props="http://properties"><props:str>A</props:str><props:str>B</props:str><props:str>C</props:str></props:simpleBodyProperties>');
+        expect(xml).to.eql(expectedXml);
       });
 
     });
@@ -302,8 +324,13 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(embedding);
 
+        var expectedXml =
+          '<props:embedding xmlns:props="http://properties">' +
+            '<props:complexCount id="ComplexCount_1" />' +
+          '</props:embedding>';
+
         // then
-        expect(xml).to.eql('<props:embedding xmlns:props="http://properties"><props:complexCount id="ComplexCount_1" /></props:embedding>');
+        expect(xml).to.eql(expectedXml);
       });
 
 
@@ -327,8 +354,15 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
+        var expectedXml =
+          '<props:root xmlns:props="http://properties">' +
+            '<props:attributes id="Attributes_1" />' +
+            '<props:simpleBody />' +
+            '<props:containedCollection />' +
+          '</props:root>';
+
         // then
-        expect(xml).to.eql('<props:root xmlns:props="http://properties"><props:attributes id="Attributes_1" /><props:simpleBody /><props:containedCollection /></props:root>');
+        expect(xml).to.eql(expectedXml);
       });
 
 
@@ -355,8 +389,16 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
+        var expectedXml =
+          '<ext:root xmlns:ext="http://extended" xmlns:props="http://properties">' +
+            '<props:attributes id="Attributes_1" />' +
+            '<props:attributes id="Attributes_2" />' +
+            '<ext:extendedComplex numCount="100" />' +
+            '<ext:base />' +
+          '</ext:root>';
+
         // then
-        expect(xml).to.eql('<ext:root xmlns:ext="http://extended" xmlns:props="http://properties"><props:attributes id="Attributes_1" /><props:attributes id="Attributes_2" /><ext:extendedComplex numCount="100" /><ext:base /></ext:root>');
+        expect(xml).to.eql(expectedXml);
       });
 
     });
@@ -393,8 +435,13 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
+        var expectedXml =
+          '<props:simpleBody xmlns:props="http://properties">' +
+            '<![CDATA[<h2>HTML markup</h2>]]>' +
+          '</props:simpleBody>';
+
         // then
-        expect(xml).to.eql('<props:simpleBody xmlns:props="http://properties"><![CDATA[<h2>HTML markup</h2>]]></props:simpleBody>');
+        expect(xml).to.eql(expectedXml);
       });
 
     });
@@ -464,8 +511,14 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
+        var expectedXml =
+          '<props:root xmlns:props="http://properties" ' +
+                      'xmlns:ext="http://extended">' +
+            '<ext:extendedComplex />' +
+          '</props:root>';
+
         // then
-        expect(xml).to.eql('<props:root xmlns:props="http://properties" xmlns:ext="http://extended"><ext:extendedComplex /></props:root>');
+        expect(xml).to.eql(expectedXml);
       });
 
 
@@ -512,7 +565,12 @@ describe('Writer', function() {
         // given
         var writer = createWriter(extendedModel);
 
-        var root = extendedModel.create('props:Root', { xmlns: 'http://properties', 'xmlns:foo': 'http://fooo', id: 'Root', 'foo:bar': 'BAR' });
+        var root = extendedModel.create('props:Root', {
+          xmlns: 'http://properties',
+          'xmlns:foo': 'http://fooo',
+          id: 'Root',
+          'foo:bar': 'BAR'
+        });
 
         // when
         var xml = writer.toXML(root);
@@ -565,7 +623,9 @@ describe('Writer', function() {
         var complexCount = model.create('props:ComplexCount', { id: 'ComplexCount_1' });
         var complexNesting = model.create('props:ComplexNesting', { id: 'ComplexNesting_1' });
 
-        var referencingCollection = model.create('props:ReferencingCollection', { references: [ complexCount, complexNesting ] });
+        var referencingCollection = model.create('props:ReferencingCollection', {
+          references: [ complexCount, complexNesting ]
+        });
 
         // when
         var xml = writer.toXML(referencingCollection);
@@ -601,8 +661,13 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
+        var expectedXml =
+          '<e:root xmlns:e="http://extensions" ' +
+                  'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+                  'xsi:schemaLocation="http://fooo ./foo.xsd" />';
+
         // then
-        expect(xml).to.eql('<e:root xmlns:e="http://extensions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://fooo ./foo.xsd" />');
+        expect(xml).to.eql(expectedXml);
       });
 
 
@@ -737,8 +802,7 @@ describe('Writer', function() {
         // when
         var xml = writer.toXML(root);
 
-        // then
-        expect(xml).to.eql(
+        var expectedXml =
           '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
             '<e:id>FOO</e:id>' +
             '<other:nestedMeta>' +
@@ -748,7 +812,10 @@ describe('Writer', function() {
                 'this is some text' +
               '</other:additionalNote>' +
             '</other:nestedMeta>' +
-          '</e:root>');
+          '</e:root>';
+
+        // then
+        expect(xml).to.eql(expectedXml);
       });
     });
 

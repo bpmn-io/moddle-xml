@@ -22,8 +22,10 @@ describe('Reader', function() {
       var reader = new Reader(model);
       var rootHandler = reader.handler('props:ComplexAttrs');
 
+      var xml = '<props:complexAttrs xmlns:props="http://properties"></props:complexAttrs>';
+
       // when
-      reader.fromXML('<props:complexAttrs xmlns:props="http://properties"></props:complexAttrs>', rootHandler, function(err, result, context) {
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
 
         // then
         expect(err).not.to.exist;
@@ -99,7 +101,8 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:ComplexAttrs');
 
-        var xml = '<props:complexAttrs xmlns:props="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        var xml = '<props:complexAttrs xmlns:props="http://properties" ' +
+                                      'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
                     '<props:attrs xsi:type="props:SubAttributes" integerValue="10" />' +
                   '</props:complexAttrs>';
 
@@ -227,7 +230,8 @@ describe('Reader', function() {
         var rootHandler = reader.handler('dt:Root');
 
         var xml =
-          '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+          '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2" ' +
+                   'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
             '<dt:otherBounds xsi:type="dt:Rect" y="100" />' +
             '<dt:otherBounds xsi:type="do:Rect" x="200" />' +
           '</dt:root>';
@@ -262,7 +266,8 @@ describe('Reader', function() {
         var rootHandler = reader.handler('dt:Root');
 
         var xml =
-          '<root xmlns="http://datatypes" xmlns:do="http://datatypes2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+          '<root xmlns="http://datatypes" xmlns:do="http://datatypes2" ' +
+                'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
             '<otherBounds xsi:type="Rect" y="100" />' +
             '<otherBounds xsi:type="do:Rect" x="200" />' +
           '</root>';
@@ -297,7 +302,8 @@ describe('Reader', function() {
         var rootHandler = reader.handler('dt:Root');
 
         var xml =
-          '<root xmlns="http://datatypes" xmlns:da="http://datatypes-aliased" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+          '<root xmlns="http://datatypes" xmlns:da="http://datatypes-aliased" ' +
+                'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
             '<otherBounds xsi:type="dt:Rect" y="100" />' +
             '<otherBounds xsi:type="da:tRect" z="200" />' +
           '</root>';
@@ -358,8 +364,10 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:BaseWithId');
 
+        var xml = '<props:baseWithId xmlns:props="http://properties" id="FOO&#10;BAR" />';
+
         // when
-        reader.fromXML('<props:baseWithId xmlns:props="http://properties" id="FOO&#10;BAR" />', rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
@@ -382,8 +390,12 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:SimpleBodyProperties');
 
+        var xml = '<props:simpleBodyProperties xmlns:props="http://properties">' +
+                    '<props:intValue>5</props:intValue>' +
+                  '</props:simpleBodyProperties>';
+
         // when
-        reader.fromXML('<props:simpleBodyProperties xmlns:props="http://properties"><props:intValue>5</props:intValue></props:simpleBodyProperties>', rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
@@ -402,8 +414,12 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:SimpleBodyProperties');
 
+        var xml = '<props:simpleBodyProperties xmlns:props="http://properties">' +
+                    '<props:boolValue>false</props:boolValue>' +
+                  '</props:simpleBodyProperties>';
+
         // when
-        reader.fromXML('<props:simpleBodyProperties xmlns:props="http://properties"><props:boolValue>false</props:boolValue></props:simpleBodyProperties>', rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
@@ -422,8 +438,14 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:SimpleBodyProperties');
 
+        var xml = '<props:simpleBodyProperties xmlns:props="http://properties">' +
+                    '<props:str>A</props:str>' +
+                    '<props:str>B</props:str>' +
+                    '<props:str>C</props:str>' +
+                  '</props:simpleBodyProperties>';
+
         // when
-        reader.fromXML('<props:simpleBodyProperties xmlns:props="http://properties"><props:str>A</props:str><props:str>B</props:str><props:str>C</props:str></props:simpleBodyProperties>', rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
@@ -445,8 +467,10 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:SimpleBody');
 
+        var xml = '<props:simpleBody xmlns:props="http://properties">textContent</props:simpleBody>';
+
         // when
-        reader.fromXML('<props:simpleBody xmlns:props="http://properties">textContent</props:simpleBody>', rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
@@ -465,8 +489,12 @@ describe('Reader', function() {
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:SimpleBody');
 
+        var xml = '<props:simpleBody xmlns:props="http://properties">' +
+                    '<![CDATA[<h2>HTML markup</h2>]]>' +
+                  '</props:simpleBody>';
+
         // when
-        reader.fromXML('<props:simpleBody xmlns:props="http://properties"><![CDATA[<h2>HTML markup</h2>]]></props:simpleBody>', rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
@@ -1217,8 +1245,13 @@ describe('Reader', function() {
       var reader = new Reader(model);
       var rootHandler = reader.handler('props:ComplexAttrs');
 
+      var xml = '<props:complexAttrs xmlns:props="http://properties" ' +
+                                    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+                  '<props:attrs xsi:type="props:Attributes" integerValue="10" />'  +
+                '</props:complexAttrs>';
+
       // when
-      reader.fromXML('<props:complexAttrs xmlns:props="http://properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><props:attrs xsi:type="props:Attributes" integerValue="10" /></props:complexAttrs>', rootHandler, function(err, result) {
+      reader.fromXML(xml, rootHandler, function(err, result) {
 
         if (err) {
           return done(err);
@@ -1315,6 +1348,7 @@ describe('Reader', function() {
         done();
       });
     });
+
   });
 
 });
