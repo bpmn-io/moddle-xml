@@ -241,6 +241,21 @@ describe('Writer', function() {
       });
 
 
+      it('attribute, escaping special characters', function() {
+
+        // given
+        var writer = createWriter(model);
+
+        var complex = model.create('props:Complex', { id: '<>\n&' });
+
+        // when
+        var xml = writer.toXML(complex);
+
+        // then
+        expect(xml).to.eql('<props:complex xmlns:props="http://properties" id="&#60;&#62;&#10;&#38;" />');
+      });
+
+
       it('write integer property', function() {
 
         // given
@@ -438,6 +453,28 @@ describe('Writer', function() {
         var expectedXml =
           '<props:simpleBody xmlns:props="http://properties">' +
             '<![CDATA[<h2>HTML markup</h2>]]>' +
+          '</props:simpleBody>';
+
+        // then
+        expect(xml).to.eql(expectedXml);
+      });
+
+
+      it('write body CDATA property with special chars', function() {
+
+        // given
+        var writer = createWriter(model);
+
+        var root = model.create('props:SimpleBody', {
+          body: '&\n<>'
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        var expectedXml =
+          '<props:simpleBody xmlns:props="http://properties">' +
+            '<![CDATA[&\n<>]]>' +
           '</props:simpleBody>';
 
         // then

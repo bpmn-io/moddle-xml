@@ -358,13 +358,13 @@ describe('Reader', function() {
 
     describe('attributes', function() {
 
-      it('with line breaks', function(done) {
+      it('with special characters', function(done) {
 
         // given
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:BaseWithId');
 
-        var xml = '<props:baseWithId xmlns:props="http://properties" id="FOO&#10;BAR" />';
+        var xml = '<props:baseWithId xmlns:props="http://properties" id="&#60;&#62;&#10;&#38;" />';
 
         // when
         reader.fromXML(xml, rootHandler, function(err, result) {
@@ -372,7 +372,7 @@ describe('Reader', function() {
           // then
           expect(result).to.jsonEqual({
             $type: 'props:BaseWithId',
-            id: 'FOO\nBAR'
+            id: '<>\n&'
           });
 
           done(err);
