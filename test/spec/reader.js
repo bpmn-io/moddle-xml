@@ -10,11 +10,10 @@ describe('Reader', function() {
 
   var createModel = createModelBuilder('test/fixtures/model/');
 
-  var model = createModel(['properties']);
-  var extendedModel = createModel(['properties', 'properties-extended']);
-
 
   describe('api', function() {
+
+    var model = createModel([ 'properties' ]);
 
     it('should provide result with context', function(done) {
 
@@ -61,6 +60,9 @@ describe('Reader', function() {
 
 
   describe('should import', function() {
+
+    var model = createModel([ 'properties' ]);
+    var extendedModel = createModel([ 'properties', 'properties-extended' ]);
 
     describe('data types', function() {
 
@@ -651,6 +653,8 @@ describe('Reader', function() {
 
   describe('internal', function() {
 
+    var extendedModel = createModel([ 'properties', 'properties-extended' ]);
+
     describe('should identify references', function() {
 
       it('on attribute', function(done) {
@@ -727,6 +731,9 @@ describe('Reader', function() {
 
 
   describe('error handling', function() {
+
+    var model = createModel([ 'properties' ]);
+    var extendedModel = createModel([ 'properties', 'properties-extended' ]);
 
     it('should handle non-xml text files', function(done) {
 
@@ -962,6 +969,120 @@ describe('Reader', function() {
 
       });
 
+    });
+
+  });
+
+
+  describe('lax error handling', function() {
+
+    var model = createModel([ 'properties' ]);
+
+
+    it('should ignore namespaced invalid child', function(done) {
+
+      // given
+      var reader = new Reader({ model: model, lax: true });
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      var xml = '<props:complexAttrs xmlns:props="http://properties">' +
+                  '<props:unknownElement foo="bar">' +
+                    '<props:unknownChild />' +
+                  '</props:unknownElement>' +
+                '</props:complexAttrs>';
+
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        if (err) {
+          return done(err);
+        }
+
+        // then
+        expect(context.warnings.length).to.eql(1);
+
+        var warning = context.warnings[0];
+
+        expect(warning.message).to.eql(
+          'unparsable content <props:unknownElement> detected\n\t' +
+            'line: 0\n\t' +
+            'column: 84\n\t' +
+            'nested error: unknown type <props:UnknownElement>');
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'props:ComplexAttrs'
+        });
+
+        done();
+      });
+    });
+
+
+    it('should ignore invalid child', function(done) {
+
+      // given
+      var reader = new Reader({ model: model, lax: true });
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      var xml = '<props:complexAttrs xmlns:props="http://properties">' +
+                  '<unknownElement foo="bar" />' +
+                '</props:complexAttrs>';
+
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        if (err) {
+          return done(err);
+        }
+
+        // then
+        expect(context.warnings.length).to.eql(1);
+
+        var warning = context.warnings[0];
+
+        expect(warning.message).to.eql(
+          'unparsable content <unknownElement> detected\n\t' +
+            'line: 0\n\t' +
+            'column: 80\n\t' +
+            'nested error: unrecognized element <unknownElement>');
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'props:ComplexAttrs'
+        });
+
+        done();
+      });
+    });
+
+
+    it('should ignore invalid attribute', function(done) {
+
+      // given
+      var reader = new Reader({ model: model, lax: true });
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      var xml = '<props:complexAttrs xmlns:props="http://properties" unknownAttribute="FOO" />';
+
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        if (err) {
+          return done(err);
+        }
+
+        expect(context.warnings).to.eql([]);
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'props:ComplexAttrs'
+        });
+
+        expect(result.$attrs).to.jsonEqual({
+          'xmlns:props': 'http://properties',
+          unknownAttribute: 'FOO'
+        });
+
+        done();
+      });
     });
 
   });
@@ -1236,6 +1357,7 @@ describe('Reader', function() {
   describe('parent -> child relationship', function() {
 
     var model = createModel([ 'properties' ]);
+    var extendedModel = createModel([ 'properties', 'properties-extended' ]);
     var extensionModel = createModel([ 'extensions' ]);
 
 
