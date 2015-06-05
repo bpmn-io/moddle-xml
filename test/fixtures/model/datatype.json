@@ -9,8 +9,8 @@
     {
       "name": "Root",
       "properties": [
-        { "name": "bounds", "serialize": "xsi:type", "type": "Rect" },
-        { "name": "otherBounds", "type": "Rect", "serialize": "xsi:type", "isMany": true }
+        { "name": "bounds", "type": "Rect", "xml": { "serialize" : "xsi:type" } },
+        { "name": "otherBounds", "type": "Rect", "xml": { "serialize" : "xsi:type" }, "isMany": true }
       ]
     },
     {

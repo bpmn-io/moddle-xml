@@ -16,14 +16,14 @@
       "name": "ComplexAttrs",
       "superClass": [ "Complex" ],
       "properties": [
-        { "name": "attrs", "type": "Attributes", "serialize": "xsi:type" }
+        { "name": "attrs", "type": "Attributes", "xml": { "serialize" : "xsi:type" } }
       ]
     },
     {
       "name": "ComplexAttrsCol",
       "superClass": [ "Complex" ],
       "properties": [
-        { "name": "attrs", "type": "Attributes", "isMany": true, "serialize": "xsi:type" }
+        { "name": "attrs", "type": "Attributes", "isMany": true, "xml": { "serialize" : "xsi:type" } }
       ]
     },
     {
@@ -57,8 +57,8 @@
       "properties": [
         {
           "name": "someBody",
-          "serialize": "xsi:type",
-          "type": "SimpleBody"
+          "type": "SimpleBody",
+          "xml": { "serialize" : "xsi:type" }
         }
       ]
     },
@@ -79,6 +79,13 @@
           "type": "String",
           "isMany": true
         }
+      ]
+    },
+    {
+      "name": "WithProperty",
+      "superClass": [ "Base" ],
+      "properties": [
+        { "name": "propertyName", "type": "Base", "xml": { "serialize" : "property" }  }
       ]
     },
     {
