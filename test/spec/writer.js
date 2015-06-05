@@ -348,6 +348,25 @@ describe('Writer', function() {
         expect(xml).to.eql(expectedXml);
       });
 
+      it('property name', function() {
+
+        // given
+        var writer = createWriter(model);
+
+        var propertyValue = model.create('props:BaseWithId', { id: 'PropertyValue' });
+        var container = model.create('props:WithProperty', { propertyName: propertyValue });
+
+        // when
+        var xml = writer.toXML(container);
+
+        var expectedXml =
+          '<props:withProperty xmlns:props="http://properties">' +
+            '<props:propertyName id="PropertyValue" />' +
+          '</props:withProperty>';
+
+        // then
+        expect(xml).to.eql(expectedXml);
+      });
 
       it('collection', function() {
 
