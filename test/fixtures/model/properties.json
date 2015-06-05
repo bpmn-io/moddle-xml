@@ -82,6 +82,13 @@
       ]
     },
     {
+      "name": "WithProperty",
+      "superClass": [ "Base" ],
+      "properties": [
+        { "name": "propertyName", "type": "Base", "serialize": "asProperty" }
+      ]
+    },
+    {
       "name": "Base"
     },
     {
