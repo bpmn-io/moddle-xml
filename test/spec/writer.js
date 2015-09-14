@@ -694,6 +694,26 @@ describe('Writer', function() {
           '</props:referencingCollection>');
       });
 
+
+      it('attribute collection', function() {
+
+        // given
+        var writer = createWriter(model);
+
+        var complexCount = model.create('props:ComplexCount', { id: 'ComplexCount_1' });
+        var complexNesting = model.create('props:ComplexNesting', { id: 'ComplexNesting_1' });
+
+        var attrReferenceCollection = model.create('props:AttributeReferenceCollection', {
+          refs: [ complexCount, complexNesting ]
+        });
+
+        // when
+        var xml = writer.toXML(attrReferenceCollection);
+
+        // then
+        expect(xml).to.eql('<props:attributeReferenceCollection xmlns:props="http://properties" refs="ComplexCount_1 ComplexNesting_1" />');
+      });
+
     });
   });
 
