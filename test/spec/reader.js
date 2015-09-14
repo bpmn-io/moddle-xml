@@ -646,6 +646,55 @@ describe('Reader', function() {
         });
       });
 
+
+      it('attribute collection', function(done) {
+
+        // given
+        var reader = new Reader(extendedModel);
+        var rootHandler = reader.handler('props:Root');
+
+        var xml =
+          '<props:root xmlns:props="http://properties">' +
+            '<props:containedCollection id="C_5">' +
+              '<props:complex id="C_1" />' +
+              '<props:complex id="C_2" />' +
+              '<props:complex id="C_3" />' +
+            '</props:containedCollection>' +
+            '<props:attributeReferenceCollection id="C_4" refs="C_2 C_3 C_5" />' +
+          '</props:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          // then
+          expect(result).to.jsonEqual({
+            $type: 'props:Root',
+            any: [
+              {
+                $type: 'props:ContainedCollection',
+                id: 'C_5',
+                children: [
+                  { $type: 'props:Complex', id: 'C_1' },
+                  { $type: 'props:Complex', id: 'C_2' },
+                  { $type: 'props:Complex', id: 'C_3' }
+                ]
+              },
+              { $type: 'props:AttributeReferenceCollection', id: 'C_4' }
+            ]
+          });
+
+          var containedCollection = result.any[0];
+          var complex_c2 = containedCollection.children[1];
+          var complex_c3 = containedCollection.children[2];
+
+          var attrReferenceCollection = result.any[1];
+
+          expect(attrReferenceCollection.refs).to.jsonEqual([ complex_c2, complex_c3, containedCollection ]);
+
+          done(err);
+        });
+      });
+
     });
 
   });

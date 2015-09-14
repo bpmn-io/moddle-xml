@@ -190,6 +190,19 @@
           "isMany": true
         }
       ]
+    },
+    {
+      "name": "AttributeReferenceCollection",
+      "superClass": [ "BaseWithId" ],
+      "properties": [
+        {
+          "name": "refs",
+          "type": "Complex",
+          "isReference": true,
+          "isMany": true,
+          "isAttr": true
+        }
+      ]
     }
   ]
 }
