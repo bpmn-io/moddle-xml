@@ -53,16 +53,6 @@ module.exports = function(grunt) {
         files: [ '<%= config.sources %>/**/*.js', '<%= config.tests %>/**/*.js' ],
         tasks: [ 'test']
       }
-    },
-
-    jsdoc: {
-      dist: {
-        src: [ '<%= config.sources %>/**/*.js' ],
-        options: {
-          destination: 'docs/api',
-          plugins: [ 'plugins/markdown' ]
-        }
-      }
     }
   });
 
@@ -71,5 +61,5 @@ module.exports = function(grunt) {
   grunt.registerTask('test', [ 'mochaTest' ]);
   grunt.registerTask('auto-test', [ 'test', 'watch:test' ]);
 
-  grunt.registerTask('default', [ 'jshint', 'test', 'jsdoc' ]);
+  grunt.registerTask('default', [ 'jshint', 'test' ]);
 };
