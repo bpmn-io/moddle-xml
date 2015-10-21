@@ -17,11 +17,9 @@ describe('Writer', function() {
 
   describe('should export', function() {
 
-    var model = createModel([ 'properties' ]);
-    var extendedModel = createModel([ 'properties', 'properties-extended' ]);
-
-
     describe('base', function() {
+
+      var model = createModel([ 'properties' ]);
 
       it('should write xml preamble', function() {
         // given
@@ -205,6 +203,8 @@ describe('Writer', function() {
 
     describe('attributes', function() {
 
+      var model = createModel([ 'properties' ]);
+
       it('with line breaks', function() {
 
         // given
@@ -225,6 +225,8 @@ describe('Writer', function() {
 
 
     describe('simple properties', function() {
+
+      var model = createModel([ 'properties' ]);
 
       it('attribute', function() {
 
@@ -328,6 +330,10 @@ describe('Writer', function() {
 
     describe('embedded properties',  function() {
 
+      var model = createModel([ 'properties' ]);
+
+      var extendedModel = createModel([ 'properties', 'properties-extended' ]);
+
       it('single', function() {
 
         // given
@@ -367,6 +373,7 @@ describe('Writer', function() {
         // then
         expect(xml).to.eql(expectedXml);
       });
+
 
       it('collection', function() {
 
@@ -438,7 +445,32 @@ describe('Writer', function() {
     });
 
 
+    describe('virtual properties', function() {
+
+      var model = createModel([ 'virtual' ]);
+
+      it('should not serialize virtual property', function() {
+        // given
+        var writer = createWriter(model);
+
+        var root = model.create('virt:Root', {
+          child: model.create('virt:Child')
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<virt:Root xmlns:virt="http://virtual" />');
+      });
+
+    });
+
+
     describe('body text', function() {
+
+      var model = createModel([ 'properties' ]);
 
       it('write body text property', function() {
 
@@ -505,6 +537,10 @@ describe('Writer', function() {
 
     describe('alias', function() {
 
+      var model = createModel([ 'properties' ]);
+
+      var noAliasModel = createModel(['noalias']);
+
       it('lowerCase', function() {
 
         // given
@@ -523,8 +559,6 @@ describe('Writer', function() {
       it('none', function() {
 
         // given
-        var noAliasModel = createModel(['noalias']);
-
         var writer = createWriter(noAliasModel);
 
         var root = noAliasModel.create('na:Root');
@@ -539,6 +573,9 @@ describe('Writer', function() {
 
 
     describe('ns', function() {
+
+      var model = createModel([ 'properties' ]);
+      var extendedModel = createModel([ 'properties', 'properties-extended' ]);
 
       it('single package', function() {
 
@@ -654,6 +691,8 @@ describe('Writer', function() {
 
 
     describe('reference', function() {
+
+      var model = createModel([ 'properties' ]);
 
       it('single', function() {
 
