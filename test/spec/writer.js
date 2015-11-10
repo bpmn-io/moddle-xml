@@ -511,6 +511,33 @@ describe('Writer', function() {
       });
 
 
+      it('write body CDATA property in subsequent calls', function() {
+
+        // given
+        var writer = createWriter(model);
+
+        var root1 = model.create('props:SimpleBody', {
+          body: '<>'
+        });
+        var root2 = model.create('props:SimpleBody', {
+          body: '<>'
+        });
+
+        // when
+        var xml1 = writer.toXML(root1);
+        var xml2 = writer.toXML(root2);
+
+        var expectedXml =
+          '<props:simpleBody xmlns:props="http://properties">' +
+            '<![CDATA[<>]]>' +
+          '</props:simpleBody>';
+
+        // then
+        expect(xml1).to.eql(expectedXml);
+        expect(xml2).to.eql(expectedXml);
+      });
+
+
       it('write body CDATA property with special chars', function() {
 
         // given
