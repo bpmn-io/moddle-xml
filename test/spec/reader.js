@@ -381,6 +381,24 @@ describe('Reader', function() {
         });
       });
 
+
+      it('inherited', function(done) {
+
+        // given
+        var reader = new Reader(extendedModel);
+        var rootHandler = reader.handler('ext:Root');
+
+        // when
+        reader.fromXML('<ext:root xmlns:ext="http://extended" id="FOO" />', rootHandler, function(err, result) {
+
+          // then
+          expect(result).to.jsonEqual({ $type: 'ext:Root', id: 'FOO' });
+
+          done(err);
+        });
+
+      });
+
     });
 
 

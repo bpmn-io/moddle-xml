@@ -13,6 +13,13 @@
       ]
     },
     {
+      "name": "SubRoot",
+      "superClass": [ "Root" ],
+      "properties": [
+        { "name": "subAttr", "type": "String", "isAttr": true }
+      ]
+    },
+    {
       "name": "Own",
       "properties": [
         { "name": "count", "type": "Integer", "isAttr": true }

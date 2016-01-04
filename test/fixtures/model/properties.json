@@ -143,6 +143,11 @@
           "name": "any",
           "type": "Base",
           "isMany": true
+        },
+        {
+          "name": "id",
+          "type": "String",
+          "isAttr": true
         }
       ]
     },

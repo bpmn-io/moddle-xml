@@ -203,11 +203,11 @@ describe('Writer', function() {
 
     describe('attributes', function() {
 
-      var model = createModel([ 'properties' ]);
-
       it('with line breaks', function() {
 
         // given
+        var model = createModel([ 'properties' ]);
+
         var writer = createWriter(model);
 
         var root = model.create('props:BaseWithId', {
@@ -219,6 +219,51 @@ describe('Writer', function() {
 
         // then
         expect(xml).to.eql('<props:baseWithId xmlns:props="http://properties" id="FOO&#10;BAR" />');
+      });
+
+
+      it('inherited', function() {
+
+        // given
+        var extendedModel = createModel([ 'properties', 'properties-extended' ]);
+
+        var writer = createWriter(extendedModel);
+
+        var root = extendedModel.create('ext:Root', {
+          id: 'FOO'
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql('<ext:root xmlns:ext="http://extended" id="FOO" />');
+      });
+
+
+      it('extended', function() {
+
+        // given
+        var extendedModel = createModel([ 'extension/base', 'extension/custom' ]);
+
+        var writer = createWriter(extendedModel);
+
+        var root = extendedModel.create('b:SubRoot', {
+          customAttr: 1,
+          subAttr: 'FOO',
+          ownAttr: 'OWN'
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+            '<b:SubRoot xmlns:b="http://base" ' +
+                       'xmlns:c="http://custom" ' +
+                       'ownAttr="OWN" ' +
+                       'c:customAttr="1" ' +
+                       'subAttr="FOO" />');
       });
 
     });
