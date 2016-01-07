@@ -876,6 +876,27 @@ describe('Writer', function() {
       });
 
 
+      it('should write manually added custom namespace', function() {
+
+        // given
+        var writer = createWriter(extensionModel);
+
+        var root = extensionModel.create('e:Root', {
+          'xmlns:foo': 'http://fooo'
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        var expectedXml =
+          '<e:root xmlns:e="http://extensions" ' +
+                  'xmlns:foo="http://fooo" />';
+
+        // then
+        expect(xml).to.eql(expectedXml);
+      });
+
+
       it('should ignore unknown namespace prefix', function() {
 
         // given
