@@ -826,6 +826,61 @@ describe('Writer', function() {
       });
 
     });
+
+
+    it('redefined properties', function() {
+
+      // given
+      var model = createModel([ 'redefine' ]);
+
+      var writer = createWriter(model);
+
+      var element = model.create('r:Extension', {
+        id: 1,
+        name: 'FOO',
+        value: 'BAR'
+      });
+
+      var expectedXml = '<r:Extension xmlns:r="http://redefine">' +
+                          '<r:id>1</r:id>' +
+                          '<r:name>FOO</r:name>' +
+                          '<r:value>BAR</r:value>' +
+                        '</r:Extension>';
+
+      // when
+      var xml = writer.toXML(element);
+
+      // then
+      expect(xml).to.eql(expectedXml);
+    });
+
+
+    it('replaced properties', function() {
+
+      // given
+      var model = createModel([ 'replace' ]);
+
+      var writer = createWriter(model);
+
+      var element = model.create('r:Extension', {
+        id: 1,
+        name: 'FOO',
+        value: 'BAR'
+      });
+
+      var expectedXml = '<r:Extension xmlns:r="http://replace">' +
+                          '<r:name>FOO</r:name>' +
+                          '<r:value>BAR</r:value>' +
+                          '<r:id>1</r:id>' +
+                        '</r:Extension>';
+
+      // when
+      var xml = writer.toXML(element);
+
+      // then
+      expect(xml).to.eql(expectedXml);
+    });
+
   });
 
 
