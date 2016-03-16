@@ -9,7 +9,7 @@
     {
       "name": "Root",
       "properties": [
-        { "name": "id", "type": "String" },
+        { "name": "id", "type": "String", "isId": true },
         { "name": "extensions", "type": "Element", "isMany" : true }
       ]
     }

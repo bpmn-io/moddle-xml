@@ -9,7 +9,7 @@
     {
       "name": "Complex",
       "properties": [
-        { "name": "id", "type": "String", "isAttr": true }
+        { "name": "id", "type": "String", "isAttr": true, "isId": true }
       ]
     },
     {
@@ -95,14 +95,14 @@
       "name": "BaseWithId",
       "superClass": [ "Base" ],
       "properties": [
-        { "name": "id", "type": "String", "isAttr": true }
+        { "name": "id", "type": "String", "isAttr": true, "isId": true }
       ]
     },
     {
       "name": "BaseWithNumericId",
       "superClass": [ "BaseWithId" ],
       "properties": [
-        { "name": "idNumeric", "type": "String", "isAttr": true, "redefines": "BaseWithId#id" }
+        { "name": "idNumeric", "type": "String", "isAttr": true, "redefines": "BaseWithId#id", "isId": true }
       ]
     },
     {
@@ -147,7 +147,8 @@
         {
           "name": "id",
           "type": "String",
-          "isAttr": true
+          "isAttr": true,
+          "isId": true
         }
       ]
     },

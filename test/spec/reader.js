@@ -1701,4 +1701,90 @@ describe('Reader', function() {
 
   });
 
+
+  describe('fake ids', function() {
+
+    var fakeIdsModel = createModel([ 'fake-id' ]);
+
+
+    it('should ignore (non-id) id attribute', function(done) {
+
+      // given
+      var reader = new Reader(fakeIdsModel);
+      var rootHandler = reader.handler('fi:Root');
+
+      var xml =
+        '<fi:Root xmlns:fi="http://fakeid">' +
+          '<fi:ChildWithFakeId id="FOO" />' +
+        '</fi:Root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        if (err) {
+          return done(err);
+        }
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'fi:Root',
+          children: [
+            {
+              $type: 'fi:ChildWithFakeId',
+              id: 'FOO'
+            }
+          ]
+        });
+
+        expect(context.elementsById).to.be.empty;
+
+        done();
+      });
+
+    });
+
+
+    it('should not-resolve (non-id) id references', function(done) {
+
+      // given
+      var reader = new Reader(fakeIdsModel);
+      var rootHandler = reader.handler('fi:Root');
+
+      var xml =
+        '<fi:Root xmlns:fi="http://fakeid">' +
+          '<fi:ChildWithFakeId id="FOO" />' +
+          '<fi:ChildWithFakeId ref="FOO" />' +
+        '</fi:Root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        if (err) {
+          return done(err);
+        }
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'fi:Root',
+          children: [
+            {
+              $type: 'fi:ChildWithFakeId',
+              id: 'FOO'
+            },
+            {
+              $type: 'fi:ChildWithFakeId'
+            }
+          ]
+        });
+
+        expect(context.warnings).to.have.length(1);
+        expect(context.warnings[0].message).to.eql('unresolved reference <FOO>');
+
+        done();
+      });
+
+    });
+
+  });
+
 });
