@@ -800,6 +800,58 @@ describe('Reader', function() {
   });
 
 
+  describe('should not import', function() {
+
+    var model = createModel([ 'properties' ]);
+
+    describe('wrong namespace', function() {
+
+      it('same alias', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:Root');
+
+        var xml = '<props:root xmlns:props="http://invalid">' +
+                    '<props:referencingSingle id="C_4" />' +
+                  '</props:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          expect(err).to.exist;
+          expect(result).not.to.exist;
+
+          done();
+        });
+      });
+
+
+      it('different alias', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:Root');
+
+        var xml = '<props1:root xmlns:props1="http://invalid">' +
+                    '<props1:referencingSingle id="C_4" />' +
+                  '</props1:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          expect(err).to.exist;
+          expect(result).not.to.exist;
+
+          done();
+        });
+      });
+
+    });
+
+  });
+
+
   describe('internal', function() {
 
     var extendedModel = createModel([ 'properties', 'properties-extended' ]);
