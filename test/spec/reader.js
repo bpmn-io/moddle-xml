@@ -926,6 +926,34 @@ describe('Reader', function() {
     });
 
 
+    it('should handle duplicate id', function(done) {
+
+      var xml = '<props:root xmlns:props="http://properties" id="root">' +
+                  '<props:baseWithId id="root" />' +
+                '</props:root>';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:Root');
+
+      var expectedError =
+        'unparsable content <props:baseWithId> detected\n\t' +
+            'line: 0\n\t' +
+            'column: 84\n\t' +
+            'nested error: duplicate ID <root>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result) {
+
+        expect(err).to.exist;
+        expect(err.message).to.eql(expectedError);
+
+        expect(result).not.to.exist;
+
+        done();
+      });
+    });
+
+
     describe('references', function() {
 
       describe('should log warning', function() {
