@@ -266,6 +266,44 @@ describe('Writer', function() {
                        'subAttr="FOO" />');
       });
 
+
+      it('ignore undefined attribute values', function() {
+
+        // given
+        var model = createModel([ 'properties' ]);
+
+        var writer = createWriter(model);
+
+        var root = model.create('props:Base', {
+          id: undefined
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql('<props:base xmlns:props="http://properties" />');
+      });
+
+
+      it('ignore null attribute values', function() {
+
+        // given
+        var model = createModel([ 'properties' ]);
+
+        var writer = createWriter(model);
+
+        var root = model.create('props:Base', {
+          id: null
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql('<props:base xmlns:props="http://properties" />');
+      });
+
     });
 
 
