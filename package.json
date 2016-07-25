@@ -6,6 +6,8 @@
     "lib": "lib"
   },
   "scripts": {
+    "all": "grunt",
+    "dev": "grunt auto-test",
     "test": "grunt test"
   },
   "repository": {
