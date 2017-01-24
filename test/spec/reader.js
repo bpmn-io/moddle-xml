@@ -476,6 +476,34 @@ describe('Reader', function() {
           done(err);
         });
       });
+
+
+      it('should not discard value with an empty tag', function(done) {
+
+        // given
+        var reader = new Reader(createModel([ 'replace' ]));
+        var rootHandler = reader.handler('r:Extension');
+
+        var xml = '<r:extension xmlns:r="http://replace">' +
+                    '<r:value></r:value>' +
+                  '</r:extension>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result).to.jsonEqual({
+            $type: 'r:Extension',
+            value: ''
+          });
+
+          done(err);
+        });
+      });
     });
 
 

@@ -198,6 +198,28 @@ describe('Writer', function() {
           '</props:withBody>\n');
       });
 
+
+      it('keep empty tag', function() {
+
+        // given
+        var replaceModel = createModel([ 'replace' ]);
+
+        var writer = createWriter(replaceModel);
+
+        var simple = replaceModel.create('r:Extension', { value: '' });
+
+        // when
+        var xml = writer.toXML(simple);
+
+        var expectedXml =
+        '<r:Extension xmlns:r="http://replace">' +
+          '<r:value></r:value>' +
+        '</r:Extension>';
+
+        // then
+        expect(xml).to.eql(expectedXml);
+      });
+
     });
 
 
