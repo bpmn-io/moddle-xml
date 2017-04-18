@@ -353,6 +353,63 @@ describe('Reader', function() {
 
           done();
         });
+
+      });
+
+      it('collection / xsi:type / with same name from default ns and external ns', function(done) {
+
+        var datatypeModel = createModel(['definition', 'definition-external']);
+
+        // given
+        var reader = new Reader(datatypeModel);
+        var rootHandler = reader.handler('d:Definitions');
+
+        var xml =
+          '<d:Definitions xmlns:d="http://definitions" xmlns:d2="http://definitions2">' +
+          '<d:import name="clazzA" />' +
+          '<d:import name="clazzB" />' +
+          '<d:extensionElements>' +
+          '<d2:import name="clazzC" />' +
+          '<d2:import name="clazzD" />' +
+          '</d:extensionElements>' +
+          '</d:Definitions>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(result).to.jsonEqual({
+            $type: 'd:Definitions',
+            import: [
+              {
+                $type: 'd:Import',
+                name: 'clazzA'
+              },
+              {
+                $type: 'd:Import',
+                name :'clazzB'
+              }
+            ],
+            extensionElements: {
+              $type: "d:ExtensionElements",
+              values: [{
+                $type: 'd2:import',
+                name: 'clazzC'
+              },
+                {
+                  $type: 'd2:import',
+                  name: 'clazzD'
+                }
+              ]
+            }
+          });
+
+          done();
+        });
       });
 
     });

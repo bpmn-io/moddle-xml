@@ -1,0 +1,83 @@
+{
+  "name": "Definitions",
+  "uri": "http://definitions",
+  "prefix": "d",
+  "xml" : {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "Definitions",
+      "properties": [
+        {
+          "name": "import",
+          "type": "Import",
+          "isMany": true
+        },
+        {
+          "name": "extensionElements",
+          "type": "ExtensionElements"
+        }
+      ]
+    },
+    {
+      "name": "Import",
+      "properties": [
+        {
+          "name": "name",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ExtensionElements",
+      "properties": [
+        {
+          "name": "valueRef",
+          "isAttr": true,
+          "isReference": true,
+          "type": "Element"
+        },
+        {
+          "name": "values",
+          "type": "Element",
+          "isMany": true
+        },
+        {
+          "name": "extensionAttributeDefinition",
+          "type": "ExtensionAttributeDefinition",
+          "isAttr": true,
+          "isReference": true
+        }
+      ]
+    },
+    {
+      "name": "ExtensionAttributeDefinition",
+      "properties": [
+        {
+          "name": "name",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "type",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "isReference",
+          "default": false,
+          "isAttr": true,
+          "type": "Boolean"
+        },
+        {
+          "name": "extensionDefinition",
+          "type": "ExtensionDefinition",
+          "isAttr": true,
+          "isReference": true
+        }
+      ]
+    }
+  ]
+}

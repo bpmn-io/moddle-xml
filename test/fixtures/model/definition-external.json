@@ -1,0 +1,21 @@
+{
+  "name": "Definitions 2",
+  "uri": "http://definitions2",
+  "prefix": "d2",
+  "associations": [],
+  "types": [
+    {
+      "name": "import",
+      "superClass": [
+        "Element"
+      ],
+      "properties": [
+        {
+          "name": "name",
+          "type": "String",
+          "isAttr": true
+        }
+      ]
+    }
+  ]
+}
