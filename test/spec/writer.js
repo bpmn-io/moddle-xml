@@ -127,7 +127,7 @@ describe('Writer', function() {
       });
 
 
-      it('via xsi:type / in collection / type prefix)', function() {
+      it('via xsi:type / in collection / type prefix', function() {
 
         // given
         var writer = createWriter(datatypesModel);
@@ -407,6 +407,28 @@ describe('Writer', function() {
       });
 
 
+      it('write boolean property, formated', function() {
+
+        // given
+        var writer = createWriter(model, { format: true });
+
+        var root = model.create('props:SimpleBodyProperties', {
+          boolValue: false
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        var expectedXml =
+          '<props:simpleBodyProperties xmlns:props="http://properties">\n' +
+          '  <props:boolValue>false</props:boolValue>\n' +
+          '</props:simpleBodyProperties>\n';
+
+        // then
+        expect(xml).to.eql(expectedXml);
+      });
+
+
       it('write string isMany property', function() {
 
         // given
@@ -425,6 +447,30 @@ describe('Writer', function() {
             '<props:str>B</props:str>' +
             '<props:str>C</props:str>' +
           '</props:simpleBodyProperties>';
+
+        // then
+        expect(xml).to.eql(expectedXml);
+      });
+
+
+      it('write string isMany property, formated', function() {
+
+        // given
+        var writer = createWriter(model, { format: true });
+
+        var root = model.create('props:SimpleBodyProperties', {
+          str: [ 'A', 'B', 'C' ]
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        var expectedXml =
+          '<props:simpleBodyProperties xmlns:props="http://properties">\n' +
+          '  <props:str>A</props:str>\n' +
+          '  <props:str>B</props:str>\n' +
+          '  <props:str>C</props:str>\n' +
+          '</props:simpleBodyProperties>\n';
 
         // then
         expect(xml).to.eql(expectedXml);
