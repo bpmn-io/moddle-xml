@@ -296,7 +296,7 @@ describe('Writer', function() {
 
         var writer = createWriter(model);
 
-        var root = model.create('props:Base', {
+        var root = model.create('props:BaseWithId', {
           id: undefined
         });
 
@@ -304,7 +304,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).to.eql('<props:base xmlns:props="http://properties" />');
+        expect(xml).to.eql('<props:baseWithId xmlns:props="http://properties" />');
       });
 
 
@@ -315,7 +315,7 @@ describe('Writer', function() {
 
         var writer = createWriter(model);
 
-        var root = model.create('props:Base', {
+        var root = model.create('props:BaseWithId', {
           id: null
         });
 
@@ -323,7 +323,7 @@ describe('Writer', function() {
         var xml = writer.toXML(root);
 
         // then
-        expect(xml).to.eql('<props:base xmlns:props="http://properties" />');
+        expect(xml).to.eql('<props:baseWithId xmlns:props="http://properties" />');
       });
 
     });
@@ -1109,6 +1109,28 @@ describe('Writer', function() {
             '<other:meta key="FOO" value="BAR" />' +
             '<other:meta key="BAZ" value="FOOBAR" />' +
           '</e:root>');
+      });
+
+
+      // workaround for #23
+      it('should write non-ns element', function() {
+
+        // given
+        var writer = createWriter(extensionModel);
+
+        // explicitly create element without prefix / namespace
+        var root = extensionModel.createAny('root', undefined, {
+          key: 'FOO',
+          value: 'BAR'
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<root key="FOO" value="BAR" />'
+        );
       });
 
 

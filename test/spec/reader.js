@@ -355,6 +355,40 @@ describe('Reader', function() {
         });
       });
 
+
+      // workaround for #23
+      it('generic, non-ns elements', function(done) {
+
+        var extensionModel = createModel([ 'extension/base' ]);
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('b:Root');
+
+        var xml =
+          '<b:Root xmlns:b="http://base">' +
+            '<Any foo="BAR" />' +
+          '</b:Root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          if (err) {
+            return done(err);
+          }
+
+          expect(result).to.jsonEqual({
+            $type: 'b:Root',
+            generic: {
+              $type: 'Any',
+              foo: 'BAR'
+            }
+          });
+
+          done();
+        });
+      });
+
     });
 
 
