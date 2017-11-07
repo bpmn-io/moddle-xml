@@ -915,7 +915,7 @@ describe('Reader', function() {
       var expectedError =
         'unparsable content <props:references> detected\n\t' +
             'line: 0\n\t' +
-            'column: 88\n\t' +
+            'column: 70\n\t' +
             'nested error: unknown type <props:References>';
 
       // when
@@ -944,7 +944,7 @@ describe('Reader', function() {
       var expectedError =
         'unparsable content <props:invalid> detected\n\t' +
             'line: 0\n\t' +
-            'column: 125\n\t' +
+            'column: 110\n\t' +
             'nested error: unknown type <props:Invalid>';
 
       // when
@@ -972,7 +972,7 @@ describe('Reader', function() {
       var expectedError =
         'unparsable content <other:foo> detected\n\t' +
             'line: 0\n\t' +
-            'column: 99\n\t' +
+            'column: 88\n\t' +
             'nested error: unrecognized element <other:foo>';
 
       // when
@@ -987,7 +987,6 @@ describe('Reader', function() {
       });
     });
 
-
     it('should handle duplicate id', function(done) {
 
       var xml = '<props:root xmlns:props="http://properties" id="root">' +
@@ -1000,7 +999,7 @@ describe('Reader', function() {
       var expectedError =
         'unparsable content <props:baseWithId> detected\n\t' +
             'line: 0\n\t' +
-            'column: 84\n\t' +
+            'column: 54\n\t' +
             'nested error: duplicate ID <root>';
 
       // when
@@ -1162,7 +1161,7 @@ describe('Reader', function() {
         expect(warning.message).to.eql(
           'unparsable content <props:unknownElement> detected\n\t' +
             'line: 0\n\t' +
-            'column: 84\n\t' +
+            'column: 52\n\t' +
             'nested error: unknown type <props:UnknownElement>');
 
         // then
@@ -1199,7 +1198,7 @@ describe('Reader', function() {
         expect(warning.message).to.eql(
           'unparsable content <unknownElement> detected\n\t' +
             'line: 0\n\t' +
-            'column: 80\n\t' +
+            'column: 52\n\t' +
             'nested error: unrecognized element <unknownElement>');
 
         // then
