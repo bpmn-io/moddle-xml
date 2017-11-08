@@ -565,14 +565,35 @@ describe('Reader', function() {
       });
 
 
-      it('parse body CDATA property', function(done) {
+      it('parse body text property / trimmed whitespace', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:SimpleBody');
+
+        var xml = '<props:simpleBody xmlns:props="http://properties">    </props:simpleBody>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          // then
+          expect(result).to.jsonEqual({
+            $type: 'props:SimpleBody'
+          });
+
+          done(err);
+        });
+      });
+
+
+      it('parse body CDATA property / trimmed whitespace', function(done) {
 
         // given
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:SimpleBody');
 
         var xml = '<props:simpleBody xmlns:props="http://properties">' +
-                    '<![CDATA[<h2>HTML markup</h2>]]>' +
+                  '   <![CDATA[<h2>HTML markup</h2>]]>' +
                   '</props:simpleBody>';
 
         // when
