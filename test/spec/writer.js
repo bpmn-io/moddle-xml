@@ -1112,13 +1112,13 @@ describe('Writer', function() {
       });
 
 
-      // workaround for #23
-      it('should write non-ns element', function() {
+      // #23
+      it('should write unqualified element', function() {
 
         // given
         var writer = createWriter(extensionModel);
 
-        // explicitly create element without prefix / namespace
+        // explicitly create element with elementForm=unqualified
         var root = extensionModel.createAny('root', undefined, {
           key: 'FOO',
           value: 'BAR'

@@ -356,7 +356,6 @@ describe('Reader', function() {
       });
 
 
-      // workaround for #23
       it('generic, non-ns elements', function(done) {
 
         var extensionModel = createModel([ 'extension/base' ]);
