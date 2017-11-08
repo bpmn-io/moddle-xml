@@ -34,12 +34,7 @@
       "url": "https://github.com/bpmn-io"
     }
   ],
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/bpmn-io/moddle-xml/blob/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "devDependencies": {
     "chai": "^1.10.0",
     "eslint": "^3.19.0",
