@@ -903,6 +903,54 @@ describe('Reader', function() {
     });
 
 
+    it('should handle invalid attribute', function(done) {
+
+      var xml = '<props:complexAttrs xmlns:props="http://properties" foo />';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        expect(err).not.to.exist;
+        expect(context.warnings).to.have.length(1);
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'props:ComplexAttrs'
+        });
+
+        done();
+      });
+
+    });
+
+
+    it('should handle unparsable attributes', function(done) {
+
+      var xml = '<props:complexAttrs foo=\'"" />';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        expect(err).not.to.exist;
+        expect(context.warnings).to.have.length(1);
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'props:ComplexAttrs'
+        });
+
+        done();
+      });
+
+    });
+
+
     it('should handle non-xml binary file', function(done) {
 
       var data = readFile('test/fixtures/error/binary.png');
