@@ -1037,6 +1037,86 @@ describe('Writer', function() {
       });
 
 
+      describe('should deconflict namespace prefixes', function() {
+
+        it('on nested Any', function() {
+
+          // given
+          var writer = createWriter(extensionModel);
+
+          var root = extensionModel.create('e:Root', {
+            extensions: [
+              extensionModel.createAny('e:foo', 'http://not-extensions', {
+                foo: 'BAR'
+              })
+            ]
+          });
+
+          // when
+          var xml = writer.toXML(root);
+
+          var expectedXml =
+            '<e:root xmlns:e="http://extensions" ' +
+                      'xmlns:e_1="http://not-extensions">' +
+              '<e_1:foo foo="BAR" />' +
+            '</e:root>';
+
+          // then
+          expect(xml).to.eql(expectedXml);
+        });
+
+
+        it('on explicitly added namespace', function() {
+
+          // given
+          var writer = createWriter(extensionModel);
+
+          var root = extensionModel.create('e:Root', {
+            'xmlns:e': 'http://not-extensions'
+          });
+
+          // when
+          var xml = writer.toXML(root);
+
+          var expectedXml =
+            '<e_1:root xmlns:e_1="http://extensions" ' +
+                      'xmlns:e="http://not-extensions" />';
+
+          // then
+          expect(xml).to.eql(expectedXml);
+        });
+
+
+        it('on explicitly added namespace + Any', function() {
+
+          // given
+          var writer = createWriter(extensionModel);
+
+          var root = extensionModel.create('e:Root', {
+            'xmlns:e': 'http://not-extensions',
+            extensions: [
+              extensionModel.createAny('e:foo', 'http://not-extensions', {
+                foo: 'BAR'
+              })
+            ]
+          });
+
+          // when
+          var xml = writer.toXML(root);
+
+          var expectedXml =
+            '<e_1:root xmlns:e_1="http://extensions" ' +
+                      'xmlns:e="http://not-extensions">' +
+              '<e:foo foo="BAR" />' +
+            '</e_1:root>';
+
+          // then
+          expect(xml).to.eql(expectedXml);
+        });
+
+      });
+
+
       it('should write manually added custom namespace', function() {
 
         // given
