@@ -517,9 +517,9 @@ describe('Reader', function() {
         var reader = new Reader(createModel([ 'replace' ]));
         var rootHandler = reader.handler('r:Extension');
 
-        var xml = '<r:extension xmlns:r="http://replace">' +
+        var xml = '<r:Extension xmlns:r="http://replace">' +
                     '<r:value></r:value>' +
-                  '</r:extension>';
+                  '</r:Extension>';
 
         // when
         reader.fromXML(xml, rootHandler, function(err, result) {
@@ -856,6 +856,7 @@ describe('Reader', function() {
 
     var extendedModel = createModel([ 'properties', 'properties-extended' ]);
 
+
     describe('should identify references', function() {
 
       it('on attribute', function(done) {
@@ -1022,32 +1023,82 @@ describe('Reader', function() {
     });
 
 
-    it('should handle invalid root element', function(done) {
+    describe('should handle invalid root element', function() {
 
-      var xml = '<props:referencingCollection xmlns:props="http://properties" id="C_4">' +
-                  '<props:references>C_2</props:references>' +
-                  '<props:references>C_5</props:references>' +
-                '</props:referencingCollection>';
+      it('wrong type', function(done) {
 
-      var reader = new Reader(model);
-      var rootHandler = reader.handler('props:ComplexAttrs');
+        var xml = '<props:referencingCollection xmlns:props="http://properties" id="C_4">' +
+                    '<props:references>C_2</props:references>' +
+                    '<props:references>C_5</props:references>' +
+                  '</props:referencingCollection>';
 
-      var expectedError =
-        'unparsable content <props:references> detected\n\t' +
-            'line: 0\n\t' +
-            'column: 70\n\t' +
-            'nested error: unknown type <props:References>';
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:ComplexAttrs');
 
-      // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+        var expectedError =
+          'unparsable content <props:referencingCollection> detected\n\t' +
+              'line: 0\n\t' +
+              'column: 0\n\t' +
+              'nested error: unexpected element <props:referencingCollection>';
 
-        expect(err).to.exist;
-        expect(err.message).to.eql(expectedError);
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
 
-        expect(result).not.to.exist;
+          expect(err).to.exist;
+          expect(err.message).to.eql(expectedError);
 
-        done();
+          expect(result).not.to.exist;
+
+          done();
+        });
       });
+
+
+      it('wrong uri', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:Root');
+
+        var xml = '<props:root xmlns:props="http://invalid">' +
+                    '<props:referencingSingle id="C_4" />' +
+                  '</props:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          expect(err).to.exist;
+          expect(err.message).to.match(/unexpected element <props:root>/);
+
+          expect(result).not.to.exist;
+
+          done();
+        });
+      });
+
+
+      it('unknown uri + prefix', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:Root');
+
+        var xml = '<props1:root xmlns:props1="http://invalid">' +
+                    '<props1:referencingSingle id="C_4" />' +
+                  '</props1:root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          expect(err).to.exist;
+          expect(err.message).to.match(/unexpected element <props1:root>/);
+
+          expect(result).not.to.exist;
+
+          done();
+        });
+      });
+
     });
 
 
@@ -1106,6 +1157,7 @@ describe('Reader', function() {
         done();
       });
     });
+
 
     it('should handle duplicate id', function(done) {
 
