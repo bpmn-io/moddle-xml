@@ -1122,6 +1122,29 @@ describe('Reader', function() {
         });
       });
 
+
+      it('unparsable root element / lax mode', function(done) {
+
+        // given
+        var reader = new Reader({ model: model, lax: true });
+        var rootHandler = reader.handler('props:Root');
+
+        var xml = '<root xmlns:props="http://properties">' +
+                    '<referencingSingle id="C_4" />' +
+                  '</root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          expect(err).to.exist;
+          expect(err.message).to.match(/failed to parse document as <props:Root>/);
+
+          expect(result).not.to.exist;
+
+          done();
+        });
+      });
+
     });
 
 
