@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "lodash": "^3.0.0",
-    "moddle": "^1.0.0",
+    "moddle": "^1.1.0",
     "saxen": "^5.0.1",
     "tiny-stack": "^0.1.0"
   }
