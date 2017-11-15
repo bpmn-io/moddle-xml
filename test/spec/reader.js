@@ -1099,6 +1099,29 @@ describe('Reader', function() {
         });
       });
 
+
+      it('missing namespace', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:Root');
+
+        var xml = '<root xmlns:props="http://properties">' +
+                    '<referencingSingle id="C_4" />' +
+                  '</root>';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          expect(err).to.exist;
+          expect(err.message).to.match(/unparsable content <root> detected/);
+
+          expect(result).not.to.exist;
+
+          done();
+        });
+      });
+
     });
 
 
