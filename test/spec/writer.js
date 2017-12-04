@@ -55,8 +55,8 @@ describe('Writer', function() {
 
         // then
         expect(xml).to.eql(
-          '<dt:root xmlns:dt="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dt:bounds xsi:type="dt:Rect" y="100" />' +
+          '<dt:root xmlns:dt="http://datatypes">' +
+            '<dt:bounds y="100" />' +
           '</dt:root>');
       });
 
@@ -75,8 +75,8 @@ describe('Writer', function() {
 
         // then
         expect(xml).to.eql(
-          '<root xmlns="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<bounds xsi:type="Rect" y="100" />' +
+          '<root xmlns="http://datatypes">' +
+            '<bounds y="100" />' +
           '</root>');
       });
 
@@ -95,8 +95,8 @@ describe('Writer', function() {
 
         // then
         expect(xml).to.eql(
-          '<a:root xmlns:a="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<a:bounds xsi:type="a:Rect" y="100" />' +
+          '<a:root xmlns:a="http://datatypes">' +
+            '<a:bounds y="100" />' +
           '</a:root>');
       });
 
@@ -119,9 +119,9 @@ describe('Writer', function() {
         // then
         expect(xml).to.eql(
           '<dt:root xmlns:dt="http://datatypes" ' +
-                   'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
-                   'xmlns:do="http://datatypes2">' +
-            '<dt:otherBounds xsi:type="dt:Rect" y="200" />' +
+                   'xmlns:do="http://datatypes2" ' +
+                   'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dt:otherBounds y="200" />' +
             '<dt:otherBounds xsi:type="do:Rect" x="100" />' +
           '</dt:root>');
       });
@@ -148,7 +148,7 @@ describe('Writer', function() {
                    'xmlns:da="http://datatypes-aliased" ' +
                    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
             '<dt:otherBounds xsi:type="da:tRect" z="200" />' +
-            '<dt:otherBounds xsi:type="dt:Rect" y="100" />' +
+            '<dt:otherBounds y="100" />' +
           '</dt:root>');
       });
 
@@ -1512,7 +1512,6 @@ describe('Writer', function() {
 
       var root = model.create('da:Root', {
         'xmlns:a' : 'http://datatypes-aliased',
-        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
         otherBounds: [
           model.create('dt:Rect', {
             'xmlns': 'http://datatypes',
@@ -1526,9 +1525,8 @@ describe('Writer', function() {
 
       // then
       expect(xml).to.eql(
-        '<a:Root xmlns:a="http://datatypes-aliased" ' +
-                'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-          '<otherBounds xmlns="http://datatypes" xsi:type="Rect" y="100" />' +
+        '<a:Root xmlns:a="http://datatypes-aliased">' +
+          '<otherBounds xmlns="http://datatypes" y="100" />' +
         '</a:Root>');
 
     });
