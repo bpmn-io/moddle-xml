@@ -1723,6 +1723,119 @@ describe('Reader', function() {
 
       });
 
+
+      describe('namespace declarations', function() {
+
+        it('should handle nested', function(done) {
+
+          // given
+          var reader = new Reader(extensionModel);
+          var rootHandler = reader.handler('e:Root');
+
+          var xml =
+            '<e:root xmlns:e="http://extensions">' +
+              '<bar:bar xmlns:bar="http://bar">' +
+                '<other:child b="B" xmlns:other="http://other" />' +
+              '</bar:bar>' +
+              '<foo xmlns="http://foo">' +
+                '<child a="A" />' +
+              '</foo>' +
+            '</e:root>';
+
+          // when
+          reader.fromXML(xml, rootHandler, function(err, result) {
+
+            if (err) {
+              return done(err);
+            }
+
+            // then
+            expect(result).to.jsonEqual({
+              $type: 'e:Root',
+              extensions: [
+                {
+                  $type: 'bar:bar',
+                  'xmlns:bar': 'http://bar',
+                  $children: [
+                    {
+                      $type: 'other:child',
+                      'xmlns:other': 'http://other',
+                      b: 'B'
+                    }
+                  ]
+                },
+                {
+                  $type: 'ns0:foo',
+                  'xmlns': 'http://foo',
+                  $children: [
+                    { $type: 'ns0:child', a: 'A' }
+                  ]
+                }
+              ]
+            });
+
+            done();
+          });
+        });
+
+
+        it('should handle nested, re-declaring default', function(done) {
+
+          // given
+          var reader = new Reader(extensionModel);
+          var rootHandler = reader.handler('e:Root');
+
+          var xml =
+            '<root xmlns="http://extensions">' +
+              '<bar:bar xmlns:bar="http://bar">' +
+                '<other:child b="B" xmlns:other="http://other" />' +
+              '</bar:bar>' +
+              '<foo xmlns="http://foo">' +
+                '<child a="A" />' +
+              '</foo>' +
+            '</root>';
+
+          // when
+          reader.fromXML(xml, rootHandler, function(err, result) {
+
+            if (err) {
+              return done(err);
+            }
+
+            // then
+            expect(result).to.jsonEqual({
+              $type: 'e:Root',
+              extensions: [
+                {
+                  $type: 'bar:bar',
+                  'xmlns:bar': 'http://bar',
+                  $children: [
+                    {
+                      $type: 'other:child',
+                      'xmlns:other': 'http://other',
+                      b: 'B'
+                    }
+                  ]
+                },
+                {
+                  $type: 'ns0:foo',
+                  'xmlns': 'http://foo',
+                  $children: [
+                    {
+                      $type: 'ns0:child',
+                      a: 'A'
+                    }
+                  ]
+                }
+              ]
+            });
+
+            done();
+          });
+        });
+
+      });
+
     });
 
   });
