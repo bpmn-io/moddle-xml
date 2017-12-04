@@ -3,7 +3,7 @@
 var Writer = require('../../lib/writer'),
     Helper = require('../helper');
 
-var _ = require('lodash');
+var assign = require('lodash/object/assign');
 
 
 describe('Writer', function() {
@@ -11,7 +11,7 @@ describe('Writer', function() {
   var createModel = Helper.createModelBuilder('test/fixtures/model/');
 
   function createWriter(model, options) {
-    return new Writer(_.extend({ preamble: false }, options || {}));
+    return new Writer(assign({ preamble: false }, options || {}));
   }
 
 
@@ -504,6 +504,7 @@ describe('Writer', function() {
         // then
         expect(xml).to.eql(expectedXml);
       });
+
 
       it('property name', function() {
 
@@ -1368,6 +1369,167 @@ describe('Writer', function() {
 
       // then
       expect(xml).to.eql(expectedXml);
+
+    });
+
+  });
+
+
+  describe('local namespace declarations', function() {
+
+    it('should write custom', function() {
+
+      var model = createModel([ 'extensions' ]);
+
+      // given
+      var writer = createWriter(model);
+
+      var root = model.create('e:Root', {
+        // unprefixed root namespace
+        'xmlns': 'http://extensions',
+        extensions: [
+          model.createAny('bar:bar', 'http://bar', {
+            'xmlns:bar': 'http://bar',
+            $children: [
+              model.createAny('other:child', 'http://other', {
+                'xmlns:other': 'http://other',
+                b: 'B'
+              })
+            ]
+          }),
+          model.createAny('ns0:foo', 'http://foo', {
+            // unprefixed extension namespace
+            'xmlns': 'http://foo',
+            $children: [
+              model.createAny('ns0:child', 'http://foo', {
+                a: 'A'
+              })
+            ]
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<root xmlns="http://extensions">' +
+          '<bar:bar xmlns:bar="http://bar">' +
+            '<other:child xmlns:other="http://other" b="B" />' +
+          '</bar:bar>' +
+          '<foo xmlns="http://foo">' +
+            '<child a="A" />' +
+          '</foo>' +
+        '</root>';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+
+    });
+
+
+    it('should write wellknown', function() {
+
+      var model = createModel([
+        'properties',
+        'properties-extended'
+      ]);
+
+      // given
+      var writer = createWriter(model);
+
+      var root = model.create('props:Root', {
+        // unprefixed top-level namespace
+        'xmlns': 'http://properties',
+        any: [
+          model.create('ext:ExtendedComplex', {
+            // unprefixed nested namespace
+            'xmlns': 'http://extended'
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<root xmlns="http://properties">' +
+          '<extendedComplex xmlns="http://extended" />' +
+        '</root>';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+
+    });
+
+
+    it('should write only actually exposed', function() {
+
+      var model = createModel([
+        'properties',
+        'properties-extended'
+      ]);
+
+      // given
+      var writer = createWriter(model);
+
+      var root = model.create('ext:Root', {
+        // unprefixed top-level namespace
+        'xmlns': 'http://extended',
+        id: 'ROOT',
+        any: [
+          model.create('props:Complex', {
+            // unprefixed nested namespace
+            'xmlns': 'http://properties'
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<root xmlns="http://extended" id="ROOT">' +
+          '<complex xmlns="http://properties" />' +
+        '</root>';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+
+    });
+
+
+    it('should write xsi:type namespaces', function() {
+
+      var model = createModel([
+        'datatype',
+        'datatype-external',
+        'datatype-aliased'
+      ]);
+
+      // given
+      var writer = createWriter(model);
+
+      var root = model.create('da:Root', {
+        'xmlns:a' : 'http://datatypes-aliased',
+        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+        otherBounds: [
+          model.create('dt:Rect', {
+            'xmlns': 'http://datatypes',
+            y: 100
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).to.eql(
+        '<a:Root xmlns:a="http://datatypes-aliased" ' +
+                'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+          '<otherBounds xmlns="http://datatypes" xsi:type="Rect" y="100" />' +
+        '</a:Root>');
 
     });
 

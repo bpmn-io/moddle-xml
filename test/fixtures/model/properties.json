@@ -41,8 +41,11 @@
       ]
     },
     {
+      "name": "Body"
+    },
+    {
       "name": "SimpleBody",
-      "superClass": [ "Base" ],
+      "superClass": [ "Base", "Body" ],
       "properties": [
         {
           "name": "body",
@@ -57,7 +60,7 @@
       "properties": [
         {
           "name": "someBody",
-          "type": "SimpleBody",
+          "type": "Body",
           "xml": { "serialize" : "xsi:type" }
         }
       ]

@@ -7,6 +7,10 @@
   },
   "types": [
     {
+      "name": "Root",
+      "superClass": [ "dt:Root" ]
+    },
+    {
       "name": "Rect",
       "properties": [
         { "name": "z", "type": "Integer", "isAttr": true }
