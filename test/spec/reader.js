@@ -2094,4 +2094,68 @@ describe('Reader', function() {
 
   });
 
+
+  describe('encoding', function() {
+
+    var model = createModel([ 'properties' ]);
+
+    it('should decode UTF-8, no problemo', function(done) {
+
+      // given
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      var xml =
+        '<?xml version="1.0" encoding="utf-8"?>' +
+        '<props:complexAttrs xmlns:props="http://properties">' +
+        '</props:complexAttrs>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        // then
+        expect(err).not.to.exist;
+        expect(context.warnings).to.be.empty;
+
+        expect(result).to.exist;
+        expect(context).to.exist;
+
+        done();
+      });
+
+    });
+
+
+    it('should warn on non-UTF-8 encoded files', function(done) {
+
+      // given
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      var xml =
+        '<?xml version="1.0" encoding="windows-1252"?>' +
+        '<props:complexAttrs xmlns:props="http://properties">' +
+        '</props:complexAttrs>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        // then
+        expect(err).not.to.exist;
+
+        var warnings = context.warnings;
+
+        expect(warnings).to.have.length(1);
+        expect(warnings[0].message).to.match(/unsupported document encoding <windows-1252>/);
+
+        expect(result).to.exist;
+        expect(context).to.exist;
+
+        done();
+      });
+
+    });
+
+  });
+
 });
