@@ -1,6 +1,6 @@
 {
   "name": "moddle-xml",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "XML import/export for documents described with moddle",
   "directories": {
     "lib": "lib"
