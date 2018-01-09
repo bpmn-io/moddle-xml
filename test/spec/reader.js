@@ -934,8 +934,17 @@ describe('Reader', function() {
 
   describe('error handling', function() {
 
+    function expectWarnings(warnings, expectedMatches) {
+      expect(warnings).to.have.length(expectedMatches.length);
+
+      warnings.forEach(function(w, idx) {
+        expect(w.message).to.match(expectedMatches[idx]);
+      });
+    }
+
     var model = createModel([ 'properties' ]);
     var extendedModel = createModel([ 'properties', 'properties-extended' ]);
+
 
     it('should handle non-xml text files', function(done) {
 
@@ -956,7 +965,7 @@ describe('Reader', function() {
     });
 
 
-    it('should handle invalid attribute', function(done) {
+    it('should handle incomplete attribute declaration', function(done) {
 
       var xml = '<props:complexAttrs xmlns:props="http://properties" foo />';
 
@@ -967,7 +976,37 @@ describe('Reader', function() {
       reader.fromXML(xml, rootHandler, function(err, result, context) {
 
         expect(err).not.to.exist;
-        expect(context.warnings).to.have.length(1);
+
+        expectWarnings(context.warnings, [
+          /nested error: missing attribute value/
+        ]);
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'props:ComplexAttrs'
+        });
+
+        done();
+      });
+
+    });
+
+
+    it('should handle attribute re-definition', function(done) {
+
+      var xml = '<props:complexAttrs xmlns:props="http://properties" a="A" a="A" />';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        expect(err).not.to.exist;
+
+        expectWarnings(context.warnings, [
+          /nested error: attribute <a> already defined/
+        ]);
 
         // then
         expect(result).to.jsonEqual({
@@ -991,7 +1030,10 @@ describe('Reader', function() {
       reader.fromXML(xml, rootHandler, function(err, result, context) {
 
         expect(err).not.to.exist;
-        expect(context.warnings).to.have.length(1);
+
+        expectWarnings(context.warnings, [
+          /nested error: attribute value quote missmatch/
+        ]);
 
         // then
         expect(result).to.jsonEqual({
