@@ -994,7 +994,7 @@ describe('Reader', function() {
 
     it('should handle attribute re-definition', function(done) {
 
-      var xml = '<props:complexAttrs xmlns:props="http://properties" a="A" a="A" />';
+      var xml = '<props:complexAttrs xmlns:props="http://properties" id="A" id="B" />';
 
       var reader = new Reader(model);
       var rootHandler = reader.handler('props:ComplexAttrs');
@@ -1005,12 +1005,13 @@ describe('Reader', function() {
         expect(err).not.to.exist;
 
         expectWarnings(context.warnings, [
-          /nested error: attribute <a> already defined/
+          /nested error: attribute <id> already defined/
         ]);
 
         // then
         expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs'
+          $type: 'props:ComplexAttrs',
+          id: 'A'
         });
 
         done();
