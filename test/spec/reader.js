@@ -2302,7 +2302,42 @@ describe('Reader', function() {
         var warnings = context.warnings;
 
         expect(warnings).to.have.length(1);
-        expect(warnings[0].message).to.match(/unsupported document encoding <windows-1252>/);
+        expect(warnings[0].message).to.match(
+          /unsupported document encoding <windows-1252>/
+        );
+
+        expect(result).to.exist;
+        expect(context).to.exist;
+
+        done();
+      });
+
+    });
+
+
+    it('should warn on non-UTF-8 encoded files / CAPITALIZED', function(done) {
+
+      // given
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      var xml =
+        '<?XML ENCODING="WINDOWS-1252"?>' +
+        '<props:complexAttrs xmlns:props="http://properties">' +
+        '</props:complexAttrs>';
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        // then
+        expect(err).not.to.exist;
+
+        var warnings = context.warnings;
+
+        expect(warnings).to.have.length(1);
+        expect(warnings[0].message).to.match(
+          /unsupported document encoding <WINDOWS-1252>/
+        );
 
         expect(result).to.exist;
         expect(context).to.exist;
