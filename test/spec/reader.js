@@ -2289,7 +2289,7 @@ describe('Reader', function() {
       var rootHandler = reader.handler('props:ComplexAttrs');
 
       var xml =
-        '<?xml version="1.0" encoding="windows-1252"?>' +
+        '<?xml encoding="windows-1252"?>' +
         '<props:complexAttrs xmlns:props="http://properties">' +
         '</props:complexAttrs>';
 
