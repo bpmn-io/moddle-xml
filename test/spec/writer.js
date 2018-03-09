@@ -1428,6 +1428,136 @@ describe('Writer', function() {
     });
 
 
+    it('should write nested custom', function() {
+
+      var model = createModel([ 'extensions' ]);
+
+      // given
+      var writer = createWriter(model);
+
+      var root = model.create('e:Root', {
+        // unprefixed root namespace
+        'xmlns': 'http://extensions',
+        extensions: [
+          model.createAny('bar:bar', 'http://bar', {
+            'xmlns:bar': 'http://bar',
+            'bar:attr': 'ATTR'
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<root xmlns="http://extensions">' +
+          '<bar:bar xmlns:bar="http://bar" attr="ATTR" />' +
+        '</root>';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+    });
+
+
+    it('should strip redundant nested custom', function() {
+
+      var model = createModel([ 'extensions' ]);
+
+      // given
+      var writer = createWriter(model);
+
+      var root = model.create('e:Root', {
+        // unprefixed root namespace
+        'xmlns': 'http://extensions',
+        'xmlns:bar': 'http://bar',
+        extensions: [
+          model.createAny('bar:bar', 'http://bar', {
+            'xmlns:bar': 'http://bar',
+            'bar:attr': 'ATTR'
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<root xmlns="http://extensions" xmlns:bar="http://bar">' +
+          '<bar:bar attr="ATTR" />' +
+        '</root>';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+    });
+
+
+    it('should strip different prefix nested custom', function() {
+
+      var model = createModel([ 'extensions' ]);
+
+      // given
+      var writer = createWriter(model);
+
+      var root = model.create('e:Root', {
+        // unprefixed root namespace
+        'xmlns': 'http://extensions',
+        'xmlns:otherBar': 'http://bar',
+        'xmlns:otherFoo': 'http://foo',
+        extensions: [
+          model.createAny('bar:bar', 'http://bar', {
+            'xmlns:bar': 'http://bar',
+            'xmlns:foo': 'http://foo',
+            'bar:attr': 'ATTR',
+            'foo:attr': 'FOO_ATTR'
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<root xmlns="http://extensions" xmlns:otherBar="http://bar" ' +
+              'xmlns:otherFoo="http://foo">' +
+          '<otherBar:bar attr="ATTR" otherFoo:attr="FOO_ATTR" />' +
+        '</root>';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+    });
+
+
+    it('should write normalized custom', function() {
+
+      var model = createModel([ 'extensions' ]);
+
+      // given
+      var writer = createWriter(model);
+
+      var root = model.create('e:Root', {
+        // unprefixed root namespace
+        'xmlns': 'http://extensions',
+        'xmlns:otherBar': 'http://bar',
+        extensions: [
+          model.createAny('bar:bar', 'http://bar', {
+            'bar:attr': 'ATTR'
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<root xmlns="http://extensions" xmlns:otherBar="http://bar">' +
+          '<otherBar:bar attr="ATTR" />' +
+        '</root>';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+    });
+
+
     it('should write wellknown', function() {
 
       var model = createModel([
