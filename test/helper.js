@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 
-var map = require('lodash/collection/map');
+var map = require('min-dash').map;
 
 var Moddle = require('moddle');
 

@@ -43,7 +43,7 @@
     "npm-run-all": "^4.1.1"
   },
   "dependencies": {
-    "lodash": "^3.0.0",
+    "min-dash": "^2.0.1",
     "moddle": "^2.0.0",
     "saxen": "^7.0.0",
     "tiny-stack": "^0.1.0"

@@ -3,7 +3,7 @@
 var Writer = require('../../lib/writer'),
     Helper = require('../helper');
 
-var assign = require('lodash/object/assign');
+var assign = require('min-dash').assign;
 
 
 describe('Writer', function() {
