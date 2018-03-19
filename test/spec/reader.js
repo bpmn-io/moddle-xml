@@ -1022,7 +1022,7 @@ describe('Reader', function() {
 
     it('should handle unparsable attributes', function(done) {
 
-      var xml = '<props:complexAttrs foo=\'"" />';
+      var xml = '<props:complexAttrs id="A" foo=\'"" />';
 
       var reader = new Reader(model);
       var rootHandler = reader.handler('props:ComplexAttrs');
@@ -1033,12 +1033,14 @@ describe('Reader', function() {
         expect(err).not.to.exist;
 
         expectWarnings(context.warnings, [
-          /nested error: attribute value quote missmatch/
+          /nested error: attribute value quote missmatch/,
+          /nested error: illegal character after attribute end/
         ]);
 
         // then
         expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs'
+          $type: 'props:ComplexAttrs',
+          id: 'A'
         });
 
         done();
