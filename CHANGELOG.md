@@ -6,9 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
-## 4.2.0
+## 5.0.0
 
-* `FEAT`: don't bail out from attribute parsing
+* `FEAT`: replace lodash with [min-dash](https://github.com/bpmn-io/min-dash)
+* `FEAT`: don't bail out from attribute parsing on parse errors  ([`fd0c8b40`](https://github.com/bpmn-io/moddle-xml/commit/fd0c8b4084b4d92565dd7d3099e283fbb98f1dd0))
 
 ## ...
 
