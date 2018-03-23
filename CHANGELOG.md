@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 5.0.1
+
+* `FIX`: decode entities in `text` nodes
+
 ## 5.0.0
 
 * `FEAT`: replace lodash with [min-dash](https://github.com/bpmn-io/min-dash)
