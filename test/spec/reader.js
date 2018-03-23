@@ -564,6 +564,32 @@ describe('Reader', function() {
       });
 
 
+      it('parse body text property / encoded', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:SimpleBody');
+
+        var xml = (
+          '<props:simpleBody xmlns:props="http://properties">' +
+            '&lt; 10, &gt; 20' +
+          '</props:simpleBody>'
+        );
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result) {
+
+          // then
+          expect(result).to.jsonEqual({
+            $type: 'props:SimpleBody',
+            body: '< 10, > 20'
+          });
+
+          done(err);
+        });
+      });
+
+
       it('parse body text property / trimmed whitespace', function(done) {
 
         // given
