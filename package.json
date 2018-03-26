@@ -45,7 +45,7 @@
   "dependencies": {
     "min-dash": "^2.0.1",
     "moddle": "^3.0.0",
-    "saxen": "^7.0.0",
+    "saxen": "^7.0.1",
     "tiny-stack": "^0.1.0"
   }
 }
