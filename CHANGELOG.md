@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 5.0.2
+
+* `FIX`: properly handle `.` in attribute names
+
 ## 5.0.1
 
 * `FIX`: decode entities in `text` nodes
