@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 6.0.0
+
+* `FEAT`: encode entities in body properties (instead of escaping via `CDATA`) ([`5645b582`](https://github.com/bpmn-io/moddle-xml/commit/5645b5822644a461eba9f3da481362475f040984))
+
 ## 5.0.2
 
 * `FIX`: properly handle `.` in attribute names
