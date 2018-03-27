@@ -572,7 +572,7 @@ describe('Reader', function() {
 
         var xml = (
           '<props:simpleBody xmlns:props="http://properties">' +
-            '&lt; 10, &gt; 20' +
+            '&lt; 10, &gt; 20, &amp;nbsp;' +
           '</props:simpleBody>'
         );
 
@@ -582,7 +582,7 @@ describe('Reader', function() {
           // then
           expect(result).to.jsonEqual({
             $type: 'props:SimpleBody',
-            body: '< 10, > 20'
+            body: '< 10, > 20, &nbsp;'
           });
 
           done(err);

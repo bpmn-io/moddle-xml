@@ -160,8 +160,12 @@ describe('Writer', function() {
         // given
         var writer = createWriter(propertiesModel);
 
-        var body = propertiesModel.create('props:SimpleBody', { body: '${ foo < bar }' });
-        var root = propertiesModel.create('props:WithBody', { someBody: body });
+        var body = propertiesModel.create('props:SimpleBody', {
+          body: '${ foo < bar }'
+        });
+        var root = propertiesModel.create('props:WithBody', {
+          someBody: body
+        });
 
         // when
         var xml = writer.toXML(root);
@@ -171,7 +175,7 @@ describe('Writer', function() {
           '<props:withBody xmlns:props="http://properties" ' +
                           'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
             '<props:someBody xsi:type="props:SimpleBody">' +
-              '<![CDATA[${ foo < bar }]]>' +
+              '${ foo &lt; bar }' +
             '</props:someBody>' +
           '</props:withBody>');
       });
@@ -194,7 +198,7 @@ describe('Writer', function() {
         expect(xml).to.eql(
           '<props:withBody xmlns:props="http://properties" ' +
                           'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
-          '  <props:someBody xsi:type="props:SimpleBody"><![CDATA[${ foo < bar }]]></props:someBody>\n' +
+          '  <props:someBody xsi:type="props:SimpleBody">${ foo &lt; bar }</props:someBody>\n' +
           '</props:withBody>\n');
       });
 
@@ -641,13 +645,13 @@ describe('Writer', function() {
       });
 
 
-      it('write body CDATA property', function() {
+      it('write encode body property', function() {
 
         // given
         var writer = createWriter(model);
 
         var root = model.create('props:SimpleBody', {
-          body: '<h2>HTML markup</h2>'
+          body: '<h2>HTML&nbsp;"markup"</h2>'
         });
 
         // when
@@ -655,7 +659,7 @@ describe('Writer', function() {
 
         var expectedXml =
           '<props:simpleBody xmlns:props="http://properties">' +
-            '<![CDATA[<h2>HTML markup</h2>]]>' +
+            '&lt;h2&gt;HTML&amp;nbsp;"markup"&lt;/h2&gt;' +
           '</props:simpleBody>';
 
         // then
@@ -663,7 +667,7 @@ describe('Writer', function() {
       });
 
 
-      it('write body CDATA property in subsequent calls', function() {
+      it('write encode body property in subsequent calls', function() {
 
         // given
         var writer = createWriter(model);
@@ -681,7 +685,7 @@ describe('Writer', function() {
 
         var expectedXml =
           '<props:simpleBody xmlns:props="http://properties">' +
-            '<![CDATA[<>]]>' +
+            '&lt;&gt;' +
           '</props:simpleBody>';
 
         // then
@@ -690,13 +694,13 @@ describe('Writer', function() {
       });
 
 
-      it('write body CDATA property with special chars', function() {
+      it('write encode body property with special chars', function() {
 
         // given
         var writer = createWriter(model);
 
         var root = model.create('props:SimpleBody', {
-          body: '&\n<>'
+          body: '&\n<>"\''
         });
 
         // when
@@ -704,7 +708,7 @@ describe('Writer', function() {
 
         var expectedXml =
           '<props:simpleBody xmlns:props="http://properties">' +
-            '<![CDATA[&\n<>]]>' +
+            '&amp;\n&lt;&gt;"\'' +
           '</props:simpleBody>';
 
         // then
