@@ -1,4 +1,7 @@
-module.exports = {
-  Reader: require('./lib/reader'),
-  Writer: require('./lib/writer')
-};
+export {
+  Reader
+} from './lib/read';
+
+export {
+  Writer
+} from './lib/write';

@@ -1,14 +1,21 @@
-'use strict';
+import expect from '../expect';
 
-var Writer = require('../../lib/writer'),
-    Helper = require('../helper');
+import {
+  Writer
+} from '../../';
 
-var assign = require('min-dash').assign;
+import {
+  createModelBuilder
+} from '../helper';
+
+import {
+  assign
+} from 'min-dash';
 
 
 describe('Writer', function() {
 
-  var createModel = Helper.createModelBuilder('test/fixtures/model/');
+  var createModel = createModelBuilder('test/fixtures/model/');
 
   function createWriter(model, options) {
     return new Writer(assign({ preamble: false }, options || {}));

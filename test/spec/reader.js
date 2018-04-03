@@ -1,9 +1,13 @@
-'use strict';
+import expect from '../expect';
 
-var Reader = require('../../lib/reader'),
-    Helper = require('../helper'),
-    readFile = Helper.readFile,
-    createModelBuilder = Helper.createModelBuilder;
+import {
+  Reader
+} from '../../';
+
+import {
+  readFile,
+  createModelBuilder
+} from '../helper';
 
 
 describe('Reader', function() {

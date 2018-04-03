@@ -1,23 +1,24 @@
-'use strict';
+import fs from 'fs';
 
-var fs = require('fs');
+import {
+  map
+} from 'min-dash';
 
-var map = require('min-dash').map;
+import Moddle from 'moddle';
 
-var Moddle = require('moddle');
 
-function ensureDirExists(dir) {
+export function ensureDirExists(dir) {
 
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
 }
 
-function readFile(filename) {
+export function readFile(filename) {
   return fs.readFileSync(filename, { encoding: 'UTF-8' });
 }
 
-function createModelBuilder(base) {
+export function createModelBuilder(base) {
 
   var cache = {};
 
@@ -47,7 +48,3 @@ function createModelBuilder(base) {
 
   return createModel;
 }
-
-module.exports.readFile = readFile;
-module.exports.ensureDirExists = ensureDirExists;
-module.exports.createModelBuilder = createModelBuilder;
