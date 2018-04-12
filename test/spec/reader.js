@@ -1447,7 +1447,7 @@ describe('Reader', function() {
         }
 
         // then
-        expect(context.warnings.length).to.eql(1);
+        expect(context.warnings).to.have.length(1);
 
         var warning = context.warnings[0];
 
@@ -1484,7 +1484,7 @@ describe('Reader', function() {
         }
 
         // then
-        expect(context.warnings.length).to.eql(1);
+        expect(context.warnings).to.have.length(1);
 
         var warning = context.warnings[0];
 
@@ -1497,37 +1497,6 @@ describe('Reader', function() {
         // then
         expect(result).to.jsonEqual({
           $type: 'props:ComplexAttrs'
-        });
-
-        done();
-      });
-    });
-
-
-    it('should ignore invalid attribute', function(done) {
-
-      // given
-      var reader = new Reader({ model: model, lax: true });
-      var rootHandler = reader.handler('props:ComplexAttrs');
-
-      var xml = '<props:complexAttrs xmlns:props="http://properties" unknownAttribute="FOO" />';
-
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
-
-        if (err) {
-          return done(err);
-        }
-
-        expect(context.warnings).to.eql([]);
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs'
-        });
-
-        expect(result.$attrs).to.jsonEqual({
-          'xmlns:props': 'http://properties',
-          unknownAttribute: 'FOO'
         });
 
         done();
@@ -2039,6 +2008,7 @@ describe('Reader', function() {
   describe('qualified extensions', function() {
 
     var extensionModel = createModel([ 'extension/base', 'extension/custom' ]);
+    var model = createModel([ 'properties' ]);
 
 
     it('should read typed extension property', function(done) {
@@ -2151,20 +2121,121 @@ describe('Reader', function() {
 
     describe('validation', function() {
 
-      it('should not fail parsing unknown attribute', function(done) {
+      describe('should warn on invalid well-known NS attribute', function() {
+
+        it('extension NS', function(done) {
+
+          // given
+          var reader = new Reader(extensionModel);
+          var rootHandler = reader.handler('b:Root');
+
+          var xml = `
+            <b:Root xmlns:b="http://base"
+                    xmlns:c="http://custom"
+                    c:unknownAttribute="XXX">
+            </b:Root>
+          `;
+
+          // when
+          reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+            // then
+            expect(context.warnings).to.have.length(1);
+
+            var warning = context.warnings[0];
+
+            expect(warning.message).to.eql(
+              'unknown attribute <c:unknownAttribute>'
+            );
+
+            expect(result).to.jsonEqual({
+              $type: 'b:Root'
+            });
+
+            expect(result.$attrs).to.jsonEqual({
+              'xmlns:b': 'http://base',
+              'xmlns:c': 'http://custom',
+              'c:unknownAttribute': 'XXX'
+            });
+
+            expect(err).not.to.exist;
+
+            done();
+          });
+
+        });
+
+
+        it('local NS', function(done) {
+
+          // given
+          var reader = new Reader({ model: model, lax: true });
+          var rootHandler = reader.handler('props:ComplexAttrs');
+
+          var xml = '<props:complexAttrs xmlns:props="http://properties" props:unknownAttribute="FOO" />';
+
+          reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+            if (err) {
+              return done(err);
+            }
+
+            // then
+            expect(context.warnings).to.have.length(1);
+
+            var warning = context.warnings[0];
+
+            expect(warning.message).to.eql(
+              'unknown attribute <props:unknownAttribute>'
+            );
+
+            expect(result).to.jsonEqual({
+              $type: 'props:ComplexAttrs'
+            });
+
+            expect(result.$attrs).to.jsonEqual({
+              'xmlns:props': 'http://properties',
+              'props:unknownAttribute': 'FOO'
+            });
+
+            done();
+          });
+        });
+
+      });
+
+
+      it('should permit non-well-known attributes', function(done) {
 
         // given
         var reader = new Reader(extensionModel);
         var rootHandler = reader.handler('b:Root');
 
-        var xml =
-          '<b:Root xmlns:b="http://base" xmlns:c="http://custom" ' +
-                  'xmlns:other="http://other" c:unknownAttribute="XXX">' +
-          '</b:Root>';
+        var xml = `
+          <b:Root
+              xmlns:b="http://base"
+              xmlns:blub="http://blub"
+              blub:attr="XXX">
+          </b:Root>
+        `;
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+          // then
+          expect(context.warnings).to.be.empty;
+
           expect(err).not.to.exist;
+
+          expect(result).to.jsonEqual({
+            $type: 'b:Root'
+          });
+
+          expect(result.$attrs).to.jsonEqual({
+            'xmlns:b': 'http://base',
+            'xmlns:blub': 'http://blub',
+            'blub:attr': 'XXX'
+          });
 
           done();
         });
@@ -2192,6 +2263,7 @@ describe('Reader', function() {
         });
 
       });
+
     });
 
   });
