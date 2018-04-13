@@ -2132,6 +2132,7 @@ describe('Reader', function() {
           var xml = `
             <b:Root xmlns:b="http://base"
                     xmlns:c="http://custom"
+                    xmlns:foo="http://foo"
                     c:unknownAttribute="XXX">
             </b:Root>
           `;
@@ -2155,6 +2156,7 @@ describe('Reader', function() {
             expect(result.$attrs).to.jsonEqual({
               'xmlns:b': 'http://base',
               'xmlns:c': 'http://custom',
+              'xmlns:foo': 'http://foo',
               'c:unknownAttribute': 'XXX'
             });
 
