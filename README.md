@@ -1,3 +1,6 @@
+> As of version `7.0.0` this library exposes ES modules. Use [esm](https://github.com/standard-things/esm) or a ES module aware transpiler such as Webpack, Rollup or Browserify + babelify to consume it.
+
+
 # moddle-xml
 
 [![Build Status](https://travis-ci.org/bpmn-io/moddle-xml.svg?branch=master)](https://travis-ci.org/bpmn-io/moddle-xml)
@@ -18,7 +21,7 @@ npm install --save moddle-xml
 
 Create a [moddle instance](https://github.com/bpmn-io/moddle)
 
-```
+```javascript
 import Moddle from 'moddle';
 import {
   Reader,
@@ -93,9 +96,6 @@ var xml = writer.toXML(bar);
 
 console.log(xml); // <my:root xmlns:props="http://mypackage"> ... <my:car power="10" /></my:root>
 ```
-
-> __Note:__ As of version `7.0.0` this library exposes ES modules. Use [esm](https://github.com/standard-things/esm) or a ES module aware transpiler such as Webpack, Rollup or Browserify + babelify to consume it.
-
 
 ## License
 
