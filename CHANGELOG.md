@@ -6,6 +6,12 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 7.2.3
+
+* `FIX`: correctly serialize extension attributes along with typed elements
+
+## 7.2.0
+
 * `FEAT`: warn on invalid attributes under well-known namespaces ([#32](https://github.com/bpmn-io/moddle-xml/issues/32))
 
 ## 7.1.0

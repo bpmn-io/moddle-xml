@@ -68,6 +68,58 @@ describe('Writer', function() {
       });
 
 
+      it('via xsi:type / default / extension attributes', function() {
+
+        // given
+        var writer = createWriter(datatypesModel);
+
+        var root = datatypesModel.create('dt:Root');
+
+        root.set('bounds', datatypesModel.create('dt:Rect', {
+          y: 100,
+          'xmlns:f': 'http://foo',
+          'f:bar': 'BAR'
+        }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<dt:root xmlns:dt="http://datatypes">' +
+            '<dt:bounds xmlns:f="http://foo" y="100" f:bar="BAR" />' +
+          '</dt:root>');
+      });
+
+
+      it('via xsi:type / explicit / extension attributes', function() {
+
+        // given
+        var writer = createWriter(datatypesModel);
+
+        var root = datatypesModel.create('dt:Root');
+
+        root.set('bounds', datatypesModel.create('do:Rect', {
+          x: 100,
+          'xmlns:f': 'http://foo',
+          'f:bar': 'BAR'
+        }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<dt:root xmlns:dt="http://datatypes">' +
+            '<dt:bounds xmlns:do="http://datatypes2" ' +
+                       'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+                       'xmlns:f="http://foo" xsi:type="do:Rect" ' +
+                       'x="100" f:bar="BAR" />' +
+          '</dt:root>'
+         );
+      });
+
+
       it('via xsi:type / no namespace', function() {
 
         // given
