@@ -995,6 +995,60 @@ describe('Reader', function() {
     });
 
 
+    it('should handle unexpected text', function(done) {
+
+      var xml = '<props:complexAttrs xmlns:props="http://properties">a</props:complexAttrs>';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        expect(err).not.to.exist;
+
+        expectWarnings(context.warnings, [
+          /unexpected body text <a>/
+        ]);
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'props:ComplexAttrs'
+        });
+
+        done();
+      });
+
+    });
+
+
+    it('should handle unexpected CDATA', function(done) {
+
+      var xml = '<props:complexAttrs xmlns:props="http://properties"><![CDATA[a]]></props:complexAttrs>';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        expect(err).not.to.exist;
+
+        expectWarnings(context.warnings, [
+          /unexpected body text <a>/
+        ]);
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 'props:ComplexAttrs'
+        });
+
+        done();
+      });
+
+    });
+
+
     it('should handle incomplete attribute declaration', function(done) {
 
       var xml = '<props:complexAttrs xmlns:props="http://properties" foo />';
