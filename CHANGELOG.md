@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+* `FEAT`: warn on unexpected body text
+* `FEAT`: warn on text outside root node
+* `CHORE`: bump to [`saxen@8.1.0`](https://github.com/nikku/saxen/blob/master/CHANGELOG.md#810)
+
 ## 7.2.3
 
 * `FIX`: correctly serialize extension attributes along with typed elements
