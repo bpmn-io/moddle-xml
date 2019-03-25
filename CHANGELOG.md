@@ -6,8 +6,11 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 7.3.0
+
 * `FEAT`: warn on unexpected body text
 * `FEAT`: warn on text outside root node
+* `CHORE`: remove `console.log` during import ([#28](https://github.com/bpmn-io/moddle-xml/issues/28))
 * `CHORE`: bump to [`saxen@8.1.0`](https://github.com/nikku/saxen/blob/master/CHANGELOG.md#810)
 
 ## 7.2.3
