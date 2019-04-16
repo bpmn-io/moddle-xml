@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 7.4.0
+
+* `CHORE`: get rid of `tiny-stack` as a dependency ([#38](https://github.com/bpmn-io/moddle-xml/pull/38))
+
 ## 7.3.0
 
 * `FEAT`: warn on unexpected body text
