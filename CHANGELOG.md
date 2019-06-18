@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 7.5.0
+
+* `FEAT`: validate ID attributes are [QNames](http://www.w3.org/TR/REC-xml/#NT-NameChar)
+
 ## 7.4.1
 
 * `FIX`: make ES5 compliant
