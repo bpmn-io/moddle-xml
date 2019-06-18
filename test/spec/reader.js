@@ -401,17 +401,17 @@ describe('Reader', function() {
 
         // given
         var reader = new Reader(model);
-        var rootHandler = reader.handler('props:BaseWithId');
+        var rootHandler = reader.handler('props:SimpleBodyProperties');
 
-        var xml = '<props:baseWithId xmlns:props="http://properties" id="&#60;&#62;&#10;&#38;" />';
+        var xml = '<props:simpleBodyProperties xmlns:props="http://properties" str="&#60;&#62;&#10;&#38;" />';
 
         // when
         reader.fromXML(xml, rootHandler, function(err, result) {
 
           // then
           expect(result).to.jsonEqual({
-            $type: 'props:BaseWithId',
-            id: '<>\n&'
+            $type: 'props:SimpleBodyProperties',
+            str: '<>\n&'
           });
 
           done(err);
@@ -964,11 +964,15 @@ describe('Reader', function() {
 
   describe('error handling', function() {
 
+    function expectError(error, expectedMatch) {
+      expect(error.message).to.match(expectedMatch);
+    }
+
     function expectWarnings(warnings, expectedMatches) {
       expect(warnings).to.have.length(expectedMatches.length);
 
       warnings.forEach(function(w, idx) {
-        expect(w.message).to.match(expectedMatches[idx]);
+        expectError(w, expectedMatches[idx]);
       });
     }
 
@@ -1126,6 +1130,27 @@ describe('Reader', function() {
           $type: 'props:ComplexAttrs',
           id: 'A'
         });
+
+        done();
+      });
+
+    });
+
+
+    it('should handle illegal ID attribute', function(done) {
+
+      var xml = '<props:complexAttrs id="a&lt;" />';
+
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('props:ComplexAttrs');
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        expect(err).to.exist;
+
+        // then
+        expectError(err, /nested error: illegal ID <a<>/);
 
         done();
       });
