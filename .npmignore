@@ -1,4 +1,8 @@
 test
+lib
 docs
+!dist
 .eslintrc
+.eslintignore
 .travis.yml
+rollup.config.js
