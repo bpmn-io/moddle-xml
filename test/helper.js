@@ -4,7 +4,7 @@ import {
   map
 } from 'min-dash';
 
-import Moddle from 'moddle';
+import { Moddle } from 'moddle';
 
 
 export function ensureDirExists(dir) {
