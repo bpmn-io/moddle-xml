@@ -2,7 +2,7 @@ import expect from '../expect';
 
 import {
   Reader
-} from '../../';
+} from '../../lib';
 
 import {
   readFile,

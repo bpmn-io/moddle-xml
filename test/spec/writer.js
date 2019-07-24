@@ -2,7 +2,7 @@ import expect from '../expect';
 
 import {
   Writer
-} from '../../';
+} from '../../lib';
 
 import {
   createModelBuilder
