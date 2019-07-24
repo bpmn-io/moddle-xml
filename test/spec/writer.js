@@ -116,7 +116,7 @@ describe('Writer', function() {
                        'xmlns:f="http://foo" xsi:type="do:Rect" ' +
                        'x="100" f:bar="BAR" />' +
           '</dt:root>'
-         );
+        );
       });
 
 
@@ -344,11 +344,12 @@ describe('Writer', function() {
 
         // then
         expect(xml).to.eql(
-            '<b:SubRoot xmlns:b="http://base" ' +
-                       'xmlns:c="http://custom" ' +
-                       'ownAttr="OWN" ' +
-                       'c:customAttr="1" ' +
-                       'subAttr="FOO" />');
+          '<b:SubRoot xmlns:b="http://base" ' +
+                     'xmlns:c="http://custom" ' +
+                     'ownAttr="OWN" ' +
+                     'c:customAttr="1" ' +
+                     'subAttr="FOO" />'
+        );
       });
 
 
@@ -542,7 +543,7 @@ describe('Writer', function() {
     });
 
 
-    describe('embedded properties',  function() {
+    describe('embedded properties', function() {
 
       var model = createModel([ 'properties' ]);
 

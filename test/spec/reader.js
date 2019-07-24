@@ -1979,7 +1979,7 @@ describe('Reader', function() {
 
       var xml = '<props:complexAttrs xmlns:props="http://properties" ' +
                                     'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-                  '<props:attrs xsi:type="props:Attributes" integerValue="10" />'  +
+                  '<props:attrs xsi:type="props:Attributes" integerValue="10" />' +
                 '</props:complexAttrs>';
 
       // when
