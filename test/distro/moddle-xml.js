@@ -21,7 +21,7 @@ describe('moddle', function() {
     const {
       Reader,
       Writer
-    } = require('../..');
+    } = require('../../dist/moddle-xml.umd.js');
 
     expect(Reader).to.exist;
     expect(Writer).to.exist;
