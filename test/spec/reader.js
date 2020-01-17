@@ -2534,4 +2534,48 @@ describe('Reader', function() {
 
   });
 
+
+  describe('attr <> child conflict', function() {
+
+    var model = createModel([ 'attr-child-conflict' ]);
+
+
+    it('should import attr and child with the same name', function(done) {
+
+      // given
+      var reader = new Reader(model);
+      var rootHandler = reader.handler('s:Foo');
+
+      var xml = `
+        <s:foo xmlns:s="http://s" bar="Bar">
+          <s:bar woop="WHOOPS">
+          </s:bar>
+        </s:foo>`;
+
+      // when
+      reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+        if (err) {
+          return done(err);
+        }
+
+        // then
+        expect(result).to.jsonEqual({
+          $type: 's:Foo',
+          bar: 'Bar',
+          bars: [
+            {
+              $type: 's:Bar',
+              woop: 'WHOOPS'
+            }
+          ]
+        });
+
+        done();
+      });
+
+    });
+
+  });
+
 });

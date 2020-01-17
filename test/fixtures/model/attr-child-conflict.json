@@ -1,0 +1,23 @@
+{
+  "name": "S",
+  "uri": "http://s",
+  "prefix": "s",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "Foo",
+      "properties": [
+        { "name": "bar", "type": "String", "isAttr": true },
+        { "name": "bars", "type": "Bar", "isMany": true }
+      ]
+    },
+    {
+      "name": "Bar",
+      "properties": [
+        { "name": "woop", "type": "String", "isAttr": true }
+      ]
+    }
+  ]
+}
