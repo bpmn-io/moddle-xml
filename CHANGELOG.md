@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 8.0.3
+
+* `CHORE`: bump to `saxen@8.1.1`
+
 ## 8.0.2
 
 * `FIX`: read element as type if conflicting named propery is defines an attribute ([#43](https://github.com/bpmn-io/moddle-xml/issues/43))
