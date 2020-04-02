@@ -47,32 +47,36 @@ var reader = new Reader(model);
 var rootHandler = reader.handler('my:Root');
 
 // when
-reader.fromXML(xml, rootHandler, function(err, cars, context) {
+try {
+  var result = await reader.fromXML(xml, rootHandler);
 
-  if (err) {
-    console.log('import error', err);
-  } else {
+  const {
+    element: cars,
+    parseContext
+  } = result;
 
-    if (context.warnings.length) {
-      console.log('import warnings', context.warnings);
-    }
-
-    console.log(cars);
-
-    // {
-    //  $type: 'my:Root',
-    //  cars: [
-    //    {
-    //      $type: 'my:Car',
-    //      id: 'Car_1',
-    //      engine: [
-    //        { $type: 'my:Engine', powser: 121, fuelConsumption: 10 }
-    //      ]
-    //    }
-    //  ]
-    // }
+  if (parseContext.warnings.length) {
+    console.log('import warnings', parseContext.warnings);
   }
-});
+
+  console.log(cars);
+
+  // {
+  //  $type: 'my:Root',
+  //  cars: [
+  //    {
+  //      $type: 'my:Car',
+  //      id: 'Car_1',
+  //      engine: [
+  //        { $type: 'my:Engine', powser: 121, fuelConsumption: 10 }
+  //      ]
+  //    }
+  //  ]
+  // }
+
+} catch (err) {
+  console.log('import error', err);
+}
 ```
 
 
