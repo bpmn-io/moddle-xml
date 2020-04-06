@@ -25,7 +25,7 @@ import {
   Writer
 } from 'moddle-xml';
 
-var model = new Moddle([ myPackage ]);
+const model = new Moddle([ myPackage ]);
 ```
 
 
@@ -34,29 +34,27 @@ var model = new Moddle([ myPackage ]);
 Use the reader to parse XML into an easily accessible object tree:
 
 ```javascript
-var model; // previously created
+const model; // previously created
 
-var xml =
+const xml =
   '<my:root xmlns:props="http://mypackage">' +
     '<my:car id="Car_1">' +
       '<my:engine power="121" fuelConsumption="10" />' +
     '</my:car>' +
   '</my:root>';
 
-var reader = new Reader(model);
-var rootHandler = reader.handler('my:Root');
+const reader = new Reader(model);
+const rootHandler = reader.handler('my:Root');
 
 // when
 try {
-  var result = await reader.fromXML(xml, rootHandler);
-
   const {
     element: cars,
-    parseContext
-  } = result;
+    warnings
+  } = await reader.fromXML(xml, rootHandler);
 
-  if (parseContext.warnings.length) {
-    console.log('import warnings', parseContext.warnings);
+  if (warnings.length) {
+    console.log('import warnings', warnings);
   }
 
   console.log(cars);
@@ -75,7 +73,7 @@ try {
   // }
 
 } catch (err) {
-  console.log('import error', err);
+  console.log('import error', err, err.warnings);
 }
 ```
 
