@@ -29,14 +29,14 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         elementsById,
         warnings,
         references
       } = await reader.fromXML(xml, rootHandler);
 
       // then
-      expect(element).to.exist;
+      expect(rootElement).to.exist;
       expect(warnings).to.eql([]);
       expect(references).to.eql([]);
       expect(elementsById).to.eql({});
@@ -87,11 +87,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:ComplexAttrs',
           attrs: {
             $type: 'props:Attributes',
@@ -114,11 +114,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:ComplexAttrs',
           attrs: {
             $type: 'props:SubAttributes',
@@ -140,10 +140,10 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:ComplexAttrs',
           attrs: {
             $type: 'props:SubAttributes',
@@ -165,11 +165,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:ComplexAttrs',
           attrs: {
             $type: 'props:SubAttributes',
@@ -192,11 +192,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:ComplexAttrsCol',
           attrs: [
             { $type: 'props:Attributes', integerValue: 10 },
@@ -223,11 +223,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'dt:Root',
           otherBounds: [
             { $type: 'dt:Rect', y: 100 },
@@ -254,11 +254,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'dt:Root',
           otherBounds: [
             { $type: 'dt:Rect', y: 100 },
@@ -285,11 +285,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'dt:Root',
           otherBounds: [
             { $type: 'dt:Rect', y: 100 },
@@ -343,10 +343,10 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'b:Root',
           generic: {
             $type: 'Any',
@@ -370,11 +370,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:SimpleBodyProperties',
           str: '<>\n&'
         });
@@ -389,11 +389,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML('<ext:root xmlns:ext="http://extended" id="FOO" />', rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'ext:Root',
           id: 'FOO'
         });
@@ -416,11 +416,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:SimpleBodyProperties',
           intValue: 5
         });
@@ -439,11 +439,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:SimpleBodyProperties',
           boolValue: false
         });
@@ -464,11 +464,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:SimpleBodyProperties',
           str: [ 'A', 'B', 'C' ]
         });
@@ -487,11 +487,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'r:Extension',
           value: ''
         });
@@ -512,11 +512,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:SimpleBody',
           body: 'textContent'
         });
@@ -537,11 +537,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:SimpleBody',
           body: '< 10, > 20, &nbsp;'
         });
@@ -558,11 +558,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:SimpleBody'
         });
       });
@@ -580,11 +580,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:SimpleBody',
           body: '<h2>HTML markup</h2>'
         });
@@ -603,11 +603,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML('<props:root xmlns:props="http://properties" />', rootHandler);
 
         // then
-        expect(element).to.jsonEqual({ $type: 'props:Root' });
+        expect(rootElement).to.jsonEqual({ $type: 'props:Root' });
 
       });
 
@@ -622,11 +622,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML('<na:Root xmlns:na="http://noalias" />', rootHandler);
 
         // then
-        expect(element).to.jsonEqual({ $type: 'na:Root' });
+        expect(rootElement).to.jsonEqual({ $type: 'na:Root' });
       });
 
     });
@@ -651,11 +651,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:Root',
           any: [
             {
@@ -670,8 +670,8 @@ describe('Reader', function() {
           ]
         });
 
-        var referenced = element.any[0].children[0];
-        var referencingSingle = element.any[1];
+        var referenced = rootElement.any[0].children[0];
+        var referencingSingle = rootElement.any[1];
 
         expect(referencingSingle.referencedComplex).to.equal(referenced);
       });
@@ -697,11 +697,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:Root',
           any: [
             {
@@ -716,10 +716,10 @@ describe('Reader', function() {
           ]
         });
 
-        var containedCollection = element.any[0];
+        var containedCollection = rootElement.any[0];
         var complex_c2 = containedCollection.children[1];
 
-        var referencingCollection = element.any[1];
+        var referencingCollection = rootElement.any[1];
 
         expect(referencingCollection.references).to.jsonEqual([ complex_c2, containedCollection ]);
       });
@@ -743,11 +743,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'props:Root',
           any: [
             {
@@ -763,11 +763,11 @@ describe('Reader', function() {
           ]
         });
 
-        var containedCollection = element.any[0];
+        var containedCollection = rootElement.any[0];
         var complex_c2 = containedCollection.children[1];
         var complex_c3 = containedCollection.children[2];
 
-        var attrReferenceCollection = element.any[1];
+        var attrReferenceCollection = rootElement.any[1];
 
         expect(attrReferenceCollection.refs).to.jsonEqual([ complex_c2, complex_c3, containedCollection ]);
       });
@@ -957,7 +957,7 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
@@ -966,7 +966,7 @@ describe('Reader', function() {
       ]);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'props:ComplexAttrs'
       });
     });
@@ -981,7 +981,7 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
@@ -990,7 +990,7 @@ describe('Reader', function() {
       ]);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'props:ComplexAttrs'
       });
     });
@@ -1005,7 +1005,7 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
@@ -1014,7 +1014,7 @@ describe('Reader', function() {
       ]);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'props:ComplexAttrs'
       });
     });
@@ -1029,7 +1029,7 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
@@ -1038,7 +1038,7 @@ describe('Reader', function() {
       ]);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'props:ComplexAttrs',
         id: 'A'
       });
@@ -1054,7 +1054,7 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
@@ -1064,7 +1064,7 @@ describe('Reader', function() {
       ]);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'props:ComplexAttrs',
         id: 'A'
       });
@@ -1357,19 +1357,19 @@ describe('Reader', function() {
 
           // when
           var {
-            element,
+            rootElement,
             warnings
           } = await reader.fromXML(xml, rootHandler);
 
           // then
-          expect(element).to.jsonEqual({
+          expect(rootElement).to.jsonEqual({
             $type: 'props:Root',
             any: [
               { $type: 'props:ReferencingSingle', id: 'C_4' }
             ]
           });
 
-          var referencingSingle = element.any[0];
+          var referencingSingle = rootElement.any[0];
 
           expect(referencingSingle.referencedComplex).not.to.exist;
 
@@ -1404,12 +1404,12 @@ describe('Reader', function() {
 
           // when
           var {
-            element,
+            rootElement,
             warnings
           } = await reader.fromXML(xml, rootHandler);
 
           // then
-          expect(element).to.jsonEqual({
+          expect(rootElement).to.jsonEqual({
             $type: 'props:Root',
             any: [
               {
@@ -1424,8 +1424,8 @@ describe('Reader', function() {
           });
 
           // expect invalid reference not to be included
-          var c2 = element.any[0].children[0];
-          var referencingCollection = element.any[1];
+          var c2 = rootElement.any[0].children[0];
+          var referencingCollection = rootElement.any[1];
 
           expect(referencingCollection.references).to.jsonEqual([ c2 ]);
 
@@ -1466,12 +1466,12 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'props:ComplexAttrs'
       });
 
@@ -1498,12 +1498,12 @@ describe('Reader', function() {
                 '</props:complexAttrs>';
 
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'props:ComplexAttrs'
       });
 
@@ -1537,11 +1537,11 @@ describe('Reader', function() {
         var xml = '<e:root xmlns:e="http://extensions" xmlns:other="http://other" other:foo="BAR" />';
 
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element.$attrs).to.jsonEqual({
+        expect(rootElement.$attrs).to.jsonEqual({
           'xmlns:e': 'http://extensions',
           'xmlns:other': 'http://other',
           'other:foo' : 'BAR'
@@ -1558,11 +1558,11 @@ describe('Reader', function() {
         var xml = '<root xmlns="http://extensions" />';
 
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element.$attrs).to.jsonEqual({
+        expect(rootElement.$attrs).to.jsonEqual({
           'xmlns': 'http://extensions'
         });
       });
@@ -1586,11 +1586,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'e:Root',
           id: 'FOO',
           extensions: [
@@ -1625,11 +1625,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'e:Root',
           id: 'FOO',
           extensions: [
@@ -1662,11 +1662,11 @@ describe('Reader', function() {
 
         // when
         var {
-          element
+          rootElement
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'e:Root',
           id: 'FOO',
           extensions: [
@@ -1701,10 +1701,10 @@ describe('Reader', function() {
 
           // when
           var {
-            element
+            rootElement
           } = await reader.fromXML(xml, rootHandler);
 
-          var note = element.extensions[0];
+          var note = rootElement.extensions[0];
 
           // then
           expect(note.$descriptor).to.exist;
@@ -1727,10 +1727,10 @@ describe('Reader', function() {
 
           // when
           var {
-            element
+            rootElement
           } = await reader.fromXML(xml, rootHandler);
 
-          var note = element.extensions[0];
+          var note = rootElement.extensions[0];
 
           // then
           expect(note.$descriptor).to.eql({
@@ -1767,11 +1767,11 @@ describe('Reader', function() {
 
           // when
           var {
-            element
+            rootElement
           } = await reader.fromXML(xml, rootHandler);
 
           // then
-          expect(element).to.jsonEqual({
+          expect(rootElement).to.jsonEqual({
             $type: 'e:Root',
             extensions: [
               {
@@ -1815,11 +1815,11 @@ describe('Reader', function() {
 
           // when
           var {
-            element
+            rootElement
           } = await reader.fromXML(xml, rootHandler);
 
           // then
-          expect(element).to.jsonEqual({
+          expect(rootElement).to.jsonEqual({
             $type: 'e:Root',
             extensions: [
               {
@@ -1874,12 +1874,12 @@ describe('Reader', function() {
 
       // when
       var {
-        element
+        rootElement
       } = await reader.fromXML(xml, rootHandler);
 
       // then
-      expect(element.$parent).not.to.exist;
-      expect(element.attrs.$parent).to.equal(element);
+      expect(rootElement.$parent).not.to.exist;
+      expect(rootElement.attrs.$parent).to.equal(rootElement);
     });
 
 
@@ -1900,11 +1900,11 @@ describe('Reader', function() {
 
       // when
       var {
-        element
+        rootElement
       } = await reader.fromXML(xml, rootHandler);
 
-      var containedCollection = element.any[0];
-      var referencedComplex = element.any[1].referencedComplex;
+      var containedCollection = rootElement.any[0];
+      var referencedComplex = rootElement.any[1].referencedComplex;
 
       // then
       expect(referencedComplex.$parent).to.equal(containedCollection);
@@ -1931,16 +1931,16 @@ describe('Reader', function() {
 
       // when
       var {
-        element
+        rootElement
       } = await reader.fromXML(xml, rootHandler);
 
-      var child = element.extensions[0];
+      var child = rootElement.extensions[0];
       var nested = child.$children[0];
 
-      expect(child.$parent).to.equal(element);
+      expect(child.$parent).to.equal(rootElement);
       expect(nested.$parent).to.equal(child);
 
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'e:Root',
         id: 'FOO',
         extensions: [
@@ -1978,10 +1978,10 @@ describe('Reader', function() {
 
       // when
       var {
-        element
+        rootElement
       } = await reader.fromXML(xml, rootHandler);
 
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'b:Root',
         generic: {
           $type: 'c:CustomGeneric',
@@ -2005,10 +2005,10 @@ describe('Reader', function() {
 
       // when
       var {
-        element
+        rootElement
       } = await reader.fromXML(xml, rootHandler);
 
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'b:Root',
         customAttr: 666
       });
@@ -2032,10 +2032,10 @@ describe('Reader', function() {
 
       // when
       var {
-        element
+        rootElement
       } = await reader.fromXML(xml, rootHandler);
 
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'b:Root',
         genericCollection: [
           {
@@ -2078,16 +2078,16 @@ describe('Reader', function() {
 
           // when
           var {
-            element,
+            rootElement,
             warnings
           } = await reader.fromXML(xml, rootHandler);
 
           // then
-          expect(element).to.jsonEqual({
+          expect(rootElement).to.jsonEqual({
             $type: 'b:Root'
           });
 
-          expect(element.$attrs).to.jsonEqual({
+          expect(rootElement.$attrs).to.jsonEqual({
             'xmlns:b': 'http://base',
             'xmlns:c': 'http://custom',
             'xmlns:foo': 'http://foo',
@@ -2113,16 +2113,16 @@ describe('Reader', function() {
           var xml = '<props:complexAttrs xmlns:props="http://properties" props:unknownAttribute="FOO" />';
 
           var {
-            element,
+            rootElement,
             warnings
           } = await reader.fromXML(xml, rootHandler);
 
           // then
-          expect(element).to.jsonEqual({
+          expect(rootElement).to.jsonEqual({
             $type: 'props:ComplexAttrs'
           });
 
-          expect(element.$attrs).to.jsonEqual({
+          expect(rootElement.$attrs).to.jsonEqual({
             'xmlns:props': 'http://properties',
             'props:unknownAttribute': 'FOO'
           });
@@ -2155,16 +2155,16 @@ describe('Reader', function() {
 
         // when
         var {
-          element,
+          rootElement,
           warnings
         } = await reader.fromXML(xml, rootHandler);
 
         // then
-        expect(element).to.jsonEqual({
+        expect(rootElement).to.jsonEqual({
           $type: 'b:Root'
         });
 
-        expect(element.$attrs).to.jsonEqual({
+        expect(rootElement.$attrs).to.jsonEqual({
           'xmlns:b': 'http://base',
           'xmlns:blub': 'http://blub',
           'blub:attr': 'XXX'
@@ -2223,12 +2223,12 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         elementsById
       } = await reader.fromXML(xml, rootHandler);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'fi:Root',
         children: [
           {
@@ -2256,12 +2256,12 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 'fi:Root',
         children: [
           {
@@ -2298,13 +2298,13 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
       // then
       expect(warnings).to.be.empty;
-      expect(element).to.exist;
+      expect(rootElement).to.exist;
     });
 
 
@@ -2321,7 +2321,7 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
@@ -2331,7 +2331,7 @@ describe('Reader', function() {
         /unsupported document encoding <windows-1252>/
       );
 
-      expect(element).to.exist;
+      expect(rootElement).to.exist;
     });
 
 
@@ -2348,7 +2348,7 @@ describe('Reader', function() {
 
       // when
       var {
-        element,
+        rootElement,
         warnings
       } = await reader.fromXML(xml, rootHandler);
 
@@ -2358,7 +2358,7 @@ describe('Reader', function() {
         /unsupported document encoding <WINDOWS-1252>/
       );
 
-      expect(element).to.exist;
+      expect(rootElement).to.exist;
     });
 
   });
@@ -2383,11 +2383,11 @@ describe('Reader', function() {
 
       // when
       var {
-        element
+        rootElement
       } = await reader.fromXML(xml, rootHandler);
 
       // then
-      expect(element).to.jsonEqual({
+      expect(rootElement).to.jsonEqual({
         $type: 's:Foo',
         bar: 'Bar',
         bars: [

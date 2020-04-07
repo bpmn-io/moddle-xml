@@ -49,7 +49,7 @@ const rootHandler = reader.handler('my:Root');
 // when
 try {
   const {
-    element: cars,
+    rootElement: cars,
     warnings
   } = await reader.fromXML(xml, rootHandler);
 
