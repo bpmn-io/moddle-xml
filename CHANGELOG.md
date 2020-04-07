@@ -6,6 +6,14 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 9.0.0
+
+* `FEAT`: promisify `Reader#fromXML` ([#45](https://github.com/bpmn-io/moddle-xml/pull/45))
+
+### Breaking Changes
+
+* `Reader#fromXML` API now returns a Promise. Support for callbacks is dropped. Refer to the [documentation](https://github.com/bpmn-io/moddle-xml#read-xml) for updated usage information.
+
 ## 8.0.3
 
 * `CHORE`: bump to `saxen@8.1.1`
