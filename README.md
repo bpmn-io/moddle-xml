@@ -25,7 +25,7 @@ import {
   Writer
 } from 'moddle-xml';
 
-var model = new Moddle([ myPackage ]);
+const model = new Moddle([ myPackage ]);
 ```
 
 
@@ -34,45 +34,47 @@ var model = new Moddle([ myPackage ]);
 Use the reader to parse XML into an easily accessible object tree:
 
 ```javascript
-var model; // previously created
+const model; // previously created
 
-var xml =
+const xml =
   '<my:root xmlns:props="http://mypackage">' +
     '<my:car id="Car_1">' +
       '<my:engine power="121" fuelConsumption="10" />' +
     '</my:car>' +
   '</my:root>';
 
-var reader = new Reader(model);
-var rootHandler = reader.handler('my:Root');
+const reader = new Reader(model);
+const rootHandler = reader.handler('my:Root');
 
 // when
-reader.fromXML(xml, rootHandler, function(err, cars, context) {
+try {
+  const {
+    rootElement: cars,
+    warnings
+  } = await reader.fromXML(xml, rootHandler);
 
-  if (err) {
-    console.log('import error', err);
-  } else {
-
-    if (context.warnings.length) {
-      console.log('import warnings', context.warnings);
-    }
-
-    console.log(cars);
-
-    // {
-    //  $type: 'my:Root',
-    //  cars: [
-    //    {
-    //      $type: 'my:Car',
-    //      id: 'Car_1',
-    //      engine: [
-    //        { $type: 'my:Engine', powser: 121, fuelConsumption: 10 }
-    //      ]
-    //    }
-    //  ]
-    // }
+  if (warnings.length) {
+    console.log('import warnings', warnings);
   }
-});
+
+  console.log(cars);
+
+  // {
+  //  $type: 'my:Root',
+  //  cars: [
+  //    {
+  //      $type: 'my:Car',
+  //      id: 'Car_1',
+  //      engine: [
+  //        { $type: 'my:Engine', powser: 121, fuelConsumption: 10 }
+  //      ]
+  //    }
+  //  ]
+  // }
+
+} catch (err) {
+  console.log('import error', err, err.warnings);
+}
 ```
 
 

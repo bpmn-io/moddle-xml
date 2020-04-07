@@ -19,7 +19,7 @@ describe('Reader', function() {
 
     var model = createModel([ 'properties' ]);
 
-    it('should provide result with context', function(done) {
+    it('should resolve with context', async function() {
 
       // given
       var reader = new Reader(model);
@@ -28,36 +28,40 @@ describe('Reader', function() {
       var xml = '<props:complexAttrs xmlns:props="http://properties"></props:complexAttrs>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        elementsById,
+        warnings,
+        references
+      } = await reader.fromXML(xml, rootHandler);
 
-        // then
-        expect(err).not.to.exist;
-
-        expect(result).to.exist;
-        expect(context).to.exist;
-
-        done();
-      });
+      // then
+      expect(rootElement).to.exist;
+      expect(warnings).to.eql([]);
+      expect(references).to.eql([]);
+      expect(elementsById).to.eql({});
     });
 
 
-    it('should provide error with context', function(done) {
+    it('should reject with context', async function() {
 
       // given
       var reader = new Reader(model);
       var rootHandler = reader.handler('props:ComplexAttrs');
 
       // when
-      reader.fromXML('this-is-garbage', rootHandler, function(err, result, context) {
+      var err;
 
-        // then
-        expect(err).to.exist;
+      try {
+        await reader.fromXML('this-is-garbage', rootHandler);
+      } catch (_err) {
+        err = _err;
+      }
 
-        expect(result).not.to.exist;
-        expect(context).to.exist;
-
-        done();
-      });
+      // then
+      expect(err).to.exist;
+      expect(err.message).to.exist;
+      expect(err.warnings).to.eql([]);
     });
 
   });
@@ -68,9 +72,10 @@ describe('Reader', function() {
     var model = createModel([ 'properties' ]);
     var extendedModel = createModel([ 'properties', 'properties-extended' ]);
 
+
     describe('data types', function() {
 
-      it('simple', function(done) {
+      it('simple', async function() {
 
         // given
         var reader = new Reader(model);
@@ -81,27 +86,22 @@ describe('Reader', function() {
                   '</props:complexAttrs>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:ComplexAttrs',
+          attrs: {
+            $type: 'props:Attributes',
+            integerValue: 10
           }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:ComplexAttrs',
-            attrs: {
-              $type: 'props:Attributes',
-              integerValue: 10
-            }
-          });
-
-          done(err);
         });
       });
 
 
-      it('simple / xsi:type', function(done) {
+      it('simple / xsi:type', async function() {
 
         // given
         var reader = new Reader(model);
@@ -113,27 +113,22 @@ describe('Reader', function() {
                   '</props:complexAttrs>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:ComplexAttrs',
+          attrs: {
+            $type: 'props:SubAttributes',
+            integerValue: 10
           }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:ComplexAttrs',
-            attrs: {
-              $type: 'props:SubAttributes',
-              integerValue: 10
-            }
-          });
-
-          done(err);
         });
       });
 
 
-      it('simple / xsi:type / default ns', function(done) {
+      it('simple / xsi:type / default ns', async function() {
 
         // given
         var reader = new Reader(model);
@@ -144,27 +139,21 @@ describe('Reader', function() {
                   '</complexAttrs>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:ComplexAttrs',
+          attrs: {
+            $type: 'props:SubAttributes',
+            integerValue: 10
           }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:ComplexAttrs',
-            attrs: {
-              $type: 'props:SubAttributes',
-              integerValue: 10
-            }
-          });
-
-          done(err);
         });
       });
 
 
-      it('simple / xsi:type / different ns prefix', function(done) {
+      it('simple / xsi:type / different ns prefix', async function() {
 
         // given
         var reader = new Reader(model);
@@ -175,27 +164,22 @@ describe('Reader', function() {
                   '</a:complexAttrs>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:ComplexAttrs',
+          attrs: {
+            $type: 'props:SubAttributes',
+            integerValue: 10
           }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:ComplexAttrs',
-            attrs: {
-              $type: 'props:SubAttributes',
-              integerValue: 10
-            }
-          });
-
-          done(err);
         });
       });
 
 
-      it('collection / no xsi:type', function(done) {
+      it('collection / no xsi:type', async function() {
 
         // given
         var reader = new Reader(model);
@@ -207,27 +191,22 @@ describe('Reader', function() {
                   '</props:complexAttrsCol>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:ComplexAttrsCol',
-            attrs: [
-              { $type: 'props:Attributes', integerValue: 10 },
-              { $type: 'props:Attributes', booleanValue: true }
-            ]
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:ComplexAttrsCol',
+          attrs: [
+            { $type: 'props:Attributes', integerValue: 10 },
+            { $type: 'props:Attributes', booleanValue: true }
+          ]
         });
       });
 
 
-      it('collection / xsi:type / from other namespace)', function(done) {
+      it('collection / xsi:type / from other namespace)', async function() {
 
         var datatypeModel = createModel(['datatype', 'datatype-external']);
 
@@ -243,27 +222,22 @@ describe('Reader', function() {
           '</dt:root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'dt:Root',
-            otherBounds: [
-              { $type: 'dt:Rect', y: 100 },
-              { $type: 'do:Rect', x: 200 }
-            ]
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'dt:Root',
+          otherBounds: [
+            { $type: 'dt:Rect', y: 100 },
+            { $type: 'do:Rect', x: 200 }
+          ]
         });
       });
 
 
-      it('collection / xsi:type / from other namespace / default ns)', function(done) {
+      it('collection / xsi:type / from other namespace / default ns)', async function() {
 
         var datatypeModel = createModel(['datatype', 'datatype-external']);
 
@@ -279,27 +253,22 @@ describe('Reader', function() {
           '</root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'dt:Root',
-            otherBounds: [
-              { $type: 'dt:Rect', y: 100 },
-              { $type: 'do:Rect', x: 200 }
-            ]
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'dt:Root',
+          otherBounds: [
+            { $type: 'dt:Rect', y: 100 },
+            { $type: 'do:Rect', x: 200 }
+          ]
         });
       });
 
 
-      it('collection / xsi:type / type alias', function(done) {
+      it('collection / xsi:type / type alias', async function() {
 
         var datatypeModel = createModel(['datatype', 'datatype-aliased']);
 
@@ -315,27 +284,22 @@ describe('Reader', function() {
           '</root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'dt:Root',
-            otherBounds: [
-              { $type: 'dt:Rect', y: 100 },
-              { $type: 'da:Rect', z: 200 }
-            ]
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'dt:Root',
+          otherBounds: [
+            { $type: 'dt:Rect', y: 100 },
+            { $type: 'da:Rect', z: 200 }
+          ]
         });
       });
 
 
-      it('collection / xsi:type / unknown type', function(done) {
+      it('collection / xsi:type / unknown type', async function() {
 
         var datatypeModel = createModel([ 'datatype' ]);
 
@@ -348,19 +312,23 @@ describe('Reader', function() {
             '<otherBounds xsi:type="Unknown" y="100" />' +
           '</root>';
 
+        var err;
+
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        try {
+          await reader.fromXML(xml, rootHandler);
+        } catch (_err) {
+          err = _err;
+        }
 
-          expect(err).to.exist;
+        // then
+        expect(err).to.exist;
 
-          expect(err.message).to.contain('unparsable content <otherBounds> detected');
-
-          done();
-        });
+        expect(err.message).to.contain('unparsable content <otherBounds> detected');
       });
 
 
-      it('generic, non-ns elements', function(done) {
+      it('generic, non-ns elements', async function() {
 
         var extensionModel = createModel([ 'extension/base' ]);
 
@@ -374,21 +342,16 @@ describe('Reader', function() {
           '</b:Root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
+        expect(rootElement).to.jsonEqual({
+          $type: 'b:Root',
+          generic: {
+            $type: 'Any',
+            foo: 'BAR'
           }
-
-          expect(result).to.jsonEqual({
-            $type: 'b:Root',
-            generic: {
-              $type: 'Any',
-              foo: 'BAR'
-            }
-          });
-
-          done();
         });
       });
 
@@ -397,7 +360,7 @@ describe('Reader', function() {
 
     describe('attributes', function() {
 
-      it('with special characters', function(done) {
+      it('with special characters', async function() {
 
         // given
         var reader = new Reader(model);
@@ -406,34 +369,34 @@ describe('Reader', function() {
         var xml = '<props:simpleBodyProperties xmlns:props="http://properties" str="&#60;&#62;&#10;&#38;" />';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:SimpleBodyProperties',
-            str: '<>\n&'
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:SimpleBodyProperties',
+          str: '<>\n&'
         });
       });
 
 
-      it('inherited', function(done) {
+      it('inherited', async function() {
 
         // given
         var reader = new Reader(extendedModel);
         var rootHandler = reader.handler('ext:Root');
 
         // when
-        reader.fromXML('<ext:root xmlns:ext="http://extended" id="FOO" />', rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML('<ext:root xmlns:ext="http://extended" id="FOO" />', rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({ $type: 'ext:Root', id: 'FOO' });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'ext:Root',
+          id: 'FOO'
         });
-
       });
 
     });
@@ -441,7 +404,7 @@ describe('Reader', function() {
 
     describe('simple nested properties', function() {
 
-      it('parse boolean property', function(done) {
+      it('parse boolean property', async function() {
 
         // given
         var reader = new Reader(model);
@@ -452,20 +415,19 @@ describe('Reader', function() {
                   '</props:simpleBodyProperties>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:SimpleBodyProperties',
-            intValue: 5
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:SimpleBodyProperties',
+          intValue: 5
         });
       });
 
 
-      it('parse boolean property', function(done) {
+      it('parse boolean property', async function() {
 
         // given
         var reader = new Reader(model);
@@ -476,20 +438,19 @@ describe('Reader', function() {
                   '</props:simpleBodyProperties>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:SimpleBodyProperties',
-            boolValue: false
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:SimpleBodyProperties',
+          boolValue: false
         });
       });
 
 
-      it('parse string isMany prooperty', function(done) {
+      it('parse string isMany prooperty', async function() {
 
         // given
         var reader = new Reader(model);
@@ -502,20 +463,19 @@ describe('Reader', function() {
                   '</props:simpleBodyProperties>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:SimpleBodyProperties',
-            str: [ 'A', 'B', 'C' ]
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:SimpleBodyProperties',
+          str: [ 'A', 'B', 'C' ]
         });
       });
 
 
-      it('should not discard value with an empty tag', function(done) {
+      it('should not discard value with an empty tag', async function() {
 
         // given
         var reader = new Reader(createModel([ 'replace' ]));
@@ -526,27 +486,23 @@ describe('Reader', function() {
                   '</r:Extension>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'r:Extension',
-            value: ''
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'r:Extension',
+          value: ''
         });
       });
+
     });
 
 
     describe('body text', function() {
 
-      it('parse body text property', function(done) {
+      it('parse body text property', async function() {
 
         // given
         var reader = new Reader(model);
@@ -555,20 +511,19 @@ describe('Reader', function() {
         var xml = '<props:simpleBody xmlns:props="http://properties">textContent</props:simpleBody>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:SimpleBody',
-            body: 'textContent'
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:SimpleBody',
+          body: 'textContent'
         });
       });
 
 
-      it('parse body text property / encoded', function(done) {
+      it('parse body text property / encoded', async function() {
 
         // given
         var reader = new Reader(model);
@@ -581,20 +536,19 @@ describe('Reader', function() {
         );
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:SimpleBody',
-            body: '< 10, > 20, &nbsp;'
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:SimpleBody',
+          body: '< 10, > 20, &nbsp;'
         });
       });
 
 
-      it('parse body text property / trimmed whitespace', function(done) {
+      it('parse body text property / trimmed whitespace', async function() {
 
         // given
         var reader = new Reader(model);
@@ -603,19 +557,18 @@ describe('Reader', function() {
         var xml = '<props:simpleBody xmlns:props="http://properties">    </props:simpleBody>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:SimpleBody'
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:SimpleBody'
         });
       });
 
 
-      it('parse body CDATA property / trimmed whitespace', function(done) {
+      it('parse body CDATA property / trimmed whitespace', async function() {
 
         // given
         var reader = new Reader(model);
@@ -626,15 +579,14 @@ describe('Reader', function() {
                   '</props:simpleBody>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:SimpleBody',
-            body: '<h2>HTML markup</h2>'
-          });
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:SimpleBody',
+          body: '<h2>HTML markup</h2>'
         });
       });
 
@@ -643,25 +595,24 @@ describe('Reader', function() {
 
     describe('alias', function() {
 
-      it('lowerCase', function(done) {
+      it('lowerCase', async function() {
 
         // given
         var reader = new Reader(model);
         var rootHandler = reader.handler('props:Root');
 
         // when
-        reader.fromXML('<props:root xmlns:props="http://properties" />', rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML('<props:root xmlns:props="http://properties" />', rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({ $type: 'props:Root' });
-
-          done(err);
-        });
+        // then
+        expect(rootElement).to.jsonEqual({ $type: 'props:Root' });
 
       });
 
 
-      it('none', function(done) {
+      it('none', async function() {
 
         // given
         var noAliasModel = createModel(['noalias']);
@@ -670,13 +621,12 @@ describe('Reader', function() {
         var rootHandler = reader.handler('na:Root');
 
         // when
-        reader.fromXML('<na:Root xmlns:na="http://noalias" />', rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML('<na:Root xmlns:na="http://noalias" />', rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({ $type: 'na:Root' });
-
-          done(err);
-        });
+        // then
+        expect(rootElement).to.jsonEqual({ $type: 'na:Root' });
       });
 
     });
@@ -684,7 +634,7 @@ describe('Reader', function() {
 
     describe('reference', function() {
 
-      it('single', function(done) {
+      it('single', async function() {
 
         // given
         var reader = new Reader(extendedModel);
@@ -700,35 +650,34 @@ describe('Reader', function() {
           '</props:root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:Root',
-            any: [
-              {
-                $type: 'props:ContainedCollection',
-                id: 'C_5',
-                children: [
-                  { $type: 'props:Complex', id: 'C_1' },
-                  { $type: 'props:Complex', id: 'C_2' }
-                ]
-              },
-              { $type: 'props:ReferencingSingle', id: 'C_4' }
-            ]
-          });
-
-          var referenced = result.any[0].children[0];
-          var referencingSingle = result.any[1];
-
-          expect(referencingSingle.referencedComplex).to.equal(referenced);
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:Root',
+          any: [
+            {
+              $type: 'props:ContainedCollection',
+              id: 'C_5',
+              children: [
+                { $type: 'props:Complex', id: 'C_1' },
+                { $type: 'props:Complex', id: 'C_2' }
+              ]
+            },
+            { $type: 'props:ReferencingSingle', id: 'C_4' }
+          ]
         });
+
+        var referenced = rootElement.any[0].children[0];
+        var referencingSingle = rootElement.any[1];
+
+        expect(referencingSingle.referencedComplex).to.equal(referenced);
       });
 
 
-      it('collection', function(done) {
+      it('collection', async function() {
 
         // given
         var reader = new Reader(extendedModel);
@@ -747,37 +696,36 @@ describe('Reader', function() {
           '</props:root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:Root',
-            any: [
-              {
-                $type: 'props:ContainedCollection',
-                id: 'C_5',
-                children: [
-                  { $type: 'props:Complex', id: 'C_1' },
-                  { $type: 'props:Complex', id: 'C_2' }
-                ]
-              },
-              { $type: 'props:ReferencingCollection', id: 'C_4' }
-            ]
-          });
-
-          var containedCollection = result.any[0];
-          var complex_c2 = containedCollection.children[1];
-
-          var referencingCollection = result.any[1];
-
-          expect(referencingCollection.references).to.jsonEqual([ complex_c2, containedCollection ]);
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:Root',
+          any: [
+            {
+              $type: 'props:ContainedCollection',
+              id: 'C_5',
+              children: [
+                { $type: 'props:Complex', id: 'C_1' },
+                { $type: 'props:Complex', id: 'C_2' }
+              ]
+            },
+            { $type: 'props:ReferencingCollection', id: 'C_4' }
+          ]
         });
+
+        var containedCollection = rootElement.any[0];
+        var complex_c2 = containedCollection.children[1];
+
+        var referencingCollection = rootElement.any[1];
+
+        expect(referencingCollection.references).to.jsonEqual([ complex_c2, containedCollection ]);
       });
 
 
-      it('attribute collection', function(done) {
+      it('attribute collection', async function() {
 
         // given
         var reader = new Reader(extendedModel);
@@ -794,35 +742,34 @@ describe('Reader', function() {
           '</props:root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'props:Root',
-            any: [
-              {
-                $type: 'props:ContainedCollection',
-                id: 'C_5',
-                children: [
-                  { $type: 'props:Complex', id: 'C_1' },
-                  { $type: 'props:Complex', id: 'C_2' },
-                  { $type: 'props:Complex', id: 'C_3' }
-                ]
-              },
-              { $type: 'props:AttributeReferenceCollection', id: 'C_4' }
-            ]
-          });
-
-          var containedCollection = result.any[0];
-          var complex_c2 = containedCollection.children[1];
-          var complex_c3 = containedCollection.children[2];
-
-          var attrReferenceCollection = result.any[1];
-
-          expect(attrReferenceCollection.refs).to.jsonEqual([ complex_c2, complex_c3, containedCollection ]);
-
-          done(err);
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:Root',
+          any: [
+            {
+              $type: 'props:ContainedCollection',
+              id: 'C_5',
+              children: [
+                { $type: 'props:Complex', id: 'C_1' },
+                { $type: 'props:Complex', id: 'C_2' },
+                { $type: 'props:Complex', id: 'C_3' }
+              ]
+            },
+            { $type: 'props:AttributeReferenceCollection', id: 'C_4' }
+          ]
         });
+
+        var containedCollection = rootElement.any[0];
+        var complex_c2 = containedCollection.children[1];
+        var complex_c3 = containedCollection.children[2];
+
+        var attrReferenceCollection = rootElement.any[1];
+
+        expect(attrReferenceCollection.refs).to.jsonEqual([ complex_c2, complex_c3, containedCollection ]);
       });
 
     });
@@ -836,7 +783,7 @@ describe('Reader', function() {
 
     describe('wrong namespace', function() {
 
-      it('same alias', function(done) {
+      it('same alias', async function() {
 
         // given
         var reader = new Reader(model);
@@ -846,18 +793,21 @@ describe('Reader', function() {
                     '<props:referencingSingle id="C_4" />' +
                   '</props:root>';
 
+        var err;
+
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        try {
+          await reader.fromXML(xml, rootHandler);
+        } catch (_err) {
+          err = _err;
+        }
 
-          expect(err).to.exist;
-          expect(result).not.to.exist;
-
-          done();
-        });
+        // then
+        expect(err).to.exist;
       });
 
 
-      it('different alias', function(done) {
+      it('different alias', async function() {
 
         // given
         var reader = new Reader(model);
@@ -867,14 +817,17 @@ describe('Reader', function() {
                     '<props1:referencingSingle id="C_4" />' +
                   '</props1:root>';
 
+        var err;
+
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        try {
+          await reader.fromXML(xml, rootHandler);
+        } catch (_err) {
+          err = _err;
+        }
 
-          expect(err).to.exist;
-          expect(result).not.to.exist;
-
-          done();
-        });
+        // then
+        expect(err).to.exist;
       });
 
     });
@@ -889,7 +842,7 @@ describe('Reader', function() {
 
     describe('should identify references', function() {
 
-      it('on attribute', function(done) {
+      it('on attribute', async function() {
 
         // given
         var reader = new Reader(extendedModel);
@@ -898,28 +851,25 @@ describe('Reader', function() {
         var xml = '<props:referencingSingle xmlns:props="http://properties" id="C_4" referencedComplex="C_1" />';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result, context) {
+        var {
+          references
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          var expectedReference = {
-            element: {
-              $type: 'props:ReferencingSingle',
-              id: 'C_4'
-            },
-            property: 'props:referencedComplex',
-            id: 'C_1'
-          };
+        // then
+        var expectedReference = {
+          element: {
+            $type: 'props:ReferencingSingle',
+            id: 'C_4'
+          },
+          property: 'props:referencedComplex',
+          id: 'C_1'
+        };
 
-          var references = context.references;
-
-          expect(references).to.jsonEqual([ expectedReference ]);
-
-          done(err);
-        });
+        expect(references).to.jsonEqual([ expectedReference ]);
       });
 
 
-      it('embedded', function(done) {
+      it('embedded', async function() {
 
         // given
         var reader = new Reader(extendedModel);
@@ -930,31 +880,28 @@ describe('Reader', function() {
                     '<props:references>C_5</props:references>' +
                   '</props:referencingCollection>';
 
-        reader.fromXML(xml, rootHandler, function(err, result, context) {
+        var {
+          references
+        } = await reader.fromXML(xml, rootHandler);
 
-          var expectedTarget = {
-            $type: 'props:ReferencingCollection',
-            id: 'C_4'
-          };
+        var expectedTarget = {
+          $type: 'props:ReferencingCollection',
+          id: 'C_4'
+        };
 
-          var expectedReference1 = {
-            property: 'props:references',
-            id: 'C_2',
-            element: expectedTarget
-          };
+        var expectedReference1 = {
+          property: 'props:references',
+          id: 'C_2',
+          element: expectedTarget
+        };
 
-          var expectedReference2 = {
-            property: 'props:references',
-            id: 'C_5',
-            element: expectedTarget
-          };
+        var expectedReference2 = {
+          property: 'props:references',
+          id: 'C_5',
+          element: expectedTarget
+        };
 
-          var references = context.references;
-
-          expect(references).to.jsonEqual([ expectedReference1, expectedReference2 ]);
-
-          done(err);
-        });
+        expect(references).to.jsonEqual([ expectedReference1, expectedReference2 ]);
       });
 
     });
@@ -980,26 +927,28 @@ describe('Reader', function() {
     var extendedModel = createModel([ 'properties', 'properties-extended' ]);
 
 
-    it('should handle non-xml text files', function(done) {
+    it('should handle non-xml text files', async function() {
 
+      // given
       var data = readFile('test/fixtures/error/no-xml.txt');
 
       var reader = new Reader(model);
       var rootHandler = reader.handler('props:ComplexAttrs');
 
+      var err;
+
       // when
-      reader.fromXML(data, rootHandler, function(err, result) {
+      try {
+        await reader.fromXML(data, rootHandler);
+      } catch (_err) {
+        err = _err;
+      }
 
-        expect(err).to.exist;
-        expect(result).not.to.exist;
-
-        done();
-      });
-
+      expect(err).to.exist;
     });
 
 
-    it('should handle unexpected text', function(done) {
+    it('should handle unexpected text', async function() {
 
       var xml = '<props:complexAttrs xmlns:props="http://properties">a</props:complexAttrs>';
 
@@ -1007,26 +956,23 @@ describe('Reader', function() {
       var rootHandler = reader.handler('props:ComplexAttrs');
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        expect(err).not.to.exist;
+      expectWarnings(warnings, [
+        /unexpected body text <a>/
+      ]);
 
-        expectWarnings(context.warnings, [
-          /unexpected body text <a>/
-        ]);
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs'
-        });
-
-        done();
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'props:ComplexAttrs'
       });
-
     });
 
 
-    it('should handle unexpected CDATA', function(done) {
+    it('should handle unexpected CDATA', async function() {
 
       var xml = '<props:complexAttrs xmlns:props="http://properties"><![CDATA[a]]></props:complexAttrs>';
 
@@ -1034,26 +980,23 @@ describe('Reader', function() {
       var rootHandler = reader.handler('props:ComplexAttrs');
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        expect(err).not.to.exist;
+      expectWarnings(warnings, [
+        /unexpected body text <a>/
+      ]);
 
-        expectWarnings(context.warnings, [
-          /unexpected body text <a>/
-        ]);
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs'
-        });
-
-        done();
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'props:ComplexAttrs'
       });
-
     });
 
 
-    it('should handle incomplete attribute declaration', function(done) {
+    it('should handle incomplete attribute declaration', async function() {
 
       var xml = '<props:complexAttrs xmlns:props="http://properties" foo />';
 
@@ -1061,26 +1004,23 @@ describe('Reader', function() {
       var rootHandler = reader.handler('props:ComplexAttrs');
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        expect(err).not.to.exist;
+      expectWarnings(warnings, [
+        /nested error: missing attribute value/
+      ]);
 
-        expectWarnings(context.warnings, [
-          /nested error: missing attribute value/
-        ]);
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs'
-        });
-
-        done();
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'props:ComplexAttrs'
       });
-
     });
 
 
-    it('should handle attribute re-definition', function(done) {
+    it('should handle attribute re-definition', async function() {
 
       var xml = '<props:complexAttrs xmlns:props="http://properties" id="A" id="B" />';
 
@@ -1088,27 +1028,24 @@ describe('Reader', function() {
       var rootHandler = reader.handler('props:ComplexAttrs');
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        expect(err).not.to.exist;
+      expectWarnings(warnings, [
+        /nested error: attribute <id> already defined/
+      ]);
 
-        expectWarnings(context.warnings, [
-          /nested error: attribute <id> already defined/
-        ]);
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs',
-          id: 'A'
-        });
-
-        done();
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'props:ComplexAttrs',
+        id: 'A'
       });
-
     });
 
 
-    it('should handle unparsable attributes', function(done) {
+    it('should handle unparsable attributes', async function() {
 
       var xml = '<props:complexAttrs id="A" foo=\'"" />';
 
@@ -1116,70 +1053,70 @@ describe('Reader', function() {
       var rootHandler = reader.handler('props:ComplexAttrs');
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        expect(err).not.to.exist;
+      expectWarnings(warnings, [
+        /nested error: attribute value quote missmatch/,
+        /nested error: illegal character after attribute end/
+      ]);
 
-        expectWarnings(context.warnings, [
-          /nested error: attribute value quote missmatch/,
-          /nested error: illegal character after attribute end/
-        ]);
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs',
-          id: 'A'
-        });
-
-        done();
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'props:ComplexAttrs',
+        id: 'A'
       });
-
     });
 
 
-    it('should handle illegal ID attribute', function(done) {
+    it('should handle illegal ID attribute', async function() {
 
       var xml = '<props:complexAttrs id="a&lt;" />';
 
       var reader = new Reader(model);
       var rootHandler = reader.handler('props:ComplexAttrs');
 
+      var err;
+
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      try {
+        await reader.fromXML(xml, rootHandler);
+      } catch (_err) {
+        err = _err;
+      }
 
-        expect(err).to.exist;
+      // then
+      expect(err).to.exist;
 
-        // then
-        expectError(err, /nested error: illegal ID <a<>/);
-
-        done();
-      });
-
+      expectError(err, /nested error: illegal ID <a<>/);
     });
 
 
-    it('should handle non-xml binary file', function(done) {
+    it('should handle non-xml binary file', async function() {
 
       var data = readFile('test/fixtures/error/binary.png');
 
       var reader = new Reader(model);
       var rootHandler = reader.handler('props:ComplexAttrs');
 
+      var err;
+
       // when
-      reader.fromXML(data, rootHandler, function(err, result) {
+      try {
+        await reader.fromXML(data, rootHandler);
+      } catch (_err) {
+        err = _err;
+      }
 
-        expect(err).to.exist;
-        expect(result).not.to.exist;
-
-        done();
-      });
-
+      expect(err).to.exist;
     });
 
 
     describe('should handle invalid root element', function() {
 
-      it('wrong type', function(done) {
+      it('wrong type', async function() {
 
         var xml = '<props:referencingCollection xmlns:props="http://properties" id="C_4">' +
                     '<props:references>C_2</props:references>' +
@@ -1195,20 +1132,22 @@ describe('Reader', function() {
               'column: 0\n\t' +
               'nested error: unexpected element <props:referencingCollection>';
 
+        var err;
+
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        try {
+          await reader.fromXML(xml, rootHandler);
+        } catch (_err) {
+          err = _err;
+        }
 
-          expect(err).to.exist;
-          expect(err.message).to.eql(expectedError);
-
-          expect(result).not.to.exist;
-
-          done();
-        });
+        // then
+        expect(err).to.exist;
+        expect(err.message).to.eql(expectedError);
       });
 
 
-      it('wrong uri', function(done) {
+      it('wrong uri', async function() {
 
         // given
         var reader = new Reader(model);
@@ -1218,20 +1157,22 @@ describe('Reader', function() {
                     '<props:referencingSingle id="C_4" />' +
                   '</props:root>';
 
+        var err;
+
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        try {
+          await reader.fromXML(xml, rootHandler);
+        } catch (_err) {
+          err = _err;
+        }
 
-          expect(err).to.exist;
-          expect(err.message).to.match(/unexpected element <props:root>/);
-
-          expect(result).not.to.exist;
-
-          done();
-        });
+        // then
+        expect(err).to.exist;
+        expect(err.message).to.match(/unexpected element <props:root>/);
       });
 
 
-      it('unknown uri + prefix', function(done) {
+      it('unknown uri + prefix', async function() {
 
         // given
         var reader = new Reader(model);
@@ -1241,20 +1182,22 @@ describe('Reader', function() {
                     '<props1:referencingSingle id="C_4" />' +
                   '</props1:root>';
 
+        var err;
+
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        try {
+          await reader.fromXML(xml, rootHandler);
+        } catch (_err) {
+          err = _err;
+        }
 
-          expect(err).to.exist;
-          expect(err.message).to.match(/unexpected element <props1:root>/);
-
-          expect(result).not.to.exist;
-
-          done();
-        });
+        // then
+        expect(err).to.exist;
+        expect(err.message).to.match(/unexpected element <props1:root>/);
       });
 
 
-      it('missing namespace', function(done) {
+      it('missing namespace', async function() {
 
         // given
         var reader = new Reader(model);
@@ -1264,20 +1207,22 @@ describe('Reader', function() {
                     '<referencingSingle id="C_4" />' +
                   '</root>';
 
+        var err;
+
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        try {
+          await reader.fromXML(xml, rootHandler);
+        } catch (_err) {
+          err = _err;
+        }
 
-          expect(err).to.exist;
-          expect(err.message).to.match(/unparsable content <root> detected/);
-
-          expect(result).not.to.exist;
-
-          done();
-        });
+        // then
+        expect(err).to.exist;
+        expect(err.message).to.match(/unparsable content <root> detected/);
       });
 
 
-      it('unparsable root element / lax mode', function(done) {
+      it('unparsable root element / lax mode', async function() {
 
         // given
         var reader = new Reader({ model: model, lax: true });
@@ -1287,22 +1232,24 @@ describe('Reader', function() {
                     '<referencingSingle id="C_4" />' +
                   '</root>';
 
+        var err;
+
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        try {
+          await reader.fromXML(xml, rootHandler);
+        } catch (_err) {
+          err = _err;
+        }
 
-          expect(err).to.exist;
-          expect(err.message).to.match(/failed to parse document as <props:Root>/);
-
-          expect(result).not.to.exist;
-
-          done();
-        });
+        // then
+        expect(err).to.exist;
+        expect(err.message).to.match(/failed to parse document as <props:Root>/);
       });
 
     });
 
 
-    it('should handle invalid child element', function(done) {
+    it('should handle invalid child element', async function() {
 
       var xml = '<props:referencingCollection xmlns:props="http://properties" id="C_4">' +
                   '<props:references>C_2</props:references>' +
@@ -1318,20 +1265,22 @@ describe('Reader', function() {
             'column: 110\n\t' +
             'nested error: unknown type <props:Invalid>';
 
+      var err;
+
       // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+      try {
+        await reader.fromXML(xml, rootHandler);
+      } catch (_err) {
+        err = _err;
+      }
 
-        expect(err).to.exist;
-        expect(err.message).to.eql(expectedError);
-
-        expect(result).not.to.exist;
-
-        done();
-      });
+      // then
+      expect(err).to.exist;
+      expect(err.message).to.eql(expectedError);
     });
 
 
-    it('should handle invalid child element / non-model schema', function(done) {
+    it('should handle invalid child element / non-model schema', async function() {
 
       var xml = '<props:referencingCollection xmlns:props="http://properties" xmlns:other="http://other">' +
                   '<other:foo>C_2</other:foo>' +
@@ -1346,20 +1295,22 @@ describe('Reader', function() {
             'column: 88\n\t' +
             'nested error: unrecognized element <other:foo>';
 
+      var err;
+
       // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+      try {
+        await reader.fromXML(xml, rootHandler);
+      } catch (_err) {
+        err = _err;
+      }
 
-        expect(err).to.exist;
-        expect(err.message).to.eql(expectedError);
-
-        expect(result).not.to.exist;
-
-        done();
-      });
+      // then
+      expect(err).to.exist;
+      expect(err.message).to.eql(expectedError);
     });
 
 
-    it('should handle duplicate id', function(done) {
+    it('should handle duplicate id', async function() {
 
       var xml = '<props:root xmlns:props="http://properties" id="root">' +
                   '<props:baseWithId id="root" />' +
@@ -1374,16 +1325,18 @@ describe('Reader', function() {
             'column: 54\n\t' +
             'nested error: duplicate ID <root>';
 
+      var err;
+
       // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+      try {
+        await reader.fromXML(xml, rootHandler);
+      } catch (_err) {
+        err = _err;
+      }
 
-        expect(err).to.exist;
-        expect(err.message).to.eql(expectedError);
-
-        expect(result).not.to.exist;
-
-        done();
-      });
+      // then
+      expect(err).to.exist;
+      expect(err.message).to.eql(expectedError);
     });
 
 
@@ -1391,7 +1344,7 @@ describe('Reader', function() {
 
       describe('should log warning', function() {
 
-        it('on unresolvable reference', function(done) {
+        it('on unresolvable reference', async function() {
 
           // given
           var reader = new Reader(extendedModel);
@@ -1403,40 +1356,36 @@ describe('Reader', function() {
             '</props:root>';
 
           // when
-          reader.fromXML(xml, rootHandler, function(err, result, context) {
+          var {
+            rootElement,
+            warnings
+          } = await reader.fromXML(xml, rootHandler);
 
-            if (err) {
-              return done(err);
-            }
-
-            // then
-            expect(result).to.jsonEqual({
-              $type: 'props:Root',
-              any: [
-                { $type: 'props:ReferencingSingle', id: 'C_4' }
-              ]
-            });
-
-            var referencingSingle = result.any[0];
-
-            expect(referencingSingle.referencedComplex).not.to.exist;
-
-            // expect warning to be logged
-            expect(context.warnings).to.eql([
-              {
-                message : 'unresolved reference <C_1>',
-                element : referencingSingle,
-                property : 'props:referencedComplex',
-                value : 'C_1'
-              }
-            ]);
-
-            done();
+          // then
+          expect(rootElement).to.jsonEqual({
+            $type: 'props:Root',
+            any: [
+              { $type: 'props:ReferencingSingle', id: 'C_4' }
+            ]
           });
+
+          var referencingSingle = rootElement.any[0];
+
+          expect(referencingSingle.referencedComplex).not.to.exist;
+
+          // expect warning to be logged
+          expect(warnings).to.eql([
+            {
+              message : 'unresolved reference <C_1>',
+              element : referencingSingle,
+              property : 'props:referencedComplex',
+              value : 'C_1'
+            }
+          ]);
         });
 
 
-        it('on unresolvable collection reference', function(done) {
+        it('on unresolvable collection reference', async function() {
 
           // given
           var reader = new Reader(extendedModel);
@@ -1454,45 +1403,41 @@ describe('Reader', function() {
             '</props:root>';
 
           // when
-          reader.fromXML(xml, rootHandler, function(err, result, context) {
+          var {
+            rootElement,
+            warnings
+          } = await reader.fromXML(xml, rootHandler);
 
-            if (err) {
-              return done(err);
-            }
-
-            // then
-            expect(result).to.jsonEqual({
-              $type: 'props:Root',
-              any: [
-                {
-                  $type: 'props:ContainedCollection',
-                  id: 'C_5',
-                  children: [
-                    { $type: 'props:Complex', id: 'C_2' }
-                  ]
-                },
-                { $type: 'props:ReferencingCollection', id: 'C_4' }
-              ]
-            });
-
-            // expect invalid reference not to be included
-            var c2 = result.any[0].children[0];
-            var referencingCollection = result.any[1];
-
-            expect(referencingCollection.references).to.jsonEqual([ c2 ]);
-
-            // expect warning to be logged
-            expect(context.warnings).to.jsonEqual([
+          // then
+          expect(rootElement).to.jsonEqual({
+            $type: 'props:Root',
+            any: [
               {
-                message: 'unresolved reference <C_1>',
-                element: referencingCollection,
-                property : 'props:references',
-                value : 'C_1'
-              }
-            ]);
-
-            done();
+                $type: 'props:ContainedCollection',
+                id: 'C_5',
+                children: [
+                  { $type: 'props:Complex', id: 'C_2' }
+                ]
+              },
+              { $type: 'props:ReferencingCollection', id: 'C_4' }
+            ]
           });
+
+          // expect invalid reference not to be included
+          var c2 = rootElement.any[0].children[0];
+          var referencingCollection = rootElement.any[1];
+
+          expect(referencingCollection.references).to.jsonEqual([ c2 ]);
+
+          // expect warning to be logged
+          expect(warnings).to.jsonEqual([
+            {
+              message: 'unresolved reference <C_1>',
+              element: referencingCollection,
+              property : 'props:references',
+              value : 'C_1'
+            }
+          ]);
         });
 
       });
@@ -1507,7 +1452,7 @@ describe('Reader', function() {
     var model = createModel([ 'properties' ]);
 
 
-    it('should ignore namespaced invalid child', function(done) {
+    it('should ignore namespaced invalid child', async function() {
 
       // given
       var reader = new Reader({ model: model, lax: true });
@@ -1519,34 +1464,30 @@ describe('Reader', function() {
                   '</props:unknownElement>' +
                 '</props:complexAttrs>';
 
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      // when
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'props:ComplexAttrs'
+      });
 
-        // then
-        expect(context.warnings).to.have.length(1);
+      expect(warnings).to.have.length(1);
 
-        var warning = context.warnings[0];
+      var warning = warnings[0];
 
-        expect(warning.message).to.eql(
-          'unparsable content <props:unknownElement> detected\n\t' +
+      expect(warning.message).to.eql(
+        'unparsable content <props:unknownElement> detected\n\t' +
             'line: 0\n\t' +
             'column: 52\n\t' +
             'nested error: unknown type <props:UnknownElement>');
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs'
-        });
-
-        done();
-      });
     });
 
 
-    it('should ignore invalid child', function(done) {
+    it('should ignore invalid child', async function() {
 
       // given
       var reader = new Reader({ model: model, lax: true });
@@ -1556,30 +1497,25 @@ describe('Reader', function() {
                   '<unknownElement foo="bar" />' +
                 '</props:complexAttrs>';
 
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'props:ComplexAttrs'
+      });
 
-        // then
-        expect(context.warnings).to.have.length(1);
+      expect(warnings).to.have.length(1);
 
-        var warning = context.warnings[0];
+      var warning = warnings[0];
 
-        expect(warning.message).to.eql(
-          'unparsable content <unknownElement> detected\n\t' +
+      expect(warning.message).to.eql(
+        'unparsable content <unknownElement> detected\n\t' +
             'line: 0\n\t' +
             'column: 52\n\t' +
             'nested error: unrecognized element <unknownElement>');
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'props:ComplexAttrs'
-        });
-
-        done();
-      });
     });
 
   });
@@ -1592,7 +1528,7 @@ describe('Reader', function() {
 
     describe('attributes', function() {
 
-      it('should read extension attributes', function(done) {
+      it('should read extension attributes', async function() {
 
         // given
         var reader = new Reader(extensionModel);
@@ -1600,25 +1536,20 @@ describe('Reader', function() {
 
         var xml = '<e:root xmlns:e="http://extensions" xmlns:other="http://other" other:foo="BAR" />';
 
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result.$attrs).to.jsonEqual({
-            'xmlns:e': 'http://extensions',
-            'xmlns:other': 'http://other',
-            'other:foo' : 'BAR'
-          });
-
-          done();
+        // then
+        expect(rootElement.$attrs).to.jsonEqual({
+          'xmlns:e': 'http://extensions',
+          'xmlns:other': 'http://other',
+          'other:foo' : 'BAR'
         });
       });
 
 
-      it('should read default ns', function(done) {
+      it('should read default ns', async function() {
 
         // given
         var reader = new Reader(extensionModel);
@@ -1626,27 +1557,21 @@ describe('Reader', function() {
 
         var xml = '<root xmlns="http://extensions" />';
 
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result.$attrs).to.jsonEqual({
-            'xmlns': 'http://extensions'
-          });
-
-          done();
+        // then
+        expect(rootElement.$attrs).to.jsonEqual({
+          'xmlns': 'http://extensions'
         });
-
       });
     });
 
 
     describe('elements', function() {
 
-      it('should read self-closing extension elements', function(done) {
+      it('should read self-closing extension elements', async function() {
 
         // given
         var reader = new Reader(extensionModel);
@@ -1660,36 +1585,31 @@ describe('Reader', function() {
           '</e:root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'e:Root',
-            id: 'FOO',
-            extensions: [
-              {
-                $type: 'other:meta',
-                key: 'FOO',
-                value: 'BAR'
-              },
-              {
-                $type: 'other:meta',
-                key: 'BAZ',
-                value: 'FOOBAR'
-              }
-            ]
-          });
-
-          done();
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'e:Root',
+          id: 'FOO',
+          extensions: [
+            {
+              $type: 'other:meta',
+              key: 'FOO',
+              value: 'BAR'
+            },
+            {
+              $type: 'other:meta',
+              key: 'BAZ',
+              value: 'FOOBAR'
+            }
+          ]
         });
       });
 
 
-      it('should read extension element body', function(done) {
+      it('should read extension element body', async function() {
 
         // given
         var reader = new Reader(extensionModel);
@@ -1704,30 +1624,25 @@ describe('Reader', function() {
           '</e:root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'e:Root',
-            id: 'FOO',
-            extensions: [
-              {
-                $type: 'other:note',
-                $body: 'a note'
-              }
-            ]
-          });
-
-          done();
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'e:Root',
+          id: 'FOO',
+          extensions: [
+            {
+              $type: 'other:note',
+              $body: 'a note'
+            }
+          ]
         });
       });
 
 
-      it('should read nested extension element', function(done) {
+      it('should read nested extension element', async function() {
 
         // given
         var reader = new Reader(extensionModel);
@@ -1746,36 +1661,31 @@ describe('Reader', function() {
           '</e:root>';
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
 
-          if (err) {
-            return done(err);
-          }
-
-          // then
-          expect(result).to.jsonEqual({
-            $type: 'e:Root',
-            id: 'FOO',
-            extensions: [
-              {
-                $type: 'other:nestedMeta',
-                $children: [
-                  { $type: 'other:meta', key: 'k1', value: 'v1' },
-                  { $type: 'other:meta', key: 'k2', value: 'v2' },
-                  { $type: 'other:additionalNote', $body: 'this is some text' }
-                ]
-              }
-            ]
-          });
-
-          done();
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'e:Root',
+          id: 'FOO',
+          extensions: [
+            {
+              $type: 'other:nestedMeta',
+              $children: [
+                { $type: 'other:meta', key: 'k1', value: 'v1' },
+                { $type: 'other:meta', key: 'k2', value: 'v2' },
+                { $type: 'other:additionalNote', $body: 'this is some text' }
+              ]
+            }
+          ]
         });
       });
 
 
       describe('descriptor', function() {
 
-        it('should exist', function(done) {
+        it('should exist', async function() {
 
           // given
           var reader = new Reader(extensionModel);
@@ -1790,23 +1700,18 @@ describe('Reader', function() {
             '</e:root>';
 
           // when
-          reader.fromXML(xml, rootHandler, function(err, result) {
+          var {
+            rootElement
+          } = await reader.fromXML(xml, rootHandler);
 
-            if (err) {
-              return done(err);
-            }
+          var note = rootElement.extensions[0];
 
-            var note = result.extensions[0];
-
-            // then
-            expect(note.$descriptor).to.exist;
-
-            done();
-          });
+          // then
+          expect(note.$descriptor).to.exist;
         });
 
 
-        it('should contain namespace information', function(done) {
+        it('should contain namespace information', async function() {
 
           // given
           var reader = new Reader(extensionModel);
@@ -1821,26 +1726,21 @@ describe('Reader', function() {
             '</e:root>';
 
           // when
-          reader.fromXML(xml, rootHandler, function(err, result) {
+          var {
+            rootElement
+          } = await reader.fromXML(xml, rootHandler);
 
-            if (err) {
-              return done(err);
+          var note = rootElement.extensions[0];
+
+          // then
+          expect(note.$descriptor).to.eql({
+            name: 'other:note',
+            isGeneric: true,
+            ns: {
+              prefix: 'other',
+              localName: 'note',
+              uri: 'http://other'
             }
-
-            var note = result.extensions[0];
-
-            // then
-            expect(note.$descriptor).to.eql({
-              name: 'other:note',
-              isGeneric: true,
-              ns: {
-                prefix: 'other',
-                localName: 'note',
-                uri: 'http://other'
-              }
-            });
-
-            done();
           });
         });
 
@@ -1849,7 +1749,7 @@ describe('Reader', function() {
 
       describe('namespace declarations', function() {
 
-        it('should handle nested', function(done) {
+        it('should handle nested', async function() {
 
           // given
           var reader = new Reader(extensionModel);
@@ -1866,43 +1766,38 @@ describe('Reader', function() {
             '</e:root>';
 
           // when
-          reader.fromXML(xml, rootHandler, function(err, result) {
+          var {
+            rootElement
+          } = await reader.fromXML(xml, rootHandler);
 
-            if (err) {
-              return done(err);
-            }
-
-            // then
-            expect(result).to.jsonEqual({
-              $type: 'e:Root',
-              extensions: [
-                {
-                  $type: 'bar:bar',
-                  'xmlns:bar': 'http://bar',
-                  $children: [
-                    {
-                      $type: 'other:child',
-                      'xmlns:other': 'http://other',
-                      b: 'B'
-                    }
-                  ]
-                },
-                {
-                  $type: 'ns0:foo',
-                  'xmlns': 'http://foo',
-                  $children: [
-                    { $type: 'ns0:child', a: 'A' }
-                  ]
-                }
-              ]
-            });
-
-            done();
+          // then
+          expect(rootElement).to.jsonEqual({
+            $type: 'e:Root',
+            extensions: [
+              {
+                $type: 'bar:bar',
+                'xmlns:bar': 'http://bar',
+                $children: [
+                  {
+                    $type: 'other:child',
+                    'xmlns:other': 'http://other',
+                    b: 'B'
+                  }
+                ]
+              },
+              {
+                $type: 'ns0:foo',
+                'xmlns': 'http://foo',
+                $children: [
+                  { $type: 'ns0:child', a: 'A' }
+                ]
+              }
+            ]
           });
         });
 
 
-        it('should handle nested, re-declaring default', function(done) {
+        it('should handle nested, re-declaring default', async function() {
 
           // given
           var reader = new Reader(extensionModel);
@@ -1919,41 +1814,36 @@ describe('Reader', function() {
             '</root>';
 
           // when
-          reader.fromXML(xml, rootHandler, function(err, result) {
+          var {
+            rootElement
+          } = await reader.fromXML(xml, rootHandler);
 
-            if (err) {
-              return done(err);
-            }
-
-            // then
-            expect(result).to.jsonEqual({
-              $type: 'e:Root',
-              extensions: [
-                {
-                  $type: 'bar:bar',
-                  'xmlns:bar': 'http://bar',
-                  $children: [
-                    {
-                      $type: 'other:child',
-                      'xmlns:other': 'http://other',
-                      b: 'B'
-                    }
-                  ]
-                },
-                {
-                  $type: 'ns0:foo',
-                  'xmlns': 'http://foo',
-                  $children: [
-                    {
-                      $type: 'ns0:child',
-                      a: 'A'
-                    }
-                  ]
-                }
-              ]
-            });
-
-            done();
+          // then
+          expect(rootElement).to.jsonEqual({
+            $type: 'e:Root',
+            extensions: [
+              {
+                $type: 'bar:bar',
+                'xmlns:bar': 'http://bar',
+                $children: [
+                  {
+                    $type: 'other:child',
+                    'xmlns:other': 'http://other',
+                    b: 'B'
+                  }
+                ]
+              },
+              {
+                $type: 'ns0:foo',
+                'xmlns': 'http://foo',
+                $children: [
+                  {
+                    $type: 'ns0:child',
+                    a: 'A'
+                  }
+                ]
+              }
+            ]
           });
         });
 
@@ -1971,7 +1861,7 @@ describe('Reader', function() {
     var extensionModel = createModel([ 'extensions' ]);
 
 
-    it('should expose $parent on model elements', function(done) {
+    it('should expose $parent on model elements', async function() {
 
       // given
       var reader = new Reader(model);
@@ -1983,22 +1873,17 @@ describe('Reader', function() {
                 '</props:complexAttrs>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
-
-        // then
-        expect(result.$parent).not.to.exist;
-        expect(result.attrs.$parent).to.equal(result);
-
-        done();
-      });
+      // then
+      expect(rootElement.$parent).not.to.exist;
+      expect(rootElement.attrs.$parent).to.equal(rootElement);
     });
 
 
-    it('should expose $parent on references', function(done) {
+    it('should expose $parent on references', async function() {
 
       // given
       var reader = new Reader(extendedModel);
@@ -2014,24 +1899,19 @@ describe('Reader', function() {
         '</props:root>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
+      var containedCollection = rootElement.any[0];
+      var referencedComplex = rootElement.any[1].referencedComplex;
 
-        var containedCollection = result.any[0];
-        var referencedComplex = result.any[1].referencedComplex;
-
-        // then
-        expect(referencedComplex.$parent).to.equal(containedCollection);
-
-        done();
-      });
+      // then
+      expect(referencedComplex.$parent).to.equal(containedCollection);
     });
 
 
-    it('should expose $parent on extension elements', function(done) {
+    it('should expose $parent on extension elements', async function() {
 
       // given
       var reader = new Reader(extensionModel);
@@ -2050,34 +1930,29 @@ describe('Reader', function() {
         '</e:root>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
+      var child = rootElement.extensions[0];
+      var nested = child.$children[0];
 
-        var child = result.extensions[0];
-        var nested = child.$children[0];
+      expect(child.$parent).to.equal(rootElement);
+      expect(nested.$parent).to.equal(child);
 
-        expect(child.$parent).to.equal(result);
-        expect(nested.$parent).to.equal(child);
-
-        expect(result).to.jsonEqual({
-          $type: 'e:Root',
-          id: 'FOO',
-          extensions: [
-            {
-              $type: 'other:nestedMeta',
-              $children: [
-                { $type: 'other:meta', key: 'k1', value: 'v1' },
-                { $type: 'other:meta', key: 'k2', value: 'v2' },
-                { $type: 'other:additionalNote', $body: 'this is some text' }
-              ]
-            }
-          ]
-        });
-
-        done();
+      expect(rootElement).to.jsonEqual({
+        $type: 'e:Root',
+        id: 'FOO',
+        extensions: [
+          {
+            $type: 'other:nestedMeta',
+            $children: [
+              { $type: 'other:meta', key: 'k1', value: 'v1' },
+              { $type: 'other:meta', key: 'k2', value: 'v2' },
+              { $type: 'other:additionalNote', $body: 'this is some text' }
+            ]
+          }
+        ]
       });
     });
 
@@ -2090,7 +1965,7 @@ describe('Reader', function() {
     var model = createModel([ 'properties' ]);
 
 
-    it('should read typed extension property', function(done) {
+    it('should read typed extension property', async function() {
 
       // given
       var reader = new Reader(extensionModel);
@@ -2102,27 +1977,22 @@ describe('Reader', function() {
         '</b:Root>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
+      expect(rootElement).to.jsonEqual({
+        $type: 'b:Root',
+        generic: {
+          $type: 'c:CustomGeneric',
+          count: 10
         }
-
-        expect(result).to.jsonEqual({
-          $type: 'b:Root',
-          generic: {
-            $type: 'c:CustomGeneric',
-            count: 10
-          }
-        });
-
-        done();
       });
 
     });
 
 
-    it('should read typed extension attribute', function(done) {
+    it('should read typed extension attribute', async function() {
 
       // given
       var reader = new Reader(extensionModel);
@@ -2134,24 +2004,19 @@ describe('Reader', function() {
         '</b:Root>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
-
-        expect(result).to.jsonEqual({
-          $type: 'b:Root',
-          customAttr: 666
-        });
-
-        done();
+      expect(rootElement).to.jsonEqual({
+        $type: 'b:Root',
+        customAttr: 666
       });
 
     });
 
 
-    it('should read generic collection', function(done) {
+    it('should read generic collection', async function() {
 
       // given
       var reader = new Reader(extensionModel);
@@ -2166,33 +2031,28 @@ describe('Reader', function() {
         '</b:Root>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result) {
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
-
-        expect(result).to.jsonEqual({
-          $type: 'b:Root',
-          genericCollection: [
-            {
-              $type: 'c:Property',
-              key: 'foo',
-              value: 'FOO'
-            },
-            {
-              $type: 'c:Property',
-              key: 'bar',
-              value: 'BAR'
-            },
-            {
-              $type: 'other:Xyz',
-              $body: 'content'
-            }
-          ]
-        });
-
-        done();
+      expect(rootElement).to.jsonEqual({
+        $type: 'b:Root',
+        genericCollection: [
+          {
+            $type: 'c:Property',
+            key: 'foo',
+            value: 'FOO'
+          },
+          {
+            $type: 'c:Property',
+            key: 'bar',
+            value: 'BAR'
+          },
+          {
+            $type: 'other:Xyz',
+            $body: 'content'
+          }
+        ]
       });
 
     });
@@ -2202,7 +2062,7 @@ describe('Reader', function() {
 
       describe('should warn on invalid well-known NS attribute', function() {
 
-        it('extension NS', function(done) {
+        it('extension NS', async function() {
 
           // given
           var reader = new Reader(extensionModel);
@@ -2217,37 +2077,34 @@ describe('Reader', function() {
           `;
 
           // when
-          reader.fromXML(xml, rootHandler, function(err, result, context) {
+          var {
+            rootElement,
+            warnings
+          } = await reader.fromXML(xml, rootHandler);
 
-            // then
-            expect(context.warnings).to.have.length(1);
-
-            var warning = context.warnings[0];
-
-            expect(warning.message).to.eql(
-              'unknown attribute <c:unknownAttribute>'
-            );
-
-            expect(result).to.jsonEqual({
-              $type: 'b:Root'
-            });
-
-            expect(result.$attrs).to.jsonEqual({
-              'xmlns:b': 'http://base',
-              'xmlns:c': 'http://custom',
-              'xmlns:foo': 'http://foo',
-              'c:unknownAttribute': 'XXX'
-            });
-
-            expect(err).not.to.exist;
-
-            done();
+          // then
+          expect(rootElement).to.jsonEqual({
+            $type: 'b:Root'
           });
 
+          expect(rootElement.$attrs).to.jsonEqual({
+            'xmlns:b': 'http://base',
+            'xmlns:c': 'http://custom',
+            'xmlns:foo': 'http://foo',
+            'c:unknownAttribute': 'XXX'
+          });
+
+          expect(warnings).to.have.length(1);
+
+          var warning = warnings[0];
+
+          expect(warning.message).to.eql(
+            'unknown attribute <c:unknownAttribute>'
+          );
         });
 
 
-        it('local NS', function(done) {
+        it('local NS', async function() {
 
           // given
           var reader = new Reader({ model: model, lax: true });
@@ -2255,38 +2112,34 @@ describe('Reader', function() {
 
           var xml = '<props:complexAttrs xmlns:props="http://properties" props:unknownAttribute="FOO" />';
 
-          reader.fromXML(xml, rootHandler, function(err, result, context) {
+          var {
+            rootElement,
+            warnings
+          } = await reader.fromXML(xml, rootHandler);
 
-            if (err) {
-              return done(err);
-            }
-
-            // then
-            expect(context.warnings).to.have.length(1);
-
-            var warning = context.warnings[0];
-
-            expect(warning.message).to.eql(
-              'unknown attribute <props:unknownAttribute>'
-            );
-
-            expect(result).to.jsonEqual({
-              $type: 'props:ComplexAttrs'
-            });
-
-            expect(result.$attrs).to.jsonEqual({
-              'xmlns:props': 'http://properties',
-              'props:unknownAttribute': 'FOO'
-            });
-
-            done();
+          // then
+          expect(rootElement).to.jsonEqual({
+            $type: 'props:ComplexAttrs'
           });
+
+          expect(rootElement.$attrs).to.jsonEqual({
+            'xmlns:props': 'http://properties',
+            'props:unknownAttribute': 'FOO'
+          });
+
+          expect(warnings).to.have.length(1);
+
+          var warning = warnings[0];
+
+          expect(warning.message).to.eql(
+            'unknown attribute <props:unknownAttribute>'
+          );
         });
 
       });
 
 
-      it('should permit non-well-known attributes', function(done) {
+      it('should permit non-well-known attributes', async function() {
 
         // given
         var reader = new Reader(extensionModel);
@@ -2301,30 +2154,27 @@ describe('Reader', function() {
         `;
 
         // when
-        reader.fromXML(xml, rootHandler, function(err, result, context) {
+        var {
+          rootElement,
+          warnings
+        } = await reader.fromXML(xml, rootHandler);
 
-          // then
-          expect(context.warnings).to.be.empty;
-
-          expect(err).not.to.exist;
-
-          expect(result).to.jsonEqual({
-            $type: 'b:Root'
-          });
-
-          expect(result.$attrs).to.jsonEqual({
-            'xmlns:b': 'http://base',
-            'xmlns:blub': 'http://blub',
-            'blub:attr': 'XXX'
-          });
-
-          done();
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'b:Root'
         });
 
+        expect(rootElement.$attrs).to.jsonEqual({
+          'xmlns:b': 'http://base',
+          'xmlns:blub': 'http://blub',
+          'blub:attr': 'XXX'
+        });
+
+        expect(warnings).to.be.empty;
       });
 
 
-      it('should fail parsing unknown element', function(done) {
+      it('should fail parsing unknown element', async function() {
 
         // given
         var reader = new Reader(extensionModel);
@@ -2336,12 +2186,17 @@ describe('Reader', function() {
             '<c:NonExisting />' +
           '</b:Root>';
 
-        // when
-        reader.fromXML(xml, rootHandler, function(err, result) {
-          expect(err).to.exist;
+        var err;
 
-          done();
-        });
+        // when
+        try {
+          await reader.fromXML(xml, rootHandler);
+        } catch (_err) {
+          err = _err;
+        }
+
+        // then
+        expect(err).to.exist;
 
       });
 
@@ -2355,7 +2210,7 @@ describe('Reader', function() {
     var fakeIdsModel = createModel([ 'fake-id' ]);
 
 
-    it('should ignore (non-id) id attribute', function(done) {
+    it('should ignore (non-id) id attribute', async function() {
 
       // given
       var reader = new Reader(fakeIdsModel);
@@ -2367,32 +2222,27 @@ describe('Reader', function() {
         '</fi:Root>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        elementsById
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'fi:Root',
-          children: [
-            {
-              $type: 'fi:ChildWithFakeId',
-              id: 'FOO'
-            }
-          ]
-        });
-
-        expect(context.elementsById).to.be.empty;
-
-        done();
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'fi:Root',
+        children: [
+          {
+            $type: 'fi:ChildWithFakeId',
+            id: 'FOO'
+          }
+        ]
       });
 
+      expect(elementsById).to.be.empty;
     });
 
 
-    it('should not-resolve (non-id) id references', function(done) {
+    it('should not-resolve (non-id) id references', async function() {
 
       // given
       var reader = new Reader(fakeIdsModel);
@@ -2405,32 +2255,27 @@ describe('Reader', function() {
         '</fi:Root>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 'fi:Root',
-          children: [
-            {
-              $type: 'fi:ChildWithFakeId',
-              id: 'FOO'
-            },
-            {
-              $type: 'fi:ChildWithFakeId'
-            }
-          ]
-        });
-
-        expect(context.warnings).to.have.length(1);
-        expect(context.warnings[0].message).to.eql('unresolved reference <FOO>');
-
-        done();
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'fi:Root',
+        children: [
+          {
+            $type: 'fi:ChildWithFakeId',
+            id: 'FOO'
+          },
+          {
+            $type: 'fi:ChildWithFakeId'
+          }
+        ]
       });
 
+      expect(warnings).to.have.length(1);
+      expect(warnings[0].message).to.eql('unresolved reference <FOO>');
     });
 
   });
@@ -2440,7 +2285,7 @@ describe('Reader', function() {
 
     var model = createModel([ 'properties' ]);
 
-    it('should decode UTF-8, no problemo', function(done) {
+    it('should decode UTF-8, no problemo', async function() {
 
       // given
       var reader = new Reader(model);
@@ -2452,22 +2297,18 @@ describe('Reader', function() {
         '</props:complexAttrs>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        // then
-        expect(err).not.to.exist;
-        expect(context.warnings).to.be.empty;
-
-        expect(result).to.exist;
-        expect(context).to.exist;
-
-        done();
-      });
-
+      // then
+      expect(warnings).to.be.empty;
+      expect(rootElement).to.exist;
     });
 
 
-    it('should warn on non-UTF-8 encoded files', function(done) {
+    it('should warn on non-UTF-8 encoded files', async function() {
 
       // given
       var reader = new Reader(model);
@@ -2479,28 +2320,22 @@ describe('Reader', function() {
         '</props:complexAttrs>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        // then
-        expect(err).not.to.exist;
+      // then
+      expect(warnings).to.have.length(1);
+      expect(warnings[0].message).to.match(
+        /unsupported document encoding <windows-1252>/
+      );
 
-        var warnings = context.warnings;
-
-        expect(warnings).to.have.length(1);
-        expect(warnings[0].message).to.match(
-          /unsupported document encoding <windows-1252>/
-        );
-
-        expect(result).to.exist;
-        expect(context).to.exist;
-
-        done();
-      });
-
+      expect(rootElement).to.exist;
     });
 
 
-    it('should warn on non-UTF-8 encoded files / CAPITALIZED', function(done) {
+    it('should warn on non-UTF-8 encoded files / CAPITALIZED', async function() {
 
       // given
       var reader = new Reader(model);
@@ -2512,24 +2347,18 @@ describe('Reader', function() {
         '</props:complexAttrs>';
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
 
-        // then
-        expect(err).not.to.exist;
+      // then
+      expect(warnings).to.have.length(1);
+      expect(warnings[0].message).to.match(
+        /unsupported document encoding <WINDOWS-1252>/
+      );
 
-        var warnings = context.warnings;
-
-        expect(warnings).to.have.length(1);
-        expect(warnings[0].message).to.match(
-          /unsupported document encoding <WINDOWS-1252>/
-        );
-
-        expect(result).to.exist;
-        expect(context).to.exist;
-
-        done();
-      });
-
+      expect(rootElement).to.exist;
     });
 
   });
@@ -2540,7 +2369,7 @@ describe('Reader', function() {
     var model = createModel([ 'attr-child-conflict' ]);
 
 
-    it('should import attr and child with the same name', function(done) {
+    it('should import attr and child with the same name', async function() {
 
       // given
       var reader = new Reader(model);
@@ -2553,27 +2382,21 @@ describe('Reader', function() {
         </s:foo>`;
 
       // when
-      reader.fromXML(xml, rootHandler, function(err, result, context) {
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
 
-        if (err) {
-          return done(err);
-        }
-
-        // then
-        expect(result).to.jsonEqual({
-          $type: 's:Foo',
-          bar: 'Bar',
-          bars: [
-            {
-              $type: 's:Bar',
-              woop: 'WHOOPS'
-            }
-          ]
-        });
-
-        done();
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 's:Foo',
+        bar: 'Bar',
+        bars: [
+          {
+            $type: 's:Bar',
+            woop: 'WHOOPS'
+          }
+        ]
       });
-
     });
 
   });
