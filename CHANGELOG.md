@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 8.0.5
+
+_Republish of `v8.0.4`._
+
 ## 8.0.4
 
 * `CHORE`: bump to `saxen@8.1.2`
