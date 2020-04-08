@@ -14,6 +14,14 @@ ___Note:__ Yet to be released changes appear here._
 
 * `Reader#fromXML` API now returns a Promise. Support for callbacks is dropped. Refer to the [documentation](https://github.com/bpmn-io/moddle-xml#read-xml) for updated usage information.
 
+## 8.0.5
+
+_Republish of `v8.0.4`._
+
+## 8.0.4
+
+* `CHORE`: bump to `saxen@8.1.2`
+
 ## 8.0.3
 
 * `CHORE`: bump to `saxen@8.1.1`
