@@ -930,6 +930,32 @@ describe('Writer', function() {
         expect(xml).to.eql('<foo:root xmlns:foo="http://properties" id="Root" />');
       });
 
+
+      it('local namespace re-definition', function() {
+
+        // given
+        var writer = createWriter(extendedModel);
+
+        var root = extendedModel.create('props:Root', {
+          xmlns: 'http://properties',
+          id: 'Root',
+          'xmlns:ext': 'http://extended',
+          any: [
+            extendedModel.create('ext:ExtendedComplex', { xmlns: 'http://extended' })
+          ]
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<root xmlns="http://properties" id="Root">' +
+            '<extendedComplex xmlns="http://extended" />' +
+          '</root>'
+        );
+      });
+
     });
 
 
