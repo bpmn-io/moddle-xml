@@ -1746,109 +1746,6 @@ describe('Reader', function() {
 
       });
 
-
-      describe('namespace declarations', function() {
-
-        it('should handle nested', async function() {
-
-          // given
-          var reader = new Reader(extensionModel);
-          var rootHandler = reader.handler('e:Root');
-
-          var xml =
-            '<e:root xmlns:e="http://extensions">' +
-              '<bar:bar xmlns:bar="http://bar">' +
-                '<other:child b="B" xmlns:other="http://other" />' +
-              '</bar:bar>' +
-              '<foo xmlns="http://foo">' +
-                '<child a="A" />' +
-              '</foo>' +
-            '</e:root>';
-
-          // when
-          var {
-            rootElement
-          } = await reader.fromXML(xml, rootHandler);
-
-          // then
-          expect(rootElement).to.jsonEqual({
-            $type: 'e:Root',
-            extensions: [
-              {
-                $type: 'bar:bar',
-                'xmlns:bar': 'http://bar',
-                $children: [
-                  {
-                    $type: 'other:child',
-                    'xmlns:other': 'http://other',
-                    b: 'B'
-                  }
-                ]
-              },
-              {
-                $type: 'ns0:foo',
-                'xmlns': 'http://foo',
-                $children: [
-                  { $type: 'ns0:child', a: 'A' }
-                ]
-              }
-            ]
-          });
-        });
-
-
-        it('should handle nested, re-declaring default', async function() {
-
-          // given
-          var reader = new Reader(extensionModel);
-          var rootHandler = reader.handler('e:Root');
-
-          var xml =
-            '<root xmlns="http://extensions">' +
-              '<bar:bar xmlns:bar="http://bar">' +
-                '<other:child b="B" xmlns:other="http://other" />' +
-              '</bar:bar>' +
-              '<foo xmlns="http://foo">' +
-                '<child a="A" />' +
-              '</foo>' +
-            '</root>';
-
-          // when
-          var {
-            rootElement
-          } = await reader.fromXML(xml, rootHandler);
-
-          // then
-          expect(rootElement).to.jsonEqual({
-            $type: 'e:Root',
-            extensions: [
-              {
-                $type: 'bar:bar',
-                'xmlns:bar': 'http://bar',
-                $children: [
-                  {
-                    $type: 'other:child',
-                    'xmlns:other': 'http://other',
-                    b: 'B'
-                  }
-                ]
-              },
-              {
-                $type: 'ns0:foo',
-                'xmlns': 'http://foo',
-                $children: [
-                  {
-                    $type: 'ns0:child',
-                    a: 'A'
-                  }
-                ]
-              }
-            ]
-          });
-        });
-
-      });
-
     });
 
   });
@@ -2397,6 +2294,187 @@ describe('Reader', function() {
           }
         ]
       });
+    });
+
+  });
+
+
+  describe('namespace declarations', function() {
+
+    var extendedModel = createModel([ 'properties', 'properties-extended' ]);
+
+    var extensionModel = createModel([ 'extensions' ]);
+
+
+    it('should handle nested', async function() {
+
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('e:Root');
+
+      var xml =
+        '<e:root xmlns:e="http://extensions">' +
+          '<bar:bar xmlns:bar="http://bar">' +
+            '<other:child b="B" xmlns:other="http://other" />' +
+          '</bar:bar>' +
+          '<foo xmlns="http://foo">' +
+            '<child a="A" />' +
+          '</foo>' +
+        '</e:root>';
+
+      // when
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
+
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'e:Root',
+        extensions: [
+          {
+            $type: 'bar:bar',
+            'xmlns:bar': 'http://bar',
+            $children: [
+              {
+                $type: 'other:child',
+                'xmlns:other': 'http://other',
+                b: 'B'
+              }
+            ]
+          },
+          {
+            $type: 'ns0:foo',
+            'xmlns': 'http://foo',
+            $children: [
+              { $type: 'ns0:child', a: 'A' }
+            ]
+          }
+        ]
+      });
+    });
+
+
+    it('should handle nested, re-declaring default', async function() {
+
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('e:Root');
+
+      var xml =
+        '<root xmlns="http://extensions">' +
+          '<bar:bar xmlns:bar="http://bar">' +
+            '<other:child b="B" xmlns:other="http://other" />' +
+          '</bar:bar>' +
+          '<foo xmlns="http://foo">' +
+            '<child a="A" />' +
+          '</foo>' +
+        '</root>';
+
+      // when
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
+
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'e:Root',
+        extensions: [
+          {
+            $type: 'bar:bar',
+            'xmlns:bar': 'http://bar',
+            $children: [
+              {
+                $type: 'other:child',
+                'xmlns:other': 'http://other',
+                b: 'B'
+              }
+            ]
+          },
+          {
+            $type: 'ns0:foo',
+            'xmlns': 'http://foo',
+            $children: [
+              {
+                $type: 'ns0:child',
+                a: 'A'
+              }
+            ]
+          }
+        ]
+      });
+    });
+
+
+    it('should handle unused global', async function() {
+
+      // given
+      var reader = new Reader(extendedModel);
+      var rootHandler = reader.handler('ext:Root');
+
+      var xml =
+        '<root xmlns="http://extended" id="Root">' +
+          '<base xmlns="http://properties" />' +
+        '</root>';
+
+      // when
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
+
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'ext:Root',
+        id: 'Root',
+        any: [
+          {
+            $type: 'props:Base'
+          }
+        ]
+      });
+    });
+
+
+    it('should handle local override', async function() {
+
+      // given
+      var reader = new Reader(extendedModel);
+      var rootHandler = reader.handler('props:ComplexNesting');
+
+      var xml =
+        '<root:complexNesting xmlns:root="http://properties" id="ComplexNesting">' +
+          '<complexNesting xmlns="http://properties">' +
+            '<complexNesting>' +
+              '<foo:complexNesting xmlns:foo="http://properties" />' +
+            '</complexNesting>' +
+          '</complexNesting>' +
+        '</root:complexNesting>';
+
+      // when
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
+
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'props:ComplexNesting',
+        id: 'ComplexNesting',
+        nested: [
+          {
+            $type: 'props:ComplexNesting',
+            nested: [
+              {
+                $type: 'props:ComplexNesting',
+                nested: [
+                  {
+                    $type: 'props:ComplexNesting'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      });
+
     });
 
   });

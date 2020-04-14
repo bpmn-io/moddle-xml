@@ -930,32 +930,6 @@ describe('Writer', function() {
         expect(xml).to.eql('<foo:root xmlns:foo="http://properties" id="Root" />');
       });
 
-
-      it('local namespace re-definition', function() {
-
-        // given
-        var writer = createWriter(extendedModel);
-
-        var root = extendedModel.create('props:Root', {
-          xmlns: 'http://properties',
-          id: 'Root',
-          'xmlns:ext': 'http://extended',
-          any: [
-            extendedModel.create('ext:ExtendedComplex', { xmlns: 'http://extended' })
-          ]
-        });
-
-        // when
-        var xml = writer.toXML(root);
-
-        // then
-        expect(xml).to.eql(
-          '<root xmlns="http://properties" id="Root">' +
-            '<extendedComplex xmlns="http://extended" />' +
-          '</root>'
-        );
-      });
-
     });
 
 
@@ -1125,124 +1099,6 @@ describe('Writer', function() {
 
         // then
         expect(xml).to.eql('<e:root xmlns:e="http://extensions" xmlns:foo="http://fooo" foo:bar="BAR" />');
-      });
-
-
-      describe('should deconflict namespace prefixes', function() {
-
-        it('on nested Any', function() {
-
-          // given
-          var writer = createWriter(extensionModel);
-
-          var root = extensionModel.create('e:Root', {
-            extensions: [
-              extensionModel.createAny('e:foo', 'http://not-extensions', {
-                foo: 'BAR'
-              })
-            ]
-          });
-
-          // when
-          var xml = writer.toXML(root);
-
-          var expectedXml =
-            '<e:root xmlns:e="http://extensions" ' +
-                      'xmlns:e_1="http://not-extensions">' +
-              '<e_1:foo foo="BAR" />' +
-            '</e:root>';
-
-          // then
-          expect(xml).to.eql(expectedXml);
-        });
-
-
-        it('on explicitly added namespace', function() {
-
-          // given
-          var writer = createWriter(extensionModel);
-
-          var root = extensionModel.create('e:Root', {
-            'xmlns:e': 'http://not-extensions'
-          });
-
-          // when
-          var xml = writer.toXML(root);
-
-          var expectedXml =
-            '<e_1:root xmlns:e_1="http://extensions" ' +
-                      'xmlns:e="http://not-extensions" />';
-
-          // then
-          expect(xml).to.eql(expectedXml);
-        });
-
-
-        it('on explicitly added namespace + Any', function() {
-
-          // given
-          var writer = createWriter(extensionModel);
-
-          var root = extensionModel.create('e:Root', {
-            'xmlns:e': 'http://not-extensions',
-            extensions: [
-              extensionModel.createAny('e:foo', 'http://not-extensions', {
-                foo: 'BAR'
-              })
-            ]
-          });
-
-          // when
-          var xml = writer.toXML(root);
-
-          var expectedXml =
-            '<e_1:root xmlns:e_1="http://extensions" ' +
-                      'xmlns:e="http://not-extensions">' +
-              '<e:foo foo="BAR" />' +
-            '</e_1:root>';
-
-          // then
-          expect(xml).to.eql(expectedXml);
-        });
-
-      });
-
-
-      it('should write manually added custom namespace', function() {
-
-        // given
-        var writer = createWriter(extensionModel);
-
-        var root = extensionModel.create('e:Root', {
-          'xmlns:foo': 'http://fooo'
-        });
-
-        // when
-        var xml = writer.toXML(root);
-
-        var expectedXml =
-          '<e:root xmlns:e="http://extensions" ' +
-                  'xmlns:foo="http://fooo" />';
-
-        // then
-        expect(xml).to.eql(expectedXml);
-      });
-
-
-      it('should ignore unknown namespace prefix', function() {
-
-        // given
-        var writer = createWriter(extensionModel);
-
-        var root = extensionModel.create('e:Root', {
-          'foo:bar': 'BAR'
-        });
-
-        // when
-        var xml = writer.toXML(root);
-
-        // then
-        expect(xml).to.eql('<e:root xmlns:e="http://extensions" />');
       });
 
     });
@@ -1465,33 +1321,157 @@ describe('Writer', function() {
   });
 
 
-  describe('local namespace declarations', function() {
+  describe('namespace declarations', function() {
+
+    var extensionModel = createModel([ 'extensions' ]);
+
+    var extendedModel = createModel([
+      'properties',
+      'properties-extended'
+    ]);
+
+
+    describe('should deconflict namespace prefixes', function() {
+
+      it('on nested Any', function() {
+
+        // given
+        var writer = createWriter(extensionModel);
+
+        var root = extensionModel.create('e:Root', {
+          extensions: [
+            extensionModel.createAny('e:foo', 'http://not-extensions', {
+              foo: 'BAR'
+            })
+          ]
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        var expectedXml =
+          '<e:root xmlns:e="http://extensions" ' +
+                    'xmlns:e_1="http://not-extensions">' +
+            '<e_1:foo foo="BAR" />' +
+          '</e:root>';
+
+        // then
+        expect(xml).to.eql(expectedXml);
+      });
+
+
+      it('on explicitly added namespace', function() {
+
+        // given
+        var writer = createWriter(extensionModel);
+
+        var root = extensionModel.create('e:Root', {
+          'xmlns:e': 'http://not-extensions'
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        var expectedXml =
+          '<e_1:root xmlns:e_1="http://extensions" ' +
+                    'xmlns:e="http://not-extensions" />';
+
+        // then
+        expect(xml).to.eql(expectedXml);
+      });
+
+
+      it('on explicitly added namespace + Any', function() {
+
+        // given
+        var writer = createWriter(extensionModel);
+
+        var root = extensionModel.create('e:Root', {
+          'xmlns:e': 'http://not-extensions',
+          extensions: [
+            extensionModel.createAny('e:foo', 'http://not-extensions', {
+              foo: 'BAR'
+            })
+          ]
+        });
+
+        // when
+        var xml = writer.toXML(root);
+
+        var expectedXml =
+          '<e_1:root xmlns:e_1="http://extensions" ' +
+                    'xmlns:e="http://not-extensions">' +
+            '<e:foo foo="BAR" />' +
+          '</e_1:root>';
+
+        // then
+        expect(xml).to.eql(expectedXml);
+      });
+
+    });
+
+
+    it('should write manually added custom namespace', function() {
+
+      // given
+      var writer = createWriter(extensionModel);
+
+      var root = extensionModel.create('e:Root', {
+        'xmlns:foo': 'http://fooo'
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      var expectedXml =
+        '<e:root xmlns:e="http://extensions" ' +
+                'xmlns:foo="http://fooo" />';
+
+      // then
+      expect(xml).to.eql(expectedXml);
+    });
+
+
+    it('should ignore unknown namespace prefix', function() {
+
+      // given
+      var writer = createWriter(extensionModel);
+
+      var root = extensionModel.create('e:Root', {
+        'foo:bar': 'BAR'
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).to.eql('<e:root xmlns:e="http://extensions" />');
+    });
+
 
     it('should write custom', function() {
 
-      var model = createModel([ 'extensions' ]);
-
       // given
-      var writer = createWriter(model);
+      var writer = createWriter(extensionModel);
 
-      var root = model.create('e:Root', {
+      var root = extensionModel.create('e:Root', {
         // unprefixed root namespace
         'xmlns': 'http://extensions',
         extensions: [
-          model.createAny('bar:bar', 'http://bar', {
+          extensionModel.createAny('bar:bar', 'http://bar', {
             'xmlns:bar': 'http://bar',
             $children: [
-              model.createAny('other:child', 'http://other', {
+              extensionModel.createAny('other:child', 'http://other', {
                 'xmlns:other': 'http://other',
                 b: 'B'
               })
             ]
           }),
-          model.createAny('ns0:foo', 'http://foo', {
+          extensionModel.createAny('ns0:foo', 'http://foo', {
             // unprefixed extension namespace
             'xmlns': 'http://foo',
             $children: [
-              model.createAny('ns0:child', 'http://foo', {
+              extensionModel.createAny('ns0:child', 'http://foo', {
                 a: 'A'
               })
             ]
@@ -1520,16 +1500,14 @@ describe('Writer', function() {
 
     it('should write nested custom', function() {
 
-      var model = createModel([ 'extensions' ]);
-
       // given
-      var writer = createWriter(model);
+      var writer = createWriter(extensionModel);
 
-      var root = model.create('e:Root', {
+      var root = extensionModel.create('e:Root', {
         // unprefixed root namespace
         'xmlns': 'http://extensions',
         extensions: [
-          model.createAny('bar:bar', 'http://bar', {
+          extensionModel.createAny('bar:bar', 'http://bar', {
             'xmlns:bar': 'http://bar',
             'bar:attr': 'ATTR'
           })
@@ -1551,17 +1529,15 @@ describe('Writer', function() {
 
     it('should strip redundant nested custom', function() {
 
-      var model = createModel([ 'extensions' ]);
-
       // given
-      var writer = createWriter(model);
+      var writer = createWriter(extensionModel);
 
-      var root = model.create('e:Root', {
+      var root = extensionModel.create('e:Root', {
         // unprefixed root namespace
         'xmlns': 'http://extensions',
         'xmlns:bar': 'http://bar',
         extensions: [
-          model.createAny('bar:bar', 'http://bar', {
+          extensionModel.createAny('bar:bar', 'http://bar', {
             'xmlns:bar': 'http://bar',
             'bar:attr': 'ATTR'
           })
@@ -1583,18 +1559,16 @@ describe('Writer', function() {
 
     it('should strip different prefix nested custom', function() {
 
-      var model = createModel([ 'extensions' ]);
-
       // given
-      var writer = createWriter(model);
+      var writer = createWriter(extensionModel);
 
-      var root = model.create('e:Root', {
+      var root = extensionModel.create('e:Root', {
         // unprefixed root namespace
         'xmlns': 'http://extensions',
         'xmlns:otherBar': 'http://bar',
         'xmlns:otherFoo': 'http://foo',
         extensions: [
-          model.createAny('bar:bar', 'http://bar', {
+          extensionModel.createAny('bar:bar', 'http://bar', {
             'xmlns:bar': 'http://bar',
             'xmlns:foo': 'http://foo',
             'bar:attr': 'ATTR',
@@ -1619,17 +1593,15 @@ describe('Writer', function() {
 
     it('should write normalized custom', function() {
 
-      var model = createModel([ 'extensions' ]);
-
       // given
-      var writer = createWriter(model);
+      var writer = createWriter(extensionModel);
 
-      var root = model.create('e:Root', {
+      var root = extensionModel.create('e:Root', {
         // unprefixed root namespace
         'xmlns': 'http://extensions',
         'xmlns:otherBar': 'http://bar',
         extensions: [
-          model.createAny('bar:bar', 'http://bar', {
+          extensionModel.createAny('bar:bar', 'http://bar', {
             'bar:attr': 'ATTR'
           })
         ]
@@ -1650,19 +1622,14 @@ describe('Writer', function() {
 
     it('should write wellknown', function() {
 
-      var model = createModel([
-        'properties',
-        'properties-extended'
-      ]);
-
       // given
-      var writer = createWriter(model);
+      var writer = createWriter(extendedModel);
 
-      var root = model.create('props:Root', {
+      var root = extendedModel.create('props:Root', {
         // unprefixed top-level namespace
         'xmlns': 'http://properties',
         any: [
-          model.create('ext:ExtendedComplex', {
+          extendedModel.create('ext:ExtendedComplex', {
             // unprefixed nested namespace
             'xmlns': 'http://extended'
           })
@@ -1679,26 +1646,20 @@ describe('Writer', function() {
 
       // then
       expect(xml).to.eql(expectedXml);
-
     });
 
 
     it('should write only actually exposed', function() {
 
-      var model = createModel([
-        'properties',
-        'properties-extended'
-      ]);
-
       // given
-      var writer = createWriter(model);
+      var writer = createWriter(extendedModel);
 
-      var root = model.create('ext:Root', {
+      var root = extendedModel.create('ext:Root', {
         // unprefixed top-level namespace
         'xmlns': 'http://extended',
         id: 'ROOT',
         any: [
-          model.create('props:Complex', {
+          extendedModel.create('props:Complex', {
             // unprefixed nested namespace
             'xmlns': 'http://properties'
           })
@@ -1749,6 +1710,72 @@ describe('Writer', function() {
           '<otherBounds xmlns="http://datatypes" y="100" />' +
         '</a:Root>');
 
+    });
+
+
+    it('should strip unused global', function() {
+
+      // given
+      var writer = createWriter(extendedModel);
+
+      var root = extendedModel.create('ext:Root', {
+        xmlns: 'http://extended',
+        id: 'Root',
+        'xmlns:props': 'http://properties',
+        any: [
+          extendedModel.create('props:Base', { xmlns: 'http://properties' })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).to.eql(
+        '<root xmlns="http://extended" id="Root">' +
+          '<base xmlns="http://properties" />' +
+        '</root>'
+      );
+    });
+
+
+    it('should keep local override', function() {
+
+      // given
+      var writer = createWriter(extendedModel);
+
+      var root = extendedModel.create('props:ComplexNesting', {
+        'xmlns:root': 'http://properties',
+        id: 'ComplexNesting',
+        nested: [
+          extendedModel.create('props:ComplexNesting', {
+            xmlns: 'http://properties',
+            nested: [
+              extendedModel.create('props:ComplexNesting', {
+                nested: [
+                  extendedModel.create('props:ComplexNesting', {
+                    'xmlns:foo': 'http://properties'
+                  })
+                ]
+              })
+            ]
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).to.eql(
+        '<root:complexNesting xmlns:root="http://properties" id="ComplexNesting">' +
+          '<complexNesting xmlns="http://properties">' +
+            '<complexNesting>' +
+              '<foo:complexNesting xmlns:foo="http://properties" />' +
+            '</complexNesting>' +
+          '</complexNesting>' +
+        '</root:complexNesting>'
+      );
     });
 
   });
