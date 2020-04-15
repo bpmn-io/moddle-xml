@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 9.0.1
+
+* `FIX`: correctly serialize nested local namespaced elements ([#47](https://github.com/bpmn-io/moddle-xml/pull/47))
+
 ## 8.0.6
 
 * `FIX`: account for local namespace prefix overrides ([#48](https://github.com/bpmn-io/moddle-xml/pull/48))
