@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 8.0.6
+
+* `FIX`: account for local namespace prefix overrides ([#48](https://github.com/bpmn-io/moddle-xml/pull/48))
+
 ## 9.0.0
 
 * `FEAT`: promisify `Reader#fromXML` ([#45](https://github.com/bpmn-io/moddle-xml/pull/45))
