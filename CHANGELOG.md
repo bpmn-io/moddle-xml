@@ -12,7 +12,7 @@ ___Note:__ Yet to be released changes appear here._
 
 ## 8.0.6
 
-* `FIX`: account for local namespace prefix overrides ([#48](https://github.com/bpmn-io/moddle-xml/pull/48))
+* `FIX`: correctly serialize nested local namespaced elements ([#48](https://github.com/bpmn-io/moddle-xml/pull/48))
 
 ## 9.0.0
 
