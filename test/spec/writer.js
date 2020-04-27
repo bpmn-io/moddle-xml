@@ -1754,7 +1754,7 @@ describe('Writer', function() {
   });
 
 
-  it('should TEST OUR FIX', function() {
+  it('should reuse global namespace', function() {
 
     var model = createModel([
       'properties',
