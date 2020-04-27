@@ -1780,4 +1780,48 @@ describe('Writer', function() {
 
   });
 
+
+  it('should TEST OUR FIX', function() {
+
+    var model = createModel([
+      'properties',
+      'properties-extended'
+    ]);
+
+    // given
+    var writer = createWriter(model);
+
+    // <props:Root xmlns:props="http://properties" xmlns:ext="http://extended">
+    //   <complexNesting... xmlns="http://props">
+    //     <ext:extendedComplex numCount="1" />
+    //   </complexNesting>
+    // </props:Root>
+    var root = model.create('props:Root', {
+      'xmlns:props': 'http://properties',
+      'xmlns:ext': 'http://extended',
+      any: [
+        model.create('props:ComplexNesting', {
+          'xmlns': 'http://properties',
+          nested: [
+            model.create('ext:ExtendedComplex', { numCount: 1 })
+          ]
+        })
+      ]
+    });
+
+    // when
+    var xml = writer.toXML(root);
+
+    var expectedXML =
+      '<props:root xmlns:props="http://properties" xmlns:ext="http://extended">' +
+        '<complexNesting xmlns="http://properties">' +
+          '<ext:extendedComplex numCount="1" />' +
+        '</complexNesting>' +
+      '</props:root>';
+
+    // then
+    expect(xml).to.eql(expectedXML);
+
+  });
+
 });
