@@ -127,6 +127,27 @@ describe('Reader', function() {
         });
       });
 
+      it('simple / default xml ns', async function() {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:ComplexAttrs');
+
+        var xml = '<props:complexAttrs xml:lang="en" xmlns:props="http://properties" ' +
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<props:attrs xsi:type="props:SubAttributes" integerValue="10" />' +
+            '</props:complexAttrs>';
+
+        // when
+        var {
+          rootElement, warnings
+        } = await reader.fromXML(xml, rootHandler);
+
+        // then
+        expect(warnings).to.be.empty;
+        expect(rootElement).not.to.be.empty;
+      });
+
 
       it('simple / xsi:type / default ns', async function() {
 
