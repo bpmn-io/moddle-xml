@@ -10,6 +10,10 @@ ___Note:__ Yet to be released changes appear here._
 
 * `FIX`: handle default `xml` namespace ([#50](https://github.com/bpmn-io/moddle-xml/issues/50))
 
+## 8.0.8
+
+* `FIX`: handle default `xml` namespace
+
 ## 9.0.2
 
 * `FIX`: recursively log namespace as used ([#49](https://github.com/bpmn-io/moddle-xml/pull/49))
