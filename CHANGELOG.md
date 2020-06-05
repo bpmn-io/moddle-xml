@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 8.0.8
+
+* `FIX`: handle default `xml` namespace
+
 ## 8.0.7
 
 * `FIX`: recursively log namespace as used ([#49](https://github.com/bpmn-io/moddle-xml/pull/49))
