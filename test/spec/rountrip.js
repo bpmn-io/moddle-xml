@@ -65,7 +65,7 @@ describe('Roundtrip', function() {
     var rootHandler = reader.handler('props:ComplexNesting');
 
     var input =
-      '<root:complexNesting xmlns:root="http://properties" xmlns:ext="http://extended">' +
+      '<root:complexNesting xml:lang="en" xmlns:root="http://properties" xmlns:ext="http://extended">' +
         '<complexNesting xmlns="http://properties">' +
           '<ext:extendedComplex numCount="1" />' +
         '</complexNesting>' +
@@ -79,7 +79,7 @@ describe('Roundtrip', function() {
     var output = writer.toXML(rootElement);
 
     expect(output).to.eql(
-      '<root:complexNesting xmlns:root="http://properties" xmlns:ext="http://extended">' +
+      '<root:complexNesting xmlns:root="http://properties" xmlns:ext="http://extended" xml:lang="en">' +
         '<complexNesting xmlns="http://properties">' +
           '<ext:extendedComplex numCount="1" />' +
         '</complexNesting>' +
