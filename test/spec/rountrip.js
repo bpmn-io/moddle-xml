@@ -87,4 +87,30 @@ describe('Roundtrip', function() {
     );
   });
 
+
+  it('should keep default <xml> namespace', async function() {
+
+    // given
+    var extendedModel = createModel([ 'properties' ]);
+
+    var reader = new Reader(extendedModel);
+    var writer = createWriter(extendedModel);
+
+    var rootHandler = reader.handler('props:ComplexNesting');
+
+    var input = '<root:complexNesting xmlns:root="http://properties" xml:lang="en" />';
+
+    // when
+    var {
+      rootElement
+    } = await reader.fromXML(input, rootHandler);
+
+    var output = writer.toXML(rootElement);
+
+    // then
+    expect(output).to.eql(
+      '<root:complexNesting xmlns:root="http://properties" xml:lang="en" />'
+    );
+  });
+
 });
