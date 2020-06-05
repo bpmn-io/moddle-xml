@@ -164,6 +164,33 @@ describe('Reader', function() {
       });
 
 
+      it('default <xml> namespace', function(done) {
+
+        // given
+        var reader = new Reader(model);
+        var rootHandler = reader.handler('props:ComplexAttrs');
+
+        var xml = '<complexAttrs xmlns="http://properties" xml:lang="en" />';
+
+        // when
+        reader.fromXML(xml, rootHandler, function(err, result, context) {
+
+          if (err) {
+            return done(err);
+          }
+
+          // then
+          expect(context.warnings).to.be.empty;
+
+          expect(result).to.jsonEqual({
+            $type: 'props:ComplexAttrs'
+          });
+
+          done(err);
+        });
+      });
+
+
       it('simple / xsi:type / different ns prefix', function(done) {
 
         // given

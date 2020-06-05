@@ -100,4 +100,36 @@ describe('Roundtrip', function() {
 
   });
 
+
+  it('should keep default <xml> namespace', function(done) {
+
+    // given
+    var extendedModel = createModel([ 'properties' ]);
+
+    var reader = new Reader(extendedModel);
+    var writer = createWriter(extendedModel);
+
+    var rootHandler = reader.handler('props:ComplexNesting');
+
+    var input = '<root:complexNesting xmlns:root="http://properties" xml:lang="en" />';
+
+    // when
+    reader.fromXML(input, rootHandler, function(err, rootElement) {
+
+      if (err) {
+        return done(err);
+      }
+
+      var output = writer.toXML(rootElement);
+
+      // then
+      expect(output).to.eql(
+        '<root:complexNesting xmlns:root="http://properties" xml:lang="en" />'
+      );
+
+      done();
+    });
+
+  });
+
 });
