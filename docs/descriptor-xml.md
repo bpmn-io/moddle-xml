@@ -1,13 +1,13 @@
 # moddle descriptor - XML Extensions
 
-When reading from / writing to XML, additional meta-data is neccesary to correctly map the data model to a XML document.
+When reading from / writing to XML, additional meta-data is necessary to correctly map the data model to a XML document.
 
 This document contains the list of supported extensions that are understood by [moddle-xml](https://github.com/bpmn-io/moddle-xml).
 
 
 ## Package Definition
 
-Extensions to the package definition allows you to configure namespacing and element serialization. 
+Extensions to the package definition allows you to configure namespacing and element serialization.
 
 
 ### Namespace URI
@@ -21,7 +21,7 @@ Specify the `uri` field in a package definition to define the associated XML nam
 }
 ```
 
-This results in 
+This results in
 
 ```xml
 <s:Root xmlns:s="http://sample" />
