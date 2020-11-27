@@ -10,14 +10,14 @@ This document contains the list of supported extensions that are understood by [
 Extensions to the package definition allows you to configure namespacing and element serialization. 
 
 
-### Namespace URL
+### Namespace URI
 
-Specify the `url` field in a package definition to define the associated XML namespace url.
+Specify the `uri` field in a package definition to define the associated XML namespace URI.
 
 ```json
 {
   "prefix": "s",
-  "url": "http://sample"
+  "uri": "http://sample"
 }
 ```
 
