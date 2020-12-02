@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 9.0.4
+
+* `FIX`: make hasOwnProperty check safe ([#54](https://github.com/bpmn-io/moddle-xml/pull/54))
+
 ## 9.0.3
 
 * `FIX`: handle default `xml` namespace ([#50](https://github.com/bpmn-io/moddle-xml/issues/50))
