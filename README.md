@@ -1,6 +1,6 @@
 # moddle-xml
 
-[![Build Status](https://travis-ci.com/bpmn-io/moddle-xml.svg?branch=master)](https://travis-ci.com/bpmn-io/moddle-xml)
+[![Build Status](https://img.shields.io/github/workflow/status/bpmn-io/moddle-xml/CI)](https://github.com/bpmn-io/moddle-xml/actions?query=workflow%3ACI)
 
 Read and write XML documents described with [moddle](https://github.com/bpmn-io/moddle).
 
