@@ -1683,6 +1683,45 @@ describe('Reader', function() {
       });
 
 
+      it('should read extension element body with whitespaces', async function() {
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('e:Root');
+
+        var xml =
+          '<e:root xmlns:e="http://extensions" xmlns:other="http://other">' +
+            '<e:id>FOO</e:id>' +
+            '<other:note>' +
+              ' a note with leading and trailing whitespaces ' +
+            '</other:note>' +
+            '<other:additionalNote>' +
+              '  ' +
+            '</other:additionalNote>' +
+          '</e:root>';
+
+        // when
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
+
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'e:Root',
+          id: 'FOO',
+          extensions: [
+            {
+              $type: 'other:note',
+              $body: ' a note with leading and trailing whitespaces '
+            },
+            {
+              $type: 'other:additionalNote'
+            }
+          ]
+        });
+      });
+
+
       it('should read nested extension element', async function() {
 
         // given
