@@ -1751,6 +1751,32 @@ describe('Writer', function() {
     });
 
 
+    it('should strip xml namespace', function() {
+
+      // given
+      var writer = createWriter(extensionModel);
+
+      var root = extensionModel.create('e:Root', {
+        'xml:lang': 'de',
+        extensions: [
+          extensionModel.createAny('bar:bar', 'http://bar', {
+            'xml:lang': 'en'
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).to.eql(
+        '<e:root xmlns:e="http://extensions" xmlns:bar="http://bar" xml:lang="de">' +
+          '<bar:bar xml:lang="en" />' +
+        '</e:root>'
+      );
+    });
+
+
     it('should keep local override', function() {
 
       // given

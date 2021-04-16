@@ -71,6 +71,7 @@ describe('Reader', function() {
 
     var model = createModel([ 'properties' ]);
     var extendedModel = createModel([ 'properties', 'properties-extended' ]);
+    var extensionModel = createModel([ 'extensions' ]);
 
 
     describe('data types', function() {
@@ -166,6 +167,39 @@ describe('Reader', function() {
         // then
         expect(warnings).to.be.empty;
         expect(rootElement).not.to.be.empty;
+      });
+
+
+      it('default <xml> namespace / any element', async function() {
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('e:Root');
+
+        var xml = '<e:root xmlns:e="http://extensions" xmlns:bar="http://bar" xml:lang="de">' +
+          '<bar:bar xml:lang="en" />' +
+        '</e:root>';
+
+        // when
+        var {
+          rootElement, warnings
+        } = await reader.fromXML(xml, rootHandler);
+
+        // then
+        expect(warnings).to.be.empty;
+        expect(rootElement).not.to.be.empty;
+
+        expect(rootElement.$attrs['xml:lang']).to.eql('de');
+
+        expect(rootElement).to.jsonEqual({
+          $type: 'e:Root',
+          extensions: [
+            {
+              $type: 'bar:bar',
+              'xml:lang': 'en'
+            }
+          ]
+        });
       });
 
 
