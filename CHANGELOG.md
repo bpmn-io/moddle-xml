@@ -9,6 +9,7 @@ ___Note:__ Yet to be released changes appear here._
 ## 9.0.5
 
 * `FIX`: correct serialization of `xml` namespace attributes on `Any` elements ([#60](https://github.com/bpmn-io/moddle-xml/issues/60))
+* `FIX`: do not trim non-empty element text ([#58](https://github.com/bpmn-io/moddle-xml/issues/58))
 
 ## 9.0.4
 
