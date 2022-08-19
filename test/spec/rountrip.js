@@ -113,4 +113,31 @@ describe('Roundtrip', function() {
     );
   });
 
+
+  it.only('should keep namespace if creates attribute duplicate otherwise (unknown)', async function() {
+
+    // given
+    var extendedModel = createModel([ 'extension/base' ]);
+    var reader = new Reader(extendedModel);
+    var writer = createWriter(extendedModel);
+
+    var rootHandler = reader.handler('b:Root');
+
+    var input = '<Root xmlns="http://base" xmlns:test="http://test">' +
+      '<test:test test:duplicate="1" duplicate="1" />' +
+    '</Root>';
+
+    // when
+    var {
+      rootElement
+    } = await reader.fromXML(input, rootHandler);
+
+    var output = writer.toXML(rootElement);
+
+    // then
+    expect(output).to.eql(
+      '<Root xmlns="http://base" xmlns:test="http://test">' +
+      '<test:test test:duplicate="1" duplicate="1" />' +
+    '</Root>');
+  });
 });
