@@ -114,7 +114,7 @@ describe('Roundtrip', function() {
   });
 
 
-  it.only('should keep namespace if creates attribute duplicate otherwise (unknown)', async function() {
+  it('should de-duplicate attribute names (unknown)', async function() {
 
     // given
     var extendedModel = createModel([ 'extension/base' ]);
@@ -137,7 +137,9 @@ describe('Roundtrip', function() {
     // then
     expect(output).to.eql(
       '<Root xmlns="http://base" xmlns:test="http://test">' +
-      '<test:test test:duplicate="1" duplicate="1" />' +
-    '</Root>');
+        '<test:test duplicate="1" />' +
+      '</Root>'
+    );
   });
+
 });
