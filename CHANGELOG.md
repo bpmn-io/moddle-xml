@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 9.0.6
+
+* `FIX`: correctly handle duplicated attributes ([#66](https://github.com/bpmn-io/moddle-xml/issues/66))
+
 ## 9.0.5
 
 * `FIX`: correct serialization of `xml` namespace attributes on `Any` elements ([#60](https://github.com/bpmn-io/moddle-xml/issues/60))
