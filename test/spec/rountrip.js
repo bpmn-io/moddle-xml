@@ -114,7 +114,7 @@ describe('Roundtrip', function() {
   });
 
 
-  it('should de-duplicate attribute names (unknown)', async function() {
+  it('should de-duplicate attribute names', async function() {
 
     // given
     var extendedModel = createModel([ 'extension/base' ]);
@@ -123,9 +123,9 @@ describe('Roundtrip', function() {
 
     var rootHandler = reader.handler('b:Root');
 
-    var input = '<Root xmlns="http://base" xmlns:test="http://test">' +
-      '<test:test test:duplicate="1" duplicate="1" />' +
-    '</Root>';
+    var input = '<base:Root xmlns:base="http://base" xmlns:test="http://test" ownAttr="A" base:ownAttr="B">' +
+      '<test:test test:duplicate="1" duplicate="2" />' +
+    '</base:Root>';
 
     // when
     var {
@@ -136,10 +136,9 @@ describe('Roundtrip', function() {
 
     // then
     expect(output).to.eql(
-      '<Root xmlns="http://base" xmlns:test="http://test">' +
-        '<test:test duplicate="1" />' +
-      '</Root>'
-    );
+      '<base:Root xmlns:base="http://base" xmlns:test="http://test" ownAttr="B">' +
+      '<test:test duplicate="2" />' +
+    '</base:Root>');
   });
 
 });
