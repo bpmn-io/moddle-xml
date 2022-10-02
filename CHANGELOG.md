@@ -6,6 +6,12 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 10.0.0
+
+* `DEPS`: update to `min-dash@4`
+* `DEPS`: update to `moddle@6`
+* `CHORE`: turn into ES module
+
 ## 9.0.6
 
 * `FIX`: correctly handle duplicated attributes ([#66](https://github.com/bpmn-io/moddle-xml/issues/66))
