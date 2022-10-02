@@ -55,8 +55,8 @@
     "rollup-plugin-terser": "^7.0.2"
   },
   "dependencies": {
-    "min-dash": "^3.5.2",
-    "moddle": "^5.0.2",
+    "min-dash": "^4.0.0",
+    "moddle": "^6.0.0",
     "saxen": "^8.1.2"
   }
 }
