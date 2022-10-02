@@ -1,13 +1,13 @@
-import expect from '../expect';
+import expect from '../expect.js';
 
 import {
   Reader
-} from '../../lib';
+} from '../../lib/index.js';
 
 import {
   readFile,
   createModelBuilder
-} from '../helper';
+} from '../helper.js';
 
 
 describe('Reader', function() {

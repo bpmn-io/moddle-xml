@@ -1,4 +1,4 @@
-import expect from '../expect';
+import expect from '../expect.js';
 
 import {
   assign
@@ -7,11 +7,11 @@ import {
 import {
   Reader,
   Writer
-} from '../../lib';
+} from '../../lib/index.js';
 
 import {
   createModelBuilder
-} from '../helper';
+} from '../helper.js';
 
 
 describe('Roundtrip', function() {

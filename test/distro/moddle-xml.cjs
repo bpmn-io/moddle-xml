@@ -2,15 +2,17 @@ const {
   expect
 } = require('chai');
 
+const pkg = require('../../package.json');
 
-describe('moddle', function() {
+
+describe('moddle-xml', function() {
 
   it('should expose CJS bundle', function() {
 
     const {
       Reader,
       Writer
-    } = require('../..');
+    } = require('../../' + pkg['main']);
 
     expect(Reader).to.exist;
     expect(Writer).to.exist;
@@ -21,7 +23,7 @@ describe('moddle', function() {
     const {
       Reader,
       Writer
-    } = require('../../dist/moddle-xml.umd.js');
+    } = require('../../' + pkg['umd:main']);
 
     expect(Reader).to.exist;
     expect(Writer).to.exist;
