@@ -47,7 +47,7 @@ describe('Writer', function() {
 
     describe('datatypes', function() {
 
-      var datatypesModel = createModel(['datatype', 'datatype-external', 'datatype-aliased']);
+      var datatypesModel = createModel([ 'datatype', 'datatype-external', 'datatype-aliased' ]);
 
       it('via xsi:type', function() {
 
@@ -784,7 +784,7 @@ describe('Writer', function() {
 
       var model = createModel([ 'properties' ]);
 
-      var noAliasModel = createModel(['noalias']);
+      var noAliasModel = createModel([ 'noalias' ]);
 
       it('lowerCase', function() {
 

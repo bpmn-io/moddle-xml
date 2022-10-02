@@ -283,7 +283,7 @@ describe('Reader', function() {
 
       it('collection / xsi:type / from other namespace)', async function() {
 
-        var datatypeModel = createModel(['datatype', 'datatype-external']);
+        var datatypeModel = createModel([ 'datatype', 'datatype-external' ]);
 
         // given
         var reader = new Reader(datatypeModel);
@@ -314,7 +314,7 @@ describe('Reader', function() {
 
       it('collection / xsi:type / from other namespace / default ns)', async function() {
 
-        var datatypeModel = createModel(['datatype', 'datatype-external']);
+        var datatypeModel = createModel([ 'datatype', 'datatype-external' ]);
 
         // given
         var reader = new Reader(datatypeModel);
@@ -345,7 +345,7 @@ describe('Reader', function() {
 
       it('collection / xsi:type / type alias', async function() {
 
-        var datatypeModel = createModel(['datatype', 'datatype-aliased']);
+        var datatypeModel = createModel([ 'datatype', 'datatype-aliased' ]);
 
         // given
         var reader = new Reader(datatypeModel);
@@ -690,7 +690,7 @@ describe('Reader', function() {
       it('none', async function() {
 
         // given
-        var noAliasModel = createModel(['noalias']);
+        var noAliasModel = createModel([ 'noalias' ]);
 
         var reader = new Reader(noAliasModel);
         var rootHandler = reader.handler('na:Root');

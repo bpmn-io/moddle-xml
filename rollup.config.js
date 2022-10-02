@@ -5,7 +5,7 @@ import commonjs from 'rollup-plugin-commonjs';
 
 import pkg from './package.json';
 
-function pgl(plugins=[]) {
+function pgl(plugins = []) {
   return plugins;
 }
 
