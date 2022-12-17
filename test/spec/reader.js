@@ -2120,7 +2120,7 @@ describe('Reader', function() {
 
       expect(rootElement).to.jsonEqual({
         $type: 'b:Root',
-        generic: {
+        'c:generic': {
           $type: 'c:CustomGeneric',
           count: 10
         }
@@ -2147,7 +2147,7 @@ describe('Reader', function() {
 
       expect(rootElement).to.jsonEqual({
         $type: 'b:Root',
-        customAttr: 666
+        'c:customAttr': 666
       });
 
     });
