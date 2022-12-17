@@ -335,7 +335,7 @@ describe('Writer', function() {
         var writer = createWriter(extendedModel);
 
         var root = extendedModel.create('b:SubRoot', {
-          customAttr: 1,
+          'c:customAttr': 1,
           subAttr: 'FOO',
           ownAttr: 'OWN'
         });
@@ -1255,7 +1255,7 @@ describe('Writer', function() {
       var customGeneric = extensionModel.create('c:CustomGeneric', { count: 10 });
 
       var root = extensionModel.create('b:Root', {
-        generic: customGeneric
+        'c:generic': customGeneric
       });
 
       // when
@@ -1276,7 +1276,7 @@ describe('Writer', function() {
       // given
       var writer = createWriter(extensionModel);
 
-      var root = extensionModel.create('b:Root', { customAttr: 666 });
+      var root = extensionModel.create('b:Root', { 'c:customAttr': 666 });
 
       // when
       var xml = writer.toXML(root);
