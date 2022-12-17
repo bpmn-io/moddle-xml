@@ -26,7 +26,7 @@ export function createModelBuilder(base) {
     throw new Error('[test-util] must specify a base directory');
   }
 
-  function createModel(packageNames) {
+  function createModel(packageNames, options = {}) {
 
     var packages = map(packageNames, function(f) {
       var pkg = cache[f];
@@ -43,7 +43,7 @@ export function createModelBuilder(base) {
       return pkg;
     });
 
-    return new Moddle(packages);
+    return new Moddle(packages, { strict: true, ...options });
   }
 
   return createModel;
