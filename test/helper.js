@@ -43,7 +43,7 @@ export function createModelBuilder(base) {
       return pkg;
     });
 
-    return new Moddle(packages);
+    return new Moddle(packages, { strict: true });
   }
 
   return createModel;

@@ -126,7 +126,7 @@ describe('Writer', function() {
         // given
         var writer = createWriter(datatypesModel);
 
-        var root = datatypesModel.create('dt:Root', { xmlns: 'http://datatypes' });
+        var root = datatypesModel.create('dt:Root', { ':xmlns': 'http://datatypes' });
 
         root.set('bounds', datatypesModel.create('dt:Rect', { y: 100 }));
 
@@ -865,7 +865,7 @@ describe('Writer', function() {
         // given
         var writer = createWriter(extendedModel);
 
-        var root = extendedModel.create('props:Root', { xmlns: 'http://properties' });
+        var root = extendedModel.create('props:Root', { ':xmlns': 'http://properties' });
 
         // when
         var xml = writer.toXML(root);
@@ -880,7 +880,7 @@ describe('Writer', function() {
         // given
         var writer = createWriter(extendedModel);
 
-        var root = extendedModel.create('props:Root', { xmlns: 'http://properties', id: 'Root' });
+        var root = extendedModel.create('props:Root', { ':xmlns': 'http://properties', id: 'Root' });
 
         var any = root.get('any');
         any.push(extendedModel.create('ext:ExtendedComplex'));
@@ -904,7 +904,7 @@ describe('Writer', function() {
         var writer = createWriter(extendedModel);
 
         var root = extendedModel.create('props:Root', {
-          xmlns: 'http://properties',
+          ':xmlns': 'http://properties',
           'xmlns:foo': 'http://fooo',
           id: 'Root',
           'foo:bar': 'BAR'
@@ -1459,7 +1459,7 @@ describe('Writer', function() {
       var root = extensionModel.create('e:Root', {
 
         // unprefixed root namespace
-        'xmlns': 'http://extensions',
+        ':xmlns': 'http://extensions',
         extensions: [
           extensionModel.createAny('bar:bar', 'http://bar', {
             'xmlns:bar': 'http://bar',
@@ -1473,7 +1473,7 @@ describe('Writer', function() {
           extensionModel.createAny('ns0:foo', 'http://foo', {
 
             // unprefixed extension namespace
-            'xmlns': 'http://foo',
+            ':xmlns': 'http://foo',
             $children: [
               extensionModel.createAny('ns0:child', 'http://foo', {
                 a: 'A'
@@ -1510,7 +1510,7 @@ describe('Writer', function() {
       var root = extensionModel.create('e:Root', {
 
         // unprefixed root namespace
-        'xmlns': 'http://extensions',
+        ':xmlns': 'http://extensions',
         extensions: [
           extensionModel.createAny('bar:bar', 'http://bar', {
             'xmlns:bar': 'http://bar',
@@ -1540,7 +1540,7 @@ describe('Writer', function() {
       var root = extensionModel.create('e:Root', {
 
         // unprefixed root namespace
-        'xmlns': 'http://extensions',
+        ':xmlns': 'http://extensions',
         'xmlns:bar': 'http://bar',
         extensions: [
           extensionModel.createAny('bar:bar', 'http://bar', {
@@ -1571,7 +1571,7 @@ describe('Writer', function() {
       var root = extensionModel.create('e:Root', {
 
         // unprefixed root namespace
-        'xmlns': 'http://extensions',
+        ':xmlns': 'http://extensions',
         'xmlns:otherBar': 'http://bar',
         'xmlns:otherFoo': 'http://foo',
         extensions: [
@@ -1606,7 +1606,7 @@ describe('Writer', function() {
       var root = extensionModel.create('e:Root', {
 
         // unprefixed root namespace
-        'xmlns': 'http://extensions',
+        ':xmlns': 'http://extensions',
         'xmlns:otherBar': 'http://bar',
         extensions: [
           extensionModel.createAny('bar:bar', 'http://bar', {
@@ -1636,12 +1636,12 @@ describe('Writer', function() {
       var root = extendedModel.create('props:Root', {
 
         // unprefixed top-level namespace
-        'xmlns': 'http://properties',
+        ':xmlns': 'http://properties',
         any: [
           extendedModel.create('ext:ExtendedComplex', {
 
             // unprefixed nested namespace
-            'xmlns': 'http://extended'
+            ':xmlns': 'http://extended'
           })
         ]
       });
@@ -1667,13 +1667,13 @@ describe('Writer', function() {
       var root = extendedModel.create('ext:Root', {
 
         // unprefixed top-level namespace
-        'xmlns': 'http://extended',
+        ':xmlns': 'http://extended',
         id: 'ROOT',
         any: [
           extendedModel.create('props:Complex', {
 
             // unprefixed nested namespace
-            'xmlns': 'http://properties'
+            ':xmlns': 'http://properties'
           })
         ]
       });
@@ -1707,7 +1707,7 @@ describe('Writer', function() {
         'xmlns:a' : 'http://datatypes-aliased',
         otherBounds: [
           model.create('dt:Rect', {
-            'xmlns': 'http://datatypes',
+            ':xmlns': 'http://datatypes',
             y: 100
           })
         ]
@@ -1731,11 +1731,11 @@ describe('Writer', function() {
       var writer = createWriter(extendedModel);
 
       var root = extendedModel.create('ext:Root', {
-        xmlns: 'http://extended',
+        ':xmlns': 'http://extended',
         id: 'Root',
         'xmlns:props': 'http://properties',
         any: [
-          extendedModel.create('props:Base', { xmlns: 'http://properties' })
+          extendedModel.create('props:Base', { ':xmlns': 'http://properties' })
         ]
       });
 
@@ -1787,7 +1787,7 @@ describe('Writer', function() {
         id: 'ComplexNesting',
         nested: [
           extendedModel.create('props:ComplexNesting', {
-            xmlns: 'http://properties',
+            ':xmlns': 'http://properties',
             nested: [
               extendedModel.create('props:ComplexNesting', {
                 nested: [
@@ -1839,7 +1839,7 @@ describe('Writer', function() {
       'xmlns:ext': 'http://extended',
       any: [
         model.create('props:ComplexNesting', {
-          'xmlns': 'http://properties',
+          ':xmlns': 'http://properties',
           nested: [
             model.create('ext:ExtendedComplex', { numCount: 1 })
           ]
