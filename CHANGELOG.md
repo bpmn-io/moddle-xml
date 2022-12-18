@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 10.1.0
+
+* `FEAT`: generate sourcemaps
+
 ## 10.0.0
 
 * `DEPS`: update to `min-dash@4`
