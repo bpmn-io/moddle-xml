@@ -137,7 +137,8 @@ describe('Writer', function() {
         expect(xml).to.eql(
           '<root xmlns="http://datatypes">' +
             '<bounds y="100" />' +
-          '</root>');
+          '</root>'
+        );
       });
 
 
@@ -157,7 +158,8 @@ describe('Writer', function() {
         expect(xml).to.eql(
           '<a:root xmlns:a="http://datatypes">' +
             '<a:bounds y="100" />' +
-          '</a:root>');
+          '</a:root>'
+        );
       });
 
 
@@ -183,7 +185,8 @@ describe('Writer', function() {
                    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
             '<dt:otherBounds y="200" />' +
             '<dt:otherBounds xsi:type="do:Rect" x="100" />' +
-          '</dt:root>');
+          '</dt:root>'
+        );
       });
 
 
@@ -209,7 +212,8 @@ describe('Writer', function() {
                    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
             '<dt:otherBounds xsi:type="da:tRect" z="200" />' +
             '<dt:otherBounds y="100" />' +
-          '</dt:root>');
+          '</dt:root>'
+        );
       });
 
 
@@ -237,7 +241,8 @@ describe('Writer', function() {
             '<props:someBody xsi:type="props:SimpleBody">' +
               '${ foo &lt; bar }' +
             '</props:someBody>' +
-          '</props:withBody>');
+          '</props:withBody>'
+        );
       });
 
 
@@ -259,7 +264,8 @@ describe('Writer', function() {
           '<props:withBody xmlns:props="http://properties" ' +
                           'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
           '  <props:someBody xsi:type="props:SimpleBody">${ foo &lt; bar }</props:someBody>\n' +
-          '</props:withBody>\n');
+          '</props:withBody>\n'
+        );
       });
 
 
