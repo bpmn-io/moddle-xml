@@ -281,7 +281,7 @@ describe('Reader', function() {
       });
 
 
-      it('collection / xsi:type / from other namespace)', async function() {
+      it('collection / xsi:type / from other namespace', async function() {
 
         var datatypeModel = createModel([ 'datatype', 'datatype-external' ]);
 
