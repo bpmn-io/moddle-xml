@@ -1868,4 +1868,41 @@ describe('Writer', function() {
 
   });
 
+
+  describe('custom namespace mapping', function() {
+
+    var datatypesModel = createModel([
+      'datatype',
+      'datatype-external'
+    ]);
+
+
+    it('should write explicitly remapped xsi:type', function() {
+
+      // given
+      var writer = createWriter(datatypesModel);
+
+      var root = datatypesModel.create('dt:Root');
+
+      root.set('bounds', datatypesModel.create('do:Rect', {
+        x: 100,
+        'xmlns:foo': 'http://www.w3.org/2001/XMLSchema-instance'
+      }));
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).to.eql(
+        '<dt:root xmlns:dt="http://datatypes">' +
+          '<dt:bounds xmlns:do="http://datatypes2" ' +
+                     'xmlns:foo="http://www.w3.org/2001/XMLSchema-instance" ' +
+                     'foo:type="do:Rect" ' +
+                     'x="100" />' +
+        '</dt:root>'
+      );
+    });
+
+  });
+
 });
