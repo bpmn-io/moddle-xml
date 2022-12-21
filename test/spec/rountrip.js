@@ -141,4 +141,46 @@ describe('Roundtrip', function() {
     '</base:Root>');
   });
 
+
+  describe('custom namespace mapping', function() {
+
+    it('should keep remapped generic prefix', async function() {
+
+      // given
+      var extensionModel = createModel([ 'extensions' ], {
+        nsMap: {
+          'http://other': 'o',
+          'http://foo': 'f'
+        }
+      });
+
+      // given
+      var reader = new Reader(extensionModel);
+      var writer = createWriter(extensionModel);
+
+      var rootHandler = reader.handler('e:Root');
+
+      var input =
+        '<e:root xmlns:e="http://extensions">' +
+          '<bar:bar xmlns:bar="http://bar">' +
+            '<other:child xmlns:other="http://other" b="B" />' +
+          '</bar:bar>' +
+          '<foo xmlns="http://foo">' +
+            '<child a="A" />' +
+          '</foo>' +
+        '</e:root>';
+
+      // when
+      var {
+        rootElement
+      } = await reader.fromXML(input, rootHandler);
+
+      var output = writer.toXML(rootElement);
+
+      // then
+      expect(output).to.eql(input);
+    });
+
+  });
+
 });

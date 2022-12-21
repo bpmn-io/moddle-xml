@@ -2593,4 +2593,104 @@ describe('Reader', function() {
 
   });
 
+
+  describe('custom namespace mapping', function() {
+
+    it('should read remapped xmi:type', async function() {
+
+      // given
+      var datatypesModel = createModel([
+        'datatype',
+        'datatype-external'
+      ], {
+        nsMap: {
+          'http://www.omg.org/spec/XMI/20131001': 'xmi'
+        }
+      });
+
+      var reader = new Reader(datatypesModel);
+      var rootHandler = reader.handler('dt:Root');
+
+      var xml =
+        '<dt:root xmlns:dt="http://datatypes">' +
+          '<dt:xmiBounds xmlns:do="http://datatypes2" ' +
+                     'xmlns:foo="http://www.omg.org/spec/XMI/20131001" ' +
+                     'xmlns:f="http://foo" foo:type="do:Rect" ' +
+                     'x="100" f:bar="BAR" />' +
+        '</dt:root>';
+
+      // when
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
+
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'dt:Root',
+        xmiBounds: {
+          $type: 'do:Rect',
+          x: 100
+        }
+      });
+
+    });
+
+
+    it('should read remapped generic prefix', async function() {
+
+      // given
+      var extensionModel = createModel([ 'extensions' ], {
+        nsMap: {
+          'http://other': 'o',
+          'http://foo': 'f'
+        }
+      });
+
+      // given
+      var reader = new Reader(extensionModel);
+      var rootHandler = reader.handler('e:Root');
+
+      var xml =
+        '<e:root xmlns:e="http://extensions">' +
+          '<bar:bar xmlns:bar="http://bar">' +
+            '<other:child b="B" xmlns:other="http://other" />' +
+          '</bar:bar>' +
+          '<foo xmlns="http://foo">' +
+            '<child a="A" />' +
+          '</foo>' +
+        '</e:root>';
+
+      // when
+      var {
+        rootElement
+      } = await reader.fromXML(xml, rootHandler);
+
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'e:Root',
+        extensions: [
+          {
+            $type: 'bar:bar',
+            'xmlns:bar': 'http://bar',
+            $children: [
+              {
+                $type: 'o:child',
+                'xmlns:other': 'http://other',
+                b: 'B'
+              }
+            ]
+          },
+          {
+            $type: 'f:foo',
+            'xmlns': 'http://foo',
+            $children: [
+              { $type: 'f:child', a: 'A' }
+            ]
+          }
+        ]
+      });
+    });
+
+  });
+
 });
