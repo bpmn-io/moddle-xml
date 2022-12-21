@@ -1,0 +1,13 @@
+{
+  "name": "XML",
+  "uri": "http://www.omg.org/spec/XMI/20131001",
+  "prefix": "xmi",
+  "types": [
+    {
+      "name": "XMI",
+      "properties": [
+        { "name": "elements", "type": "Element", "isMany": true }
+      ]
+    }
+  ]
+}
