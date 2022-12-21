@@ -175,6 +175,33 @@ describe('Roundtrip', function() {
 
   describe('generic', function() {
 
+    it('should keep local ns attribute', async function() {
+
+      // given
+      var extendedModel = createModel([ 'extensions' ]);
+
+      var reader = new Reader(extendedModel);
+      var writer = createWriter(extendedModel);
+
+      var rootHandler = reader.handler('e:Root');
+
+      var input =
+        '<e:root xmlns:e="http://extensions" xmlns:woop="https://woop">' +
+          '<Bar xmlns="http://foobar">' +
+            '<Foo woop:boop="Some" />' +
+          '</Bar>' +
+        '</e:root>';
+
+      // when
+      var {
+        rootElement
+      } = await reader.fromXML(input, rootHandler);
+
+      var output = writer.toXML(rootElement);
+
+      // then
+      expect(output).to.eql(input);
+    });
 
 
     it('should keep local <xsi:type>', async function() {
