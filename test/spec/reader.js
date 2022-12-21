@@ -435,32 +435,97 @@ describe('Reader', function() {
       });
 
 
-      it('collection / xsi:type / unknown type', async function() {
+      describe('unknown type', function() {
 
-        var datatypeModel = createModel([ 'datatype' ]);
+        it('single', async function() {
 
-        // given
-        var reader = new Reader(datatypeModel);
-        var rootHandler = reader.handler('dt:Root');
+          var datatypeModel = createModel([ 'datatype' ]);
 
-        var xml =
-          '<root xmlns="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<otherBounds xsi:type="Unknown" y="100" />' +
-          '</root>';
+          // given
+          var reader = new Reader(datatypeModel);
+          var rootHandler = reader.handler('dt:Root');
 
-        var err;
+          var xml =
+            '<root xmlns="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+              '<bounds xsi:type="Unknown" y="100" />' +
+            '</root>';
 
-        // when
-        try {
-          await reader.fromXML(xml, rootHandler);
-        } catch (_err) {
-          err = _err;
-        }
+          var err;
 
-        // then
-        expect(err).to.exist;
+          // when
+          try {
+            await reader.fromXML(xml, rootHandler);
+          } catch (_err) {
+            err = _err;
+          }
 
-        expect(err.message).to.contain('unparsable content <otherBounds> detected');
+          // then
+          expect(err).to.exist;
+
+          expect(err.message).to.contain('unparsable content <bounds> detected');
+          expect(err.message).to.contain('unknown type <dt:Unknown>');
+        });
+
+
+        it('single / ns type', async function() {
+
+          var datatypeModel = createModel([ 'datatype' ]);
+
+          // given
+          var reader = new Reader(datatypeModel);
+          var rootHandler = reader.handler('dt:Root');
+
+          var xml =
+            '<root xmlns="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+              '<bounds xsi:type="other:Unknown" y="100" />' +
+            '</root>';
+
+          var err;
+
+          // when
+          try {
+            await reader.fromXML(xml, rootHandler);
+          } catch (_err) {
+            err = _err;
+          }
+
+          // then
+          expect(err).to.exist;
+
+          expect(err.message).to.contain('unparsable content <bounds> detected');
+          expect(err.message).to.contain('unknown type <other:Unknown>');
+        });
+
+
+        it('collection', async function() {
+
+          var datatypeModel = createModel([ 'datatype' ]);
+
+          // given
+          var reader = new Reader(datatypeModel);
+          var rootHandler = reader.handler('dt:Root');
+
+          var xml =
+            '<root xmlns="http://datatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+              '<otherBounds xsi:type="Unknown" y="100" />' +
+            '</root>';
+
+          var err;
+
+          // when
+          try {
+            await reader.fromXML(xml, rootHandler);
+          } catch (_err) {
+            err = _err;
+          }
+
+          // then
+          expect(err).to.exist;
+
+          expect(err.message).to.contain('unparsable content <otherBounds> detected');
+          expect(err.message).to.contain('unknown type <dt:Unknown>');
+        });
+
       });
 
 
@@ -2481,7 +2546,7 @@ describe('Reader', function() {
     var extensionModel = createModel([ 'extensions' ]);
 
 
-    it('should handle nested', async function() {
+    it('should handle nested (generic)', async function() {
 
       // given
       var reader = new Reader(extensionModel);
