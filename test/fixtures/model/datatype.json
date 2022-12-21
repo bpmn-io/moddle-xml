@@ -10,7 +10,9 @@
       "name": "Root",
       "properties": [
         { "name": "bounds", "type": "Rect", "xml": { "serialize" : "xsi:type" } },
-        { "name": "otherBounds", "type": "Rect", "xml": { "serialize" : "xsi:type" }, "isMany": true }
+        { "name": "otherBounds", "type": "Rect", "xml": { "serialize" : "xsi:type" }, "isMany": true },
+        { "name": "xmiBounds", "type": "Rect", "xml": { "serialize" : "xmi:type" } },
+        { "name": "xmiManyBounds", "type": "Rect", "xml": { "serialize" : "xmi:type" }, "isMany": true }
       ]
     },
     {

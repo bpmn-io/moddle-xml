@@ -129,6 +129,36 @@ describe('Reader', function() {
       });
 
 
+      it('simple / xmi:type', async function() {
+
+        var datatypeModel = createModel([ 'datatype', 'datatype-external' ]);
+
+        // given
+        var reader = new Reader(datatypeModel);
+        var rootHandler = reader.handler('dt:Root');
+
+        var xml =
+          '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2" ' +
+                   'xmlns:xmi="http://www.omg.org/spec/XMI/20131001">' +
+            '<dt:xmiBounds xmi:type="dt:Rect" y="100" />' +
+          '</dt:root>';
+
+        // when
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
+
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'dt:Root',
+          xmiBounds: {
+            $type: 'dt:Rect',
+            y: 100
+          }
+        });
+      });
+
+
       it('simple / default xml ns', async function() {
 
         // given
@@ -305,6 +335,37 @@ describe('Reader', function() {
         expect(rootElement).to.jsonEqual({
           $type: 'dt:Root',
           otherBounds: [
+            { $type: 'dt:Rect', y: 100 },
+            { $type: 'do:Rect', x: 200 }
+          ]
+        });
+      });
+
+
+      it('collection / xmi:type / from other namespace', async function() {
+
+        var datatypeModel = createModel([ 'datatype', 'datatype-external' ]);
+
+        // given
+        var reader = new Reader(datatypeModel);
+        var rootHandler = reader.handler('dt:Root');
+
+        var xml =
+          '<dt:root xmlns:dt="http://datatypes" xmlns:do="http://datatypes2" ' +
+                   'xmlns:xmi="http://www.omg.org/spec/XMI/20131001">' +
+            '<dt:xmiManyBounds xmi:type="dt:Rect" y="100" />' +
+            '<dt:xmiManyBounds xmi:type="do:Rect" x="200" />' +
+          '</dt:root>';
+
+        // when
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
+
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'dt:Root',
+          xmiManyBounds: [
             { $type: 'dt:Rect', y: 100 },
             { $type: 'do:Rect', x: 200 }
           ]
