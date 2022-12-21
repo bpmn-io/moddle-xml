@@ -47,7 +47,16 @@ describe('Writer', function() {
 
     describe('datatypes', function() {
 
-      var datatypesModel = createModel([ 'datatype', 'datatype-external', 'datatype-aliased' ]);
+      var datatypesModel = createModel([
+        'datatype',
+        'datatype-external',
+        'datatype-aliased'
+      ], {
+        nsMap: {
+          'http://www.omg.org/spec/XMI/20131001': 'xmi'
+        }
+      });
+
 
       it('via xsi:type', function() {
 
@@ -65,6 +74,26 @@ describe('Writer', function() {
         expect(xml).to.eql(
           '<dt:root xmlns:dt="http://datatypes">' +
             '<dt:bounds y="100" />' +
+          '</dt:root>');
+      });
+
+
+      it('via xmi:type', function() {
+
+        // given
+        var writer = createWriter(datatypesModel);
+
+        var root = datatypesModel.create('dt:Root');
+
+        root.set('xmiBounds', datatypesModel.create('dt:Rect', { y: 100 }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<dt:root xmlns:dt="http://datatypes">' +
+            '<dt:xmiBounds y="100" />' +
           '</dt:root>');
       });
 
@@ -115,6 +144,91 @@ describe('Writer', function() {
             '<dt:bounds xmlns:do="http://datatypes2" ' +
                        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
                        'xmlns:f="http://foo" xsi:type="do:Rect" ' +
+                       'x="100" f:bar="BAR" />' +
+          '</dt:root>'
+        );
+      });
+
+
+      it('via xsi:type / explicit / local ns declaration', function() {
+
+        // given
+        var writer = createWriter(datatypesModel);
+
+        var root = datatypesModel.create('dt:Root');
+
+        root.set('bounds', datatypesModel.create('do:Rect', {
+          x: 100,
+          'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'
+        }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<dt:root xmlns:dt="http://datatypes">' +
+            '<dt:bounds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' +
+                       'xmlns:do="http://datatypes2" ' +
+                       'xsi:type="do:Rect" ' +
+                       'x="100" />' +
+          '</dt:root>'
+        );
+      });
+
+
+      it('via xsi:type / overriding existing <xsi:type> attr', function() {
+
+        // given
+        var writer = createWriter(datatypesModel);
+
+        var root = datatypesModel.create('dt:Root', {
+          'xmlns:foo': 'http://datatypes',
+          'xmlns:bar': 'http://datatypes2'
+        });
+
+        root.set('bounds', datatypesModel.create('do:Rect', {
+          x: 100,
+          'xsi:type': 'other:Rect'
+        }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<foo:root ' +
+              'xmlns:foo="http://datatypes" ' +
+              'xmlns:bar="http://datatypes2" ' +
+              'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<foo:bounds xsi:type="bar:Rect" x="100" />' +
+          '</foo:root>'
+        );
+      });
+
+
+      it('via xmi:type / implicit / extension attributes', function() {
+
+        // given
+        var writer = createWriter(datatypesModel);
+
+        var root = datatypesModel.create('dt:Root');
+
+        root.set('xmiBounds', datatypesModel.create('do:Rect', {
+          x: 100,
+          'xmlns:f': 'http://foo',
+          'f:bar': 'BAR'
+        }));
+
+        // when
+        var xml = writer.toXML(root);
+
+        // then
+        expect(xml).to.eql(
+          '<dt:root xmlns:dt="http://datatypes">' +
+            '<dt:xmiBounds xmlns:do="http://datatypes2" ' +
+                       'xmlns:xmi="http://www.omg.org/spec/XMI/20131001" ' +
+                       'xmlns:f="http://foo" xmi:type="do:Rect" ' +
                        'x="100" f:bar="BAR" />' +
           '</dt:root>'
         );
@@ -1874,7 +1988,11 @@ describe('Writer', function() {
     var datatypesModel = createModel([
       'datatype',
       'datatype-external'
-    ]);
+    ], {
+      nsMap: {
+        'http://www.omg.org/spec/XMI/20131001': 'xmi'
+      }
+    });
 
 
     it('should write explicitly remapped xsi:type', function() {
@@ -1897,6 +2015,33 @@ describe('Writer', function() {
         '<dt:root xmlns:dt="http://datatypes">' +
           '<dt:bounds xmlns:do="http://datatypes2" ' +
                      'xmlns:foo="http://www.w3.org/2001/XMLSchema-instance" ' +
+                     'foo:type="do:Rect" ' +
+                     'x="100" />' +
+        '</dt:root>'
+      );
+    });
+
+
+    it('should write explicitly remapped xmi:type', function() {
+
+      // given
+      var writer = createWriter(datatypesModel);
+
+      var root = datatypesModel.create('dt:Root');
+
+      root.set('xmiBounds', datatypesModel.create('do:Rect', {
+        x: 100,
+        'xmlns:foo': 'http://www.omg.org/spec/XMI/20131001'
+      }));
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).to.eql(
+        '<dt:root xmlns:dt="http://datatypes">' +
+          '<dt:xmiBounds xmlns:do="http://datatypes2" ' +
+                     'xmlns:foo="http://www.omg.org/spec/XMI/20131001" ' +
                      'foo:type="do:Rect" ' +
                      'x="100" />' +
         '</dt:root>'
