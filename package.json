@@ -1,6 +1,6 @@
 {
   "name": "moddle-xml",
-  "version": "11.0.0-exp.2",
+  "version": "11.0.0-exp.3",
   "description": "XML import/export for documents described with moddle",
   "scripts": {
     "all": "run-s lint test distro",
