@@ -2849,14 +2849,14 @@ describe('Reader', function() {
       // then
       expect(rootElement).to.jsonEqual({
         $type: 'xmi:XMI',
-        extensions: [
+        extension: [
           {
             $type: 'uml:Package',
-            type: 'uml:Package'
+            'xmi:type': 'uml:Package'
           },
           {
             $type: 'uml:SpecialPackage',
-            type: 'uml:SpecialPackage'
+            'xmi:type': 'uml:SpecialPackage'
           }
         ]
       });
