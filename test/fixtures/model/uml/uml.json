@@ -1,0 +1,19 @@
+{
+  "name": "UML",
+  "uri": "http://www.omg.org/spec/UML/20131001",
+  "prefix": "uml",
+  "types": [
+    {
+      "name": "Package",
+      "superClass": [
+        "xmi:Extension"
+      ]
+    },
+    {
+      "name": "SpecialPackage",
+      "superClass": [
+        "Package"
+      ]
+    }
+  ]
+}
