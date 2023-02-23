@@ -2819,4 +2819,51 @@ describe('Reader', function() {
 
   });
 
+
+  describe('package owned xml -> serialize property', function() {
+
+    it('should parse without warnings', async function() {
+
+      // given
+      var datatypesModel = createModel([
+        'uml/xmi',
+        'uml/uml'
+      ]);
+
+      var reader = new Reader(datatypesModel);
+      var rootHandler = reader.handler('xmi:XMI');
+
+      var xml = `
+        <xmi:XMI xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20131001">
+          <uml:Package xmi:type="uml:Package" />
+          <uml:Package xmi:type="uml:SpecialPackage" />
+        </xmi:XMI>
+      `;
+
+      // when
+      var {
+        rootElement,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
+
+      // then
+      expect(rootElement).to.jsonEqual({
+        $type: 'xmi:XMI',
+        extensions: [
+          {
+            $type: 'uml:Package',
+            type: 'uml:Package'
+          },
+          {
+            $type: 'uml:SpecialPackage',
+            type: 'uml:SpecialPackage'
+          }
+        ]
+      });
+
+      expect(warnings).to.be.empty;
+    });
+
+  });
+
 });

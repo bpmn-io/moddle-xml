@@ -1,0 +1,23 @@
+{
+  "name": "XMI",
+  "uri": "http://www.omg.org/spec/XMI/20131001",
+  "prefix": "xmi",
+  "types": [
+    {
+      "name": "XMI",
+      "properties": [
+        { "name": "extensions", "type": "Extension", "isMany": true, "xml": { "serialize": "xmi:type" } }
+      ]
+    },
+    {
+      "name": "Extension",
+      "properties": [
+        {
+          "name": "type",
+          "type": "String",
+          "isAttr": true
+        }
+      ]
+    }
+  ]
+}
