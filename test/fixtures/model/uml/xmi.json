@@ -6,11 +6,20 @@
     {
       "name": "XMI",
       "properties": [
-        { "name": "extensions", "type": "Extension", "isMany": true, "xml": { "serialize": "xmi:type" } }
+        { "name": "extension", "type": "Extension", "isMany": true, "xml": { "serialize": "xmi:type" } }
       ]
     },
     {
       "name": "Extension",
+      "superClass": [
+        "Element"
+      ]
+    },
+    {
+      "name": "Typed",
+      "extends": [
+        "xmi:Extension"
+      ],
       "properties": [
         {
           "name": "type",

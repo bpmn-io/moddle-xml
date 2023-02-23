@@ -454,4 +454,44 @@ describe('Roundtrip', function() {
 
   });
 
+
+  describe('package owned xml -> serialize property', function() {
+
+    it('should roundtrip', async function() {
+
+      // given
+      var xmiModel = createModel([
+        'uml/xmi',
+        'uml/uml'
+      ]);
+
+      var reader = new Reader(xmiModel);
+      var rootHandler = reader.handler('xmi:XMI');
+
+      var input =
+        '<xmi:XMI xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20131001">' +
+          '<uml:Package xmi:type="uml:Package" />' +
+          '<uml:Package xmi:type="uml:SpecialPackage" />' +
+        '</xmi:XMI>';
+
+      var {
+        rootElement
+      } = await reader.fromXML(input, rootHandler);
+
+      // when
+      var writer = createWriter(xmiModel);
+
+      var output = writer.toXML(rootElement);
+
+      // then
+      expect(output).to.eql(
+        '<xmi:XMI xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20131001">' +
+          '<xmi:extension xmi:type="uml:Package" />' +
+          '<xmi:extension xmi:type="uml:SpecialPackage" />' +
+        '</xmi:XMI>'
+      );
+    });
+
+  });
+
 });
