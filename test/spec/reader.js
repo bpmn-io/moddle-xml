@@ -878,6 +878,53 @@ describe('Reader', function() {
       });
 
 
+      it('single (attribute / idAttr)', async function() {
+
+        // given
+        var reader = new Reader(extendedModel);
+        var rootHandler = reader.handler('props:Root');
+
+        var xml =
+          '<props:root xmlns:props="http://properties">' +
+            '<props:containedCollection id="C_5">' +
+              '<props:complex id="C_1" />' +
+              '<props:complex id="C_2" />' +
+            '</props:containedCollection>' +
+            '<props:referencingNestedRef id="C_4">' +
+              '<props:referencedComplex idref="C_1" />' +
+            '</props:referencingNestedRef>' +
+            '<props:referencingNestedRef id="C_6" referencedComplex="C_1" />' +
+          '</props:root>';
+
+        // when
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
+
+        // then
+        expect(rootElement).to.jsonEqual({
+          $type: 'props:Root',
+          any: [
+            {
+              $type: 'props:ContainedCollection',
+              id: 'C_5',
+              children: [
+                { $type: 'props:Complex', id: 'C_1' },
+                { $type: 'props:Complex', id: 'C_2' }
+              ]
+            },
+            { $type: 'props:ReferencingNestedRef', id: 'C_4' },
+            { $type: 'props:ReferencingNestedRef', id: 'C_6' }
+          ]
+        });
+
+        var referenced = rootElement.any[0].children[0];
+
+        expect(rootElement.any[1].referencedComplex).to.equal(referenced);
+        expect(rootElement.any[2].referencedComplex).to.equal(referenced);
+      });
+
+
       it('collection', async function() {
 
         // given

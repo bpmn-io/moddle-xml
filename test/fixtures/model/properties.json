@@ -178,6 +178,20 @@
       ]
     },
     {
+      "name": "ReferencingNestedRef",
+      "superClass": [ "BaseWithId" ],
+      "properties": [
+        {
+          "name": "referencedComplex",
+          "type": "Complex",
+          "isReference": true,
+          "xml": {
+            "idAttr": "idref"
+          }
+        }
+      ]
+    },
+    {
       "name": "ReferencingCollection",
       "superClass": [ "BaseWithId" ],
       "properties": [
