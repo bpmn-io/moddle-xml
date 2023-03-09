@@ -19,7 +19,7 @@ npm install --save moddle-xml
 Create a [moddle instance](https://github.com/bpmn-io/moddle)
 
 ```javascript
-import Moddle from 'moddle';
+import { Moddle } from 'moddle';
 import {
   Reader,
   Writer
