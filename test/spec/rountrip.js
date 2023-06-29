@@ -454,4 +454,96 @@ describe('Roundtrip', function() {
 
   });
 
+
+  describe('references (idAttr)', function() {
+
+    var refsModel = createModel([ 'properties', 'properties-extended' ]);
+
+
+    it('single (attribute / idAttr)', async function() {
+
+      // given
+      var reader = new Reader(refsModel);
+      var rootHandler = reader.handler('props:Root');
+
+      var input =
+        '<props:root xmlns:props="http://properties">' +
+          '<props:containedCollection id="C_5">' +
+            '<props:complex id="C_1" />' +
+            '<props:complex id="C_2" />' +
+          '</props:containedCollection>' +
+          '<props:referencingNestedRef id="C_4">' +
+            '<props:referencedComplex idref="C_1" />' +
+          '</props:referencingNestedRef>' +
+          '<props:referencingNestedRef id="C_6" referencedComplex="C_1" />' +
+        '</props:root>';
+
+      var {
+        rootElement
+      } = await reader.fromXML(input, rootHandler);
+
+      // when
+      var writer = createWriter(refsModel);
+
+      var output = writer.toXML(rootElement);
+
+      // then
+      expect(output).to.eql(
+        '<props:root xmlns:props="http://properties">' +
+          '<props:containedCollection id="C_5">' +
+            '<props:complex id="C_1" />' +
+            '<props:complex id="C_2" />' +
+          '</props:containedCollection>' +
+          '<props:referencingNestedRef id="C_4">' +
+            '<props:referencedComplex idref="C_1" />' +
+          '</props:referencingNestedRef>' +
+          '<props:referencingNestedRef id="C_6">' +
+            '<props:referencedComplex idref="C_1" />' +
+          '</props:referencingNestedRef>' +
+        '</props:root>'
+      );
+    });
+
+  });
+
+
+  describe('package owned xml -> serialize property', function() {
+
+    it('should roundtrip', async function() {
+
+      // given
+      var xmiModel = createModel([
+        'uml/xmi',
+        'uml/uml'
+      ]);
+
+      var reader = new Reader(xmiModel);
+      var rootHandler = reader.handler('xmi:XMI');
+
+      var input =
+        '<xmi:XMI xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20131001">' +
+          '<uml:Package xmi:type="uml:Package" />' +
+          '<uml:Package xmi:type="uml:SpecialPackage" />' +
+        '</xmi:XMI>';
+
+      var {
+        rootElement
+      } = await reader.fromXML(input, rootHandler);
+
+      // when
+      var writer = createWriter(xmiModel);
+
+      var output = writer.toXML(rootElement);
+
+      // then
+      expect(output).to.eql(
+        '<xmi:XMI xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20131001">' +
+          '<xmi:extension xmi:type="uml:Package" />' +
+          '<xmi:extension xmi:type="uml:SpecialPackage" />' +
+        '</xmi:XMI>'
+      );
+    });
+
+  });
+
 });
