@@ -3,25 +3,28 @@
   "version": "10.1.0",
   "description": "XML import/export for documents described with moddle",
   "scripts": {
-    "all": "run-s lint test distro",
-    "lint": "eslint .",
-    "dev": "npm test -- --watch",
-    "test": "mocha --reporter=spec --recursive test/spec",
-    "distro": "run-s build test:build",
+    "all": "run-s lint test test:distro",
     "build": "rollup -c",
-    "prepare": "npm run build",
-    "test:build": "mocha --reporter=spec --recursive test/distro",
-    "prepublishOnly": "run-s distro"
+    "dev": "npm test -- --watch",
+    "lint": "eslint .",
+    "test": "mocha --reporter=spec --recursive test/spec",
+    "test:distro": "mocha --reporter=spec --recursive test/distro",
+    "pretest": "run-s build",
+    "prepare": "run-s build"
   },
   "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/bpmn-io/moddle-xml"
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "umd:main": "dist/moddle-xml.umd.cjs",
-  "source": "lib/index.js",
   "keywords": [
     "moddle",
     "model",

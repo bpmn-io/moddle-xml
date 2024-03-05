@@ -2,7 +2,7 @@ import expect from '../expect.js';
 
 import {
   Reader
-} from '../../lib/index.js';
+} from 'moddle-xml';
 
 import {
   readFile,
