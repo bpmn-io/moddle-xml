@@ -6,7 +6,7 @@
     "all": "run-s lint test test:distro",
     "build": "rollup -c",
     "dev": "npm test -- --watch",
-    "lint": "eslint .",
+    "lint": "eslint . --ext cjs,js",
     "test": "mocha --reporter=spec --recursive test/spec",
     "test:distro": "mocha --reporter=spec --recursive test/distro",
     "pretest": "run-s build",
