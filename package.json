@@ -44,6 +44,9 @@
       "url": "https://github.com/bpmn-io"
     }
   ],
+  "engines": {
+    "node": ">= 18"
+  },
   "files": [
     "dist"
   ],
