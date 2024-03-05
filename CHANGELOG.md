@@ -6,6 +6,20 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 11.0.0
+
+* `FEAT`: add package `exports`
+* `FIX`: remove broken `main` configuration
+* `CHORE`: drop `UMD` distribution
+* `DEPS`: update to `min-dash@4.2.1`
+* `DEPS`: update to `min-dash@4.2.1`
+* `DEPS`: update to `saxen@10`
+* `DEPS`: update to `moddle@7`
+
+### Breaking Changes
+
+* UMD distribution no longer bundled. The module is now available as an ES module.
+
 ## 10.1.0
 
 * `FEAT`: generate sourcemaps
