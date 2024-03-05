@@ -24,7 +24,6 @@
     },
     "./package.json": "./package.json"
   },
-  "umd:main": "dist/moddle-xml.umd.cjs",
   "keywords": [
     "moddle",
     "model",
@@ -53,9 +52,6 @@
   "license": "MIT",
   "sideEffects": false,
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^24.0.1",
-    "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/plugin-terser": "^0.4.0",
     "chai": "^4.3.6",
     "eslint": "^8.34.0",
     "eslint-plugin-bpmn-io": "^1.0.0",
