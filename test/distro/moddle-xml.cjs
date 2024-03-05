@@ -4,6 +4,8 @@ const {
 
 const pkg = require('../../package.json');
 
+const pkgExports = pkg.exports['.'];
+
 
 describe('moddle-xml', function() {
 
@@ -12,7 +14,7 @@ describe('moddle-xml', function() {
     const {
       Reader,
       Writer
-    } = require('../../' + pkg['main']);
+    } = require('../../' + pkgExports['require']);
 
     expect(Reader).to.exist;
     expect(Writer).to.exist;

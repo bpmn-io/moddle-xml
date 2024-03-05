@@ -2,7 +2,7 @@ import expect from '../expect.js';
 
 import {
   Writer
-} from '../../lib/index.js';
+} from 'moddle-xml';
 
 import {
   createModelBuilder

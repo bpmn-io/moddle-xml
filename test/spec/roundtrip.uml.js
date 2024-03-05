@@ -9,7 +9,7 @@ import {
 import {
   Reader,
   Writer
-} from '../../lib/index.js';
+} from 'moddle-xml';
 
 import {
   createModelBuilder
