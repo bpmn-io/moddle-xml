@@ -3,12 +3,11 @@
   "version": "11.0.0",
   "description": "XML import/export for documents described with moddle",
   "scripts": {
-    "all": "run-s lint test test:distro",
+    "all": "run-s lint test",
     "build": "rollup -c",
     "dev": "npm test -- --watch",
     "lint": "eslint . --ext cjs,js",
-    "test": "mocha --reporter=spec --recursive test/spec",
-    "test:distro": "mocha --reporter=spec --recursive test/distro",
+    "test": "mocha --reporter=spec --recursive test",
     "pretest": "run-s build",
     "prepare": "run-s build"
   },
