@@ -8,9 +8,13 @@ ___Note:__ Yet to be released changes appear here._
 
 ## 11.0.0
 
-* `FEAT`: add package `exports`
-* `FIX`: remove broken `main` configuration
-* `CHORE`: drop `UMD` distribution
+* `FEAT`: add package `exports` ([#73](https://github.com/bpmn-io/moddle-xml/pull/73))
+* `FEAT`: access `:xmlns` as a global name ([#69](https://github.com/bpmn-io/moddle-xml/pull/69), [`bdb5824`](https://github.com/bpmn-io/moddle-xml/pull/69/commits/bdb5824d8fc7727c20de40f5460f0f2b32b0d0c1))
+* `FEAT`: allow to configure custom namespace map ([#69](https://github.com/bpmn-io/moddle-xml/pull/69), [`17d8cb0`](https://github.com/bpmn-io/moddle-xml/pull/69/commits/17d8cb0a737551c738b77c7e42bb7f3b56ab2fdb))
+* `FEAT`: support alternative serialization methods ([#69](https://github.com/bpmn-io/moddle-xml/pull/69), [`2cb16b2`](https://github.com/bpmn-io/moddle-xml/pull/69/commits/2cb16b277c710ff1d4a53acfa78e243de898d0a5))
+* `FIX`: correct export of generic element ([#69](https://github.com/bpmn-io/moddle-xml/pull/69), [`235504f`](https://github.com/bpmn-io/moddle-xml/pull/69/commits/235504f98488fced305e13a5b8a7e9f157f80232))
+* `FIX`: remove broken `main` configuration ([#73](https://github.com/bpmn-io/moddle-xml/pull/73))
+* `CHORE`: drop `UMD` distribution ([#73](https://github.com/bpmn-io/moddle-xml/pull/73))
 * `DEPS`: update to `min-dash@4.2.1`
 * `DEPS`: update to `min-dash@4.2.1`
 * `DEPS`: update to `saxen@10`
