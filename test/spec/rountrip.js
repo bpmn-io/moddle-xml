@@ -373,6 +373,35 @@ describe('Roundtrip', function() {
       expect(output).to.eql(input);
     });
 
+
+    it.only('should keep custom namespace', async function() {
+
+      // given
+      var extendedModel = createModel([ 'extension/base' ]);
+
+      var reader = new Reader(extendedModel);
+      var writer = createWriter(extendedModel);
+
+      var rootHandler = reader.handler('b:Root');
+
+      var input =
+        '<b:Root xmlns="http://foo" xmlns:foo="http://foo" xmlns:b="http://base" foo:bar="1">' +
+          '<generic foo:bar="1" />' +
+          '<b:own foo:bar="1" />' +
+        '</b:Root>';
+
+      // when
+      var {
+        rootElement
+      } = await reader.fromXML(input, rootHandler);
+
+      var output = writer.toXML(rootElement);
+
+      // then
+      expect(output).to.eql(input);
+    });
+
+
   });
 
 

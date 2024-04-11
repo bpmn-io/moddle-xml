@@ -556,6 +556,70 @@ describe('Reader', function() {
         });
       });
 
+
+      it.only('duplicate custom ns declaration', async function() {
+
+        var extensionModel = createModel([ 'extension/base' ]);
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('b:Root');
+
+        var xml =
+          '<b:Root xmlns="http://foo" xmlns:foo="http://foo" xmlns:b="http://base" foo:bar="1" />';
+
+        // when
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
+
+        expect(rootElement).to.jsonEqual({
+          $type: 'b:Root'
+        });
+
+        expect(rootElement.$attrs).to.jsonEqual({
+          'xmlns:b': 'http://base',
+          'xmlns:foo': 'http://foo',
+          'xmlns': 'http://foo',
+          'foo:bar': '1'
+        });
+      });
+
+
+      it.only('duplicate custom ns declaration, generic element attribute', async function() {
+
+        var extensionModel = createModel([ 'extension/base' ]);
+
+        // given
+        var reader = new Reader(extensionModel);
+        var rootHandler = reader.handler('b:Root');
+
+        var xml =
+          '<b:Root xmlns="http://foo" xmlns:foo="http://foo" xmlns:b="http://base">' +
+            '<generic foo:bar="1" />' +
+          '</b:Root>';
+
+        // when
+        var {
+          rootElement
+        } = await reader.fromXML(xml, rootHandler);
+
+        expect(rootElement).to.jsonEqual({
+          $type: 'b:Root',
+          generic: {
+            $type: 'ns0:generic',
+            bar: '1'
+          }
+        });
+
+        expect(rootElement.$attrs).to.jsonEqual({
+          'xmlns:b': 'http://base',
+          'xmlns:foo': 'http://foo',
+          'xmlns': 'http://foo',
+          'foo:bar': '1'
+        });
+      });
+
     });
 
 
@@ -1767,6 +1831,7 @@ describe('Reader', function() {
           'xmlns': 'http://extensions'
         });
       });
+
     });
 
 
