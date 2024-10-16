@@ -605,7 +605,7 @@ describe('Reader', function() {
 
     describe('simple nested properties', function() {
 
-      it('parse boolean property', async function() {
+      it('parse int property', async function() {
 
         // given
         var reader = new Reader(model);
