@@ -1,13 +1,6 @@
-import fs from 'node:fs';
-
-
-const pkg = JSON.parse(fs.readFileSync('./package.json'));
+import pkg from './package.json';
 
 const pkgExports = pkg.exports['.'];
-
-function pgl(plugins = []) {
-  return plugins;
-}
 
 const srcEntry = 'lib/index.js';
 
@@ -22,7 +15,6 @@ export default [
       'min-dash',
       'moddle',
       'saxen'
-    ],
-    plugins: pgl()
+    ]
   }
 ];
