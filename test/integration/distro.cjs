@@ -18,6 +18,18 @@ describe('integration', function() {
       expect(Writer).to.exist;
     });
 
+
+    it('should expose ESM bundle', async function() {
+
+      const {
+        Reader,
+        Writer
+      } = await import('moddle-xml');
+
+      expect(Reader).to.exist;
+      expect(Writer).to.exist;
+    });
+
   });
 
 });
