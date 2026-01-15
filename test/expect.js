@@ -1,9 +1,9 @@
-import chai from 'chai';
+import { use as chaiUse } from 'chai';
 
 import Matchers from './matchers.js';
 
 // add matchers
-chai.use(Matchers);
+chaiUse(Matchers);
 
 // expose chai expect
 export {
