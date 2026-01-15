@@ -2,10 +2,6 @@ const {
   expect
 } = require('chai');
 
-const pkg = require('../../package.json');
-
-const pkgExports = pkg.exports['.'];
-
 
 describe('integration', function() {
 
@@ -16,7 +12,7 @@ describe('integration', function() {
       const {
         Reader,
         Writer
-      } = require('../../' + pkgExports['require']);
+      } = require('moddle-xml');
 
       expect(Reader).to.exist;
       expect(Writer).to.exist;
