@@ -4,7 +4,7 @@
   "description": "XML import/export for documents described with moddle",
   "scripts": {
     "all": "run-s lint test",
-    "build": "rollup -c",
+    "build": "rollup -c --bundleConfigAsCjs",
     "dev": "npm test -- --watch",
     "lint": "eslint .",
     "test": "mocha --reporter=spec --recursive test",
