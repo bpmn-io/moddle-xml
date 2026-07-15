@@ -57,7 +57,7 @@
     "rollup": "^4.62.2"
   },
   "dependencies": {
-    "min-dash": "^5.0.0",
+    "min-dash": "^5.1.0",
     "saxen": "^11.0.2"
   },
   "peerDependencies": {
