@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "min-dash": "^5.1.0",
-    "saxen": "^11.0.2"
+    "saxen": "^11.1.0"
   },
   "peerDependencies": {
     "moddle": ">= 6.2.0"
