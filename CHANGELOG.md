@@ -6,6 +6,11 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 12.1.0
+
+* `DEPS`: update to `saxen@11.1.0`
+* `DEPS`: update to `min-dash@5.1.0`
+
 ## 12.0.0
 
 * `CHORE`: drop CJS distribution, turn into ESM only module
