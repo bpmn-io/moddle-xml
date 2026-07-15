@@ -54,7 +54,7 @@
     "mocha": "^11.7.5",
     "moddle": "^8.0.0",
     "npm-run-all2": "^9.0.2",
-    "rollup": "^4.55.1"
+    "rollup": "^4.62.2"
   },
   "dependencies": {
     "min-dash": "^5.0.0",
