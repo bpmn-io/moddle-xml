@@ -19,7 +19,11 @@ describe('performance', function() {
 
   var model = createModel([ 'properties' ]);
 
+  var extensionModel = createModel([ 'extensions' ]);
+
   var DEPTH = 50000;
+
+  var NS_DEPTH = 1500;
 
   // linear read / write stays far below this, a quadratic or stack-recursive
   // regression blows past it (or crashes outright)
@@ -109,5 +113,35 @@ describe('performance', function() {
     // then
     expect(write(rootElement)).to.eql(createDeepXML(DEPTH));
   });
+
+
+  it('should round-trip deeply nested namespaces', async function() {
+
+    // given
+    var xml = createDeepNamespaceXML(NS_DEPTH);
+
+    // when
+    var reader = new Reader(extensionModel);
+    var rootHandler = reader.handler('e:Root');
+
+    var { rootElement } = await reader.fromXML(xml, rootHandler);
+
+    // then
+    expect(write(rootElement)).to.eql(xml);
+  });
+
+  function createDeepNamespaceXML(depth) {
+    var open = '<e:root xmlns:e="http://extensions">',
+        close = '</e:root>';
+
+    for (var i = 0; i < depth - 1; i++) {
+      open += '<p' + i + ':e xmlns:p' + i + '="urn:' + i + '">';
+      close = '</p' + i + ':e>' + close;
+    }
+
+    open += '<p' + (depth - 1) + ':e xmlns:p' + (depth - 1) + '="urn:' + (depth - 1) + '" />';
+
+    return open + close;
+  }
 
 });
