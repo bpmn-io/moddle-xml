@@ -6,6 +6,8 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 12.3.0
+
 * `DEPS`: update to `saxen@11.2.0`
 
 ## 12.2.0
