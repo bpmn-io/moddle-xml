@@ -8,6 +8,7 @@ ___Note:__ Yet to be released changes appear here._
 
 ## 12.3.0
 
+* `FEAT`: parse documents with deeply nested namespace declarations linearily ([nikku/saxen#33](https://github.com/nikku/saxen/pull/33))
 * `DEPS`: update to `saxen@11.2.0`
 
 ## 12.2.0
