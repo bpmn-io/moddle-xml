@@ -6,6 +6,10 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+## 12.3.1
+
+* `FIX`: resolve used namespace once when logging usage ([#82](https://github.com/bpmn-io/moddle-xml/pull/82))
+
 ## 12.3.0
 
 * `FEAT`: parse documents with deeply nested namespace declarations linearily ([nikku/saxen#33](https://github.com/nikku/saxen/pull/33))
