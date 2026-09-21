@@ -6,6 +6,8 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+* `DEPS`: update to `saxen@11.2.0`
+
 ## 12.2.0
 
 * `FEAT`: serialize deeply nested documents in a scalable, stack-safe manner ([#81](https://github.com/bpmn-io/moddle-xml/pull/81), [`GHSA-x3vc-q6mj-47vp`](https://github.com/bpmn-io/moddle-xml/security/advisories/GHSA-x3vc-q6mj-47vp))
