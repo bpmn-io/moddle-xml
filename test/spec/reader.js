@@ -1641,8 +1641,69 @@ describe('Reader', function() {
           ]);
         });
 
+
+        it('on reference to built-in property name', async function() {
+
+          // given
+          var reader = new Reader(extendedModel);
+          var rootHandler = reader.handler('props:Root');
+
+          var xml =
+            '<props:root xmlns:props="http://properties">' +
+              '<props:referencingSingle id="C_4" referencedComplex="constructor" />' +
+            '</props:root>';
+
+          // when
+          var {
+            rootElement,
+            warnings
+          } = await reader.fromXML(xml, rootHandler);
+
+          // then
+          var referencingSingle = rootElement.any[0];
+
+          expect(referencingSingle.referencedComplex).not.to.exist;
+
+          expect(warnings).to.have.length(1);
+          expect(warnings[0].message).to.eql('unresolved reference <constructor>');
+        });
+
       });
 
+    });
+
+
+    it('should import built-in property name as ID', async function() {
+
+      // given
+      var reader = new Reader(extendedModel);
+      var rootHandler = reader.handler('props:Root');
+
+      var xml =
+        '<props:root xmlns:props="http://properties">' +
+          '<props:containedCollection id="C_5">' +
+            '<props:complex id="toString" />' +
+            '<props:complex id="__proto__" />' +
+          '</props:containedCollection>' +
+          '<props:referencingSingle id="C_4" referencedComplex="toString" />' +
+        '</props:root>';
+
+      // when
+      var {
+        rootElement,
+        elementsById,
+        warnings
+      } = await reader.fromXML(xml, rootHandler);
+
+      // then
+      expect(warnings).to.be.empty;
+
+      var children = rootElement.any[0].children;
+
+      expect(elementsById.toString).to.equal(children[0]);
+      expect(elementsById.__proto__).to.equal(children[1]);
+
+      expect(rootElement.any[1].referencedComplex).to.equal(children[0]);
     });
 
   });
