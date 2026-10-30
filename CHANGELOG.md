@@ -6,6 +6,9 @@ All notable changes to [moddle-xml](https://github.com/bpmn-io/moddle-xml) are d
 
 ___Note:__ Yet to be released changes appear here._
 
+* `FIX`: escape namespace URIs and reference IDs on export ([`GHSA-7f6h-27xg-f2fh`](https://github.com/bpmn-io/moddle-xml/security/advisories/GHSA-7f6h-27xg-f2fh))
+* `FIX`: track element IDs in prototype-less map ([`GHSA-7f6h-27xg-f2fh`](https://github.com/bpmn-io/moddle-xml/security/advisories/GHSA-7f6h-27xg-f2fh))
+
 ## 12.3.1
 
 * `FIX`: resolve used namespace once when logging usage ([#82](https://github.com/bpmn-io/moddle-xml/pull/82))
