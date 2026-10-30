@@ -1118,6 +1118,28 @@ describe('Writer', function() {
         expect(xml).to.eql('<props:attributeReferenceCollection xmlns:props="http://properties" refs="ComplexCount_1 ComplexNesting_1" />');
       });
 
+
+      it('should escape reference ID', function() {
+
+        // given
+        var writer = createWriter(model);
+
+        var complex = model.create('props:Complex', { id: 'C</props:references><pwned />&' });
+
+        var referencingCollection = model.create('props:ReferencingCollection', {
+          references: [ complex ]
+        });
+
+        // when
+        var xml = writer.toXML(referencingCollection);
+
+        // then
+        expect(xml).to.eql(
+          '<props:referencingCollection xmlns:props="http://properties">' +
+            '<props:references>C&lt;/props:references&gt;&lt;pwned /&gt;&amp;</props:references>' +
+          '</props:referencingCollection>');
+      });
+
     });
 
 
@@ -1979,6 +2001,60 @@ describe('Writer', function() {
 
     // then
     expect(xml).to.eql(expectedXML);
+
+  });
+
+
+  describe('namespace URI escaping', function() {
+
+    var model = createModel([ 'properties' ]);
+
+    var extensionModel = createModel([ 'extensions' ]);
+
+
+    it('should escape prefixed namespace URI', function() {
+
+      // given
+      var writer = createWriter(model);
+
+      var root = model.create('props:Root', {
+        'xmlns:evil': 'http://x"><injected /><x a="'
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).to.eql(
+        '<props:root xmlns:props="http://properties" ' +
+          'xmlns:evil="http://x&#34;&#62;&#60;injected /&#62;&#60;x a=&#34;" />'
+      );
+    });
+
+
+    it('should escape default namespace URI on Any', function() {
+
+      // given
+      var writer = createWriter(extensionModel);
+
+      var root = extensionModel.create('e:Root', {
+        extensions: [
+          extensionModel.createAny('foo', 'http://y"><injected />', {
+            xmlns: 'http://y"><injected />'
+          })
+        ]
+      });
+
+      // when
+      var xml = writer.toXML(root);
+
+      // then
+      expect(xml).to.eql(
+        '<e:root xmlns:e="http://extensions">' +
+          '<foo xmlns="http://y&#34;&#62;&#60;injected /&#62;" />' +
+        '</e:root>'
+      );
+    });
 
   });
 
